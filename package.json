@@ -1,0 +1,74 @@
+{
+  "name": "usetheform",
+  "version": "1.0.0-alpha",
+  "description": "React library for composing declarative forms in React and manage their state.",
+  "main": "./build/index.js",
+  "module": "./build/es/index.js",
+  "repository": "github:iusehooks/usetheform",
+  "scripts": {
+    "build": "npm run clean && node ./build_config/build.js",
+    "clean": "rimraf build coverage",
+    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
+    "lint": "eslint --ext .jsx --ext .js src __tests__ --fix",
+    "pretest": "npm run lint",
+    "test": "cross-env NODE_ENV=test jest -u",
+    "test:watch": "npm run test -- --watch",
+    "test:cov": "npm test -- --coverage",
+    "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
+  },
+  "author": "Antonio Pangallo (https://github.com/antoniopangallo)",
+  "files": [
+    "build/index.js",
+    "build/index.es.js",
+    "build/es",
+    "build/umd"
+  ],
+  "keywords": [
+    "usetheform",
+    "form",
+    "state",
+    "react form",
+    "react-hooks",
+    "hooks"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "child_process": "^1.0.2",
+    "coveralls": "^3.0.2",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.11.1",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.3",
+    "jest": "^23.6.0",
+    "prettier": "^1.9.2",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
+    "react-testing-library": "^5.4.4",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.0.1",
+    "rollup-plugin-babel": "^4.2.0",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-terser": "^4.0.1"
+  },
+  "jest": {
+    "testRegex": "(/__tests__/.*\\.spec\\.js)$",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
+  }
+}

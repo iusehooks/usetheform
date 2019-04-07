@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "node"
+install:
+  - npm i -g npm@6.5.0
+  - npm ci
+branches:
+  only:
+    - master
+cache: npm
+after_success:
+- npm run coveralls
