@@ -15,12 +15,5 @@ export default function useValidationFunction(validators) {
 }
 
 function getValidationMsg(errors) {
-  let errorMsg;
-  for (let i = 0; i < errors.length; i++) {
-    if (errors[i] !== undefined && errors[i] !== null) {
-      errorMsg = errors[i];
-      break;
-    }
-  }
-  return errorMsg;
+  return errors.find(e => e !== undefined && e !== null);
 }
