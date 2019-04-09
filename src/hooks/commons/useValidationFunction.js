@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import passValidation from "./../../utils/passValidation";
+import { getValidationMsg } from "../../utils/getValidationMsg";
 
 export default function useValidationFunction(validators) {
   const validationMsg = useRef(undefined);
@@ -12,15 +13,4 @@ export default function useValidationFunction(validators) {
   });
 
   return { validationMsg, validationObj, validationFN };
-}
-
-function getValidationMsg(errors) {
-  let errorMsg;
-  for (let i = 0; i < errors.length; i++) {
-    if (errors[i] !== undefined && errors[i] !== null) {
-      errorMsg = errors[i];
-      break;
-    }
-  }
-  return errorMsg;
 }

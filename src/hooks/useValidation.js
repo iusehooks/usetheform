@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getValidationMsg } from "../../utils/getValidationMsg";
 
 const initialState = { error: undefined, isValid: true };
 export default function useValidation(validators = []) {
@@ -11,15 +12,4 @@ export default function useValidation(validators = []) {
   const resetSyncErr = () => setState({ ...initialState });
 
   return [status, { onValidation, validators, resetSyncErr }];
-}
-
-function getValidationMsg(errors) {
-  let errorMsg;
-  for (let i = 0; i < errors.length; i++) {
-    if (errors[i] !== undefined && errors[i] !== null) {
-      errorMsg = errors[i];
-      break;
-    }
-  }
-  return errorMsg;
 }
