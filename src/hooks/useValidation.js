@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getValidationMsg } from "../../utils/getValidationMsg";
+import { getValidationMsg } from "./../utils/getValidationMsg";
 
 const initialState = { error: undefined, isValid: true };
 export default function useValidation(validators = []) {

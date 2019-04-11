@@ -1,11 +1,12 @@
 # UseTheForm
 
-UseTheForm is a React library for composing declarative forms in React and manage their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others.
+UseTheForm is a React library for composing declarative forms in React and manage their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others. It is still an alpha version.
 
 - [Basic Example](#basic-example)
 - [Apply Sync Validation](#apply-sync-validation)
 - [Apply Async Validation](#apply-async-validation)
 - [Apply Reducers](#apply-reducers)
+- [Use Multiple Form - Wizard](#use-multiple-form---wizard)
 - [UseTheForm API Reference](#usetheform-api-reference)
 - [CodeSandbox Examples](#codesandbox-examples)
 - [License](#license)
@@ -64,7 +65,7 @@ const output = {
     name: "Anything you typed",
     lastname: "Anything you typed"
   },
-  addresses: ["Anything Address you typed", "Anything Address you typed"]
+  addresses: ["Any Address you typed", "Any Address you typed"]
 };
 ```
 
@@ -193,7 +194,7 @@ Any reducer function receives three arguments: the next value, the previous valu
 
 If multiple reducer functions are passed, they will be chained in sequence based on their order. The first function of the chain will receive the `nextValue` and whatever value it will return it will be passed as `nextValue` of the second function of the chain and so on.
 
-## Reducers at Fields level
+## Reducers at Field level
 
 ```js
 import React from "react";
@@ -278,6 +279,53 @@ const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
 ```
 
+# Use Multiple Form - Wizard
+
+One common form implementation is to handle multiple form states and submitting the merged output of their states. This implementation is commonly known as Wizard.
+
+## Wizard Implementation
+Each Form must have a unique `name` prop and using the `useMultipleForm()` api.
+
+```js
+import React, { useState, Fragment } from "react";
+import Form, { Input, useMultipleForm } from "usetheform";
+
+const Wizard = () => {
+  const [state, setState] = useState({ page: 1 });
+  const nextPage = () => setState({ page: state.page + 1 });
+  const prevPage = () => setState({ page: state.page - 1 });
+
+  const [getWizardState, wizardApi] = useMultipleForm();
+  return (
+    <Fragment>
+      {state.page === 1 && (
+        <Form name="form1" {...wizardApi} onSubmit={nextPage}>
+          <Input type="text" name="name" />
+          <Input type="text" name="lastname" />
+          <button type="submit">Next</button>
+        </Form>
+      )}
+      {state.page === 2 && (
+        <Form
+          name="form2"
+          onSubmit={() => console.log(getWizardState())}
+          {...wizardApi}
+        >
+          <Input type="text" name="country" />
+          <Input type="text" name="city" />
+          <button type="button" onClick={prevPage}>
+            Previous
+          </button>
+          <button type="submit">Submit Wizard</button>
+        </Form>
+      )}
+    </Fragment>
+  );
+};
+
+export default Wizard;
+```
+
 # UseTheForm API Reference
 
 - [Form](#form)
@@ -289,6 +337,7 @@ ReactDOM.render(<App />, rootElement);
   - [Collection](#collection)
 - [useValidation](#usevalidation)
 - [useAsyncValidation](#useasyncvalidation)
+- [useMultipleForm](#usemultipleform)
 
 ## Form
 
@@ -569,6 +618,30 @@ const [asyncStatus, validationAttr] = useAsyncValidation(asyncTest);
   {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
 </div>;
 ```
+
+## useMultipleForm
+It is a custom hook function which provides the logic to handle the implementation of wizards.
+
+```js
+const [getWizardStatus, wizardApi] = useMultipleForm(callback);
+```
+
+`getWizardStatus` - It is a function that returns the actual state of the wizard.
+
+`wizardApi` - An object of props that must be spreaded in each form.
+
+```js
+const [getWizardStatus, wizardApi] = useMultipleForm();
+<Form {...wizardApi} name="form1" />
+<Form {...wizardApi} name="form2" />
+```
+
+`callback` - A function that is called anytime one of the form updates its state.
+
+```js
+const [getWizardStatus, wizardApi] = useMultipleForm(state => console.log(state));
+```
+
 
 # CodeSandbox Examples
 

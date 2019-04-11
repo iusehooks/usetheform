@@ -17,10 +17,18 @@ export default function useForm({
   onReset = noop,
   onInit = noop,
   onSubmit = noop,
-  reducers = []
+  reducers = [],
+  _getInitilaStateForm_, // Private API
+  _onMultipleForm_, // Private API
+  name
 }) {
   const [formState, dispatch] = useState(() => createForm(initialState));
   const stateRef = useRef(formState);
+
+  const { current: isMultipleForm } = useRef(
+    isUsingMultipleForm(_getInitilaStateForm_, _onMultipleForm_, name)
+  );
+
   const { current: dispatchFormState } = useRef(
     ({ state, status, ...rest }) => {
       const prevState =
@@ -160,6 +168,7 @@ export default function useForm({
 
     const isValid = isFormValid(validators.current, state);
     const status = STATUS.ON_RESET;
+
     dispatchFormState({ ...memoInitialState.current, state, status, isValid });
   });
 
@@ -182,17 +191,26 @@ export default function useForm({
 
   // chenge status form to READY after being reset
   useEffect(() => {
-    if (stateRef.current.status === STATUS.ON_RESET) {
-      onReset(stateRef.current.state);
+    const { status, state, isValid } = stateRef.current;
+    if (status === STATUS.ON_RESET) {
+      onReset(state);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
-    } else if (stateRef.current.status === STATUS.ON_CHANGE) {
-      onChange(stateRef.current.state);
-    } else if (stateRef.current.status === STATUS.ON_INIT) {
-      onInit(stateRef.current.state);
-    } else if (stateRef.current.status === STATUS.ON_SUBMIT) {
-      stateRef.current.isValid &&
-        onSubmit(stateRef.current.state, stateRef.current.isValid);
+    } else if (status === STATUS.ON_CHANGE) {
+      onChange(state);
+    } else if (status === STATUS.ON_INIT) {
+      onInit(state);
+    } else if (status === STATUS.ON_SUBMIT) {
+      isValid && onSubmit(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
+    }
+    if (
+      isMultipleForm &&
+      (status === STATUS.ON_RESET ||
+        status === STATUS.ON_CHANGE ||
+        status === STATUS.ON_INIT ||
+        status === STATUS.ON_SUBMIT)
+    ) {
+      _onMultipleForm_(name, state);
     }
   }, [stateRef.current]);
 
@@ -200,10 +218,15 @@ export default function useForm({
   useEffect(() => {
     isMounted.current = true;
 
-    const isValid = isFormValid(validators.current, stateRef.current.state);
+    // It is using the useMultipleForm hook
+    const state = isMultipleForm
+      ? _getInitilaStateForm_(name) || stateRef.current.state
+      : stateRef.current.state;
+    const isValid = isFormValid(validators.current, state);
 
     stateRef.current = {
       ...stateRef.current,
+      state,
       isValid,
       status: STATUS.ON_INIT
     };
@@ -212,7 +235,9 @@ export default function useForm({
   }, []);
 
   return {
-    ...formState,
+    ...formState, // { isValid, state, status, pristine }
+    formState: formState.state, // pass the global form state down
+    formStatus: formState.status, // pass the global form state down
     changeProp,
     initProp,
     onSubmitForm,
@@ -226,4 +251,12 @@ export default function useForm({
     registerReset,
     unRegisterReset
   };
+}
+
+function isUsingMultipleForm(_getInitilaStateForm_, _onMultipleForm_, name) {
+  return (
+    typeof _getInitilaStateForm_ === "function" &&
+    typeof _onMultipleForm_ === "function" &&
+    typeof name === "string"
+  );
 }

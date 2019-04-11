@@ -12,3 +12,4 @@ export { default as useValidation } from "./hooks/useValidation";
 export { default as useAsyncValidation } from "./hooks/useAsyncValidation";
 export { default as useChildren } from "./hooks/useChildren";
 export { default as useField } from "./hooks/useField";
+export { useMultipleForm } from "./hooks/useMultipleForm";

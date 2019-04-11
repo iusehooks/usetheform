@@ -13,45 +13,23 @@ export default function Form({
   onReset,
   onSubmit = noop,
   reducers,
+  _getInitilaStateForm_, // Private API
+  _onMultipleForm_, // Private API
+  name,
   ...rest
 }) {
-  const {
-    state,
-    changeProp,
-    initProp,
-    removeProp,
-    onSubmitForm,
-    stillMounted,
-    status,
-    reset,
-    addValidators,
-    removeValidators,
-    addValidatorsAsync,
-    removeValidatorsAsync,
-    registerReset,
-    unRegisterReset,
-    isValid,
-    pristine
-  } = useForm({ initialState, onChange, onInit, onReset, onSubmit, reducers });
+  const { onSubmitForm, ...value } = useForm({
+    initialState,
+    onChange,
+    onInit,
+    onReset,
+    onSubmit,
+    reducers,
+    _getInitilaStateForm_,
+    _onMultipleForm_,
+    name
+  });
 
-  const value = {
-    state,
-    formState: state, // pass the global form state down
-    formStatus: status, // pass the global form state down
-    changeProp,
-    initProp,
-    removeProp,
-    stillMounted,
-    addValidators,
-    removeValidators,
-    addValidatorsAsync,
-    removeValidatorsAsync,
-    registerReset,
-    unRegisterReset,
-    reset,
-    isValid,
-    pristine
-  };
   return (
     <Context.Provider value={value}>
       <form onSubmit={onSubmitForm} {...rest}>

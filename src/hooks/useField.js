@@ -135,6 +135,16 @@ export default function useField(props) {
 
     context.registerReset(nameProp.current, reset);
 
+    // TO-DO it must be improved
+    // if initialValue has been set from <Form initialState={} />
+    if (
+      initialValue === "" &&
+      valueField.current !== undefined &&
+      valueField.current !== ""
+    ) {
+      initialValue = valueField.current;
+    }
+
     if (
       (type !== "checkbox" && type !== "radio" && initialValue !== "") ||
       ((type === "checkbox" || type === "radio") && initialChecked)
