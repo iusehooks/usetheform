@@ -1,7 +1,7 @@
 {
   "name": "usetheform",
-  "version": "1.0.0-alpha",
-  "description": "React library for composing declarative forms in React and manage their state.",
+  "version": "1.0.0-alpha.1",
+  "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
   "repository": "github:iusehooks/usetheform",

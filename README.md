@@ -1,6 +1,6 @@
 # UseTheForm
 
-UseTheForm is a React library for composing declarative forms in React and manage their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others. It is still an alpha version.
+UseTheForm is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others. It is still an alpha version.
 
 - [Basic Example](#basic-example)
 - [Apply Sync Validation](#apply-sync-validation)
@@ -11,7 +11,7 @@ UseTheForm is a React library for composing declarative forms in React and manag
 - [CodeSandbox Examples](#codesandbox-examples)
 - [License](#license)
 
-[![Package size](https://img.shields.io/bundlephobia/minzip/usetheform.svg)](https://bundlephobia.com/result?p=usetheform) ![License](https://img.shields.io/npm/l/usetheform.svg?style=flat) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks)
+[![Build Status](https://travis-ci.org/iusehooks/usetheform.svg?branch=master)](https://travis-ci.org/iusehooks/usetheform) [![Package size](https://img.shields.io/bundlephobia/minzip/usetheform.svg)](https://bundlephobia.com/result?p=usetheform) ![License](https://img.shields.io/npm/l/usetheform.svg?style=flat) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks)
 
 ✅ Zero dependencies 
 
@@ -468,6 +468,22 @@ It is not a React Component. Any Component considered as Field shares the follow
 `reducers`
 It can be either an array of function reducers or a single function reducer.
 It receives three arguments: the next value, the prev value and the entire form state.
+It must return the new state and it is applicable at `Form`, `Collection` and `Field` level.
+
+```js
+const sum = (nexState, prevState, formState) => {
+  const total = nexState.x + nexState.y;
+  const newState = { ...nexState, total };
+  return newState;
+};
+<Form>
+  <Collection reducers={sum} object name="sum">
+    <Input name="x" type="number" value="0" />
+    <Input name="y" type="number" value="0" />
+    <Input type="number" name="total" readOnly value="0" />
+  </Collection>
+</Form>
+```
 
 `name`
 A String to uniquely identify the Field within its context.
@@ -477,11 +493,11 @@ The **context** of any Field can be either the `<Form >` or any `<Collection >` 
 A String which assigns the initial value of the Field.
 
 `touched`
-It is a boolean. If it is true it shows validation errors once your field has been touched.
+It is a boolean. If it is true it shows validation errors once the field has been touched.
 
 Following are listed all the supported Fields.
 
-**Warning:** `value` and `touched` it is not supported for `<Collection />`.
+**Warning:** `value` and `touched` are not supported for `<Collection />`.
 
 ## Input
 
@@ -634,6 +650,7 @@ const [getWizardStatus, wizardApi] = useMultipleForm(callback);
 const [getWizardStatus, wizardApi] = useMultipleForm();
 <Form {...wizardApi} name="form1" />
 <Form {...wizardApi} name="form2" />
+<button onClick={() => getWizardStatus()}>Submit Wizard</button>
 ```
 
 `callback` - A function that is called anytime one of the form updates its state.
@@ -642,10 +659,10 @@ const [getWizardStatus, wizardApi] = useMultipleForm();
 const [getWizardStatus, wizardApi] = useMultipleForm(state => console.log(state));
 ```
 
-
 # CodeSandbox Examples
 
-- UseTheForm: [Sandbox](https://codesandbox.io/s/035l4l75ln)
+- Various Implementation: [Sandbox](https://codesandbox.io/s/035l4l75ln)
+- Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)
 
 # License
 
