@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import useOwnContext from "./useOwnContext";
-import { STATUS, fileList } from "./../utils/formUtils";
 import useValidationFunction from "./commons/useValidationFunction";
 import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
+import { STATUS, fileList } from "./../utils/formUtils";
 import chainReducers from "./../utils/chainReducers";
 import isValidValue from "./../utils/isValidValue";
 
@@ -18,7 +18,7 @@ export default function useField(props) {
     }
   }
 
-  const {
+  let {
     name,
     validators = [],
     asyncValidator,
@@ -54,7 +54,13 @@ export default function useField(props) {
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const { current: reset } = useRef(formState => {
-    const val = type === "number" ? Number(initialValue) : initialValue;
+    let val = initialValue;
+    if (type === "number") {
+      val = Number(initialValue);
+    } else if (type === "checkbox" || type === "radio") {
+      val = "";
+    }
+
     let value = applyReducers(val, val, formState);
     value = value === "" ? undefined : value;
     return value;
@@ -120,7 +126,7 @@ export default function useField(props) {
       nameProp.current = context.getIndex(setNameProp);
     }
 
-    if (type !== "checkbox" && type !== "radio" && validators.length > 0) {
+    if (validators.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
     }
 
@@ -209,7 +215,7 @@ export default function useField(props) {
     } else {
       if (
         validationObj.current !== null &&
-        (initialValue !== "" ||
+        ((initialValue !== "" && type !== "radio" && type !== "checkbox") ||
           context.formStatus === STATUS.ON_SUBMIT ||
           ((touched && onSyncBlurState) || !touched))
       ) {

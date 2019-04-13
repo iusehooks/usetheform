@@ -219,15 +219,20 @@ export default function useForm({
     isMounted.current = true;
 
     // It is using the useMultipleForm hook
+    const pristine =
+      isMultipleForm && _getInitilaStateForm_(name) === undefined;
+
     const state = isMultipleForm
       ? _getInitilaStateForm_(name) || stateRef.current.state
       : stateRef.current.state;
+
     const isValid = isFormValid(validators.current, state);
 
     stateRef.current = {
       ...stateRef.current,
       state,
       isValid,
+      pristine,
       status: STATUS.ON_INIT
     };
 
