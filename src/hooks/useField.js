@@ -55,8 +55,8 @@ export default function useField(props) {
 
   const { current: reset } = useRef(formState => {
     let val = initialValue;
-    if (type === "number") {
-      val = Number(initialValue);
+    if (type === "number" || type === "range") {
+      val = initialValue !== "" ? Number(initialValue) : initialValue;
     } else if (type === "checkbox" || type === "radio") {
       val = "";
     }
@@ -108,7 +108,10 @@ export default function useField(props) {
       nextValue =
         state[nameProp.current] !== undefined ? "" : target.value || true;
     } else {
-      nextValue = type === "number" ? Number(target.value) : target.value;
+      nextValue =
+        type === "number" || type === "range"
+          ? Number(target.value)
+          : target.value;
     }
     const newValue = applyReducers(
       nextValue,
@@ -159,7 +162,7 @@ export default function useField(props) {
       let val = initialValue;
       if (type === "checkbox") {
         val = type === "checkbox" ? initialValue || true : initialValue;
-      } else if (type === "number") {
+      } else if (type === "number" || type === "range") {
         val = Number(val);
       }
 
@@ -204,20 +207,24 @@ export default function useField(props) {
   );
 
   const [onSyncBlurState, setSyncOnBlur] = useState(() => false);
+  const [onSyncFocusState, setSyncOnFocus] = useState(() => false);
   const [onAsyncBlurState, setAyncOnBlur] = useState(() => false);
 
   useEffect(() => {
     if (context.formStatus === STATUS.ON_RESET) {
       setSyncOnBlur(false);
       setAyncOnBlur(false);
+      setSyncOnFocus(false);
       resetSyncErr();
       resetAsyncErr();
     } else {
+      const onlyShowOnSubmit = type === "radio" || type === "checkbox";
       if (
         validationObj.current !== null &&
-        ((initialValue !== "" && type !== "radio" && type !== "checkbox") ||
+        ((!onlyShowOnSubmit && initialValue !== "") ||
           context.formStatus === STATUS.ON_SUBMIT ||
-          ((touched && onSyncBlurState) || !touched))
+          (!onlyShowOnSubmit && ((touched && onSyncBlurState) || !touched)) ||
+          (onlyShowOnSubmit && onSyncFocusState))
       ) {
         onValidation(
           validationObj.current.checks,
@@ -242,6 +249,7 @@ export default function useField(props) {
     validationMsg.current,
     onSyncBlurState,
     onAsyncBlurState,
+    onSyncFocusState,
     context.formStatus
   ]);
 
@@ -255,6 +263,7 @@ export default function useField(props) {
   const { current: onFocus } = useRef(e => {
     e.persist();
     setAyncOnBlur(false);
+    setSyncOnFocus(true);
     customFocus(e);
   });
 
@@ -275,23 +284,12 @@ export default function useField(props) {
 
 function filterProps(allProps) {
   switch (allProps.type) {
-    case "checkbox":
-    case "radio": {
-      const { multiple, fileValue, ...props } = allProps;
-      return props;
-    }
     case "file": {
-      const { checked, value, fileValue, ...props } = allProps;
+      const { value: omitValue, fileValue, ...props } = allProps;
       return { ...props, value: fileValue };
     }
     case "select": {
-      const { type, fileValue, checked, ...props } = allProps;
-      return props;
-    }
-    case "password":
-    case "number":
-    case "text": {
-      const { multiple, fileValue, checked, ...props } = allProps;
+      const { type: omitType, fileValue, ...props } = allProps;
       return props;
     }
     default:
@@ -324,6 +322,7 @@ function validateProps(
   }
 
   if (!isValidValue(name, contextType)) {
-    return `The prop "name": ${name} of type "${typeof name}" passed to "${type}" it is not allowed within context a of type "${contextType}".`;
+    const nameContext = contextType || "<Form />";
+    return `The prop "name": ${name} of type "${typeof name}" passed to "${type}" it is not allowed within context a of type "${nameContext}".`;
   }
 }

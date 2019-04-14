@@ -9,6 +9,7 @@ export default function useValidators(
 ) {
   const validators = useRef({});
   const validatorsMaps = useRef({});
+
   const { current: addValidators } = useRef(
     (path, validatorsFN, validatorsMapsFN) => {
       validators.current = {
@@ -28,19 +29,11 @@ export default function useValidators(
         isMounted.current &&
         context !== undefined
       ) {
-        if (isAsync) {
-          context.addAsyncValidators(
-            nameProp.current,
-            validators.current,
-            validatorsMaps.current
-          );
-        } else {
-          context.addValidators(
-            nameProp.current,
-            validators.current,
-            validatorsMaps.current
-          );
-        }
+        const addFN = isAsync
+          ? context.addValidatorsAsync
+          : context.addValidators;
+
+        addFN(nameProp.current, validators.current, validatorsMaps.current);
       }
     }
   );
@@ -58,22 +51,16 @@ export default function useValidators(
             ...validatorsMaps.current,
             ...mergeValidators(path, validatorsMapsToRemove, true)
           };
+
       if (context !== undefined) {
         validators.current = newValidators;
         validatorsMaps.current = newValidatorsMaps;
-        if (isAsync) {
-          context.removeValidatorsAsync(
-            nameProp.current,
-            validators.current,
-            validatorsMaps.current
-          );
-        } else {
-          context.removeValidators(
-            nameProp.current,
-            validators.current,
-            validatorsMaps.current
-          );
-        }
+
+        const removeFN = isAsync
+          ? context.removeValidatorsAsync
+          : context.removeValidators;
+
+        removeFN(nameProp.current, validators.current, validatorsMaps.current);
       } else {
         // if context is undefined it is the form context and then
         // we must clean the undefined prop from it

@@ -235,10 +235,6 @@ export default function useObject(props) {
           .current(state.current)
           .then(val => val)
           .catch(err => err);
-        /* onAsyncValidation({ status: "asyncStart" });
-        asyncValidator(state.current)
-          .then(value => onAsyncValidation({ status: "asyncSuccess", value }))
-          .catch(value => onAsyncValidation({ status: "asyncError", value })); */
       } else if (
         validationObj.current !== null &&
         !validationObj.current.isValid
@@ -256,6 +252,7 @@ export default function useObject(props) {
       nameProp.current = context.getIndex(setNameProp);
     }
 
+    // Add the its own validators
     if (validatorsFuncs.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
     }
@@ -267,15 +264,9 @@ export default function useObject(props) {
         false
       );
     }
+    // --- Add the its own validators --- //
 
-    context.registerReset(nameProp.current, reset);
-
-    const newState = applyReducers(
-      state.current,
-      state.current,
-      formState.current
-    );
-
+    // Add the its children validators
     if (Object.keys(validators.current).length > 0) {
       context.addValidators(nameProp.current, validators.current);
     }
@@ -287,26 +278,49 @@ export default function useObject(props) {
         validatorsMapsAsync.current
       );
     }
+    // --- Add the its children validators --- //
+
+    context.registerReset(nameProp.current, reset);
+
+    const newState = applyReducers(
+      state.current,
+      state.current,
+      formState.current
+    );
 
     context.initProp(nameProp.current, newState, memoInitialState.current);
 
     return () => {
       isMounted.current = false;
       if (context.stillMounted()) {
+        // remove its own by validators
         if (typeof asyncValidator === "function") {
           context.removeValidatorsAsync(
             nameProp.current,
-            validationFNAsync.current
+            validationFNAsync.current,
+            false
           );
         }
+
         if (validatorsFuncs.length > 0) {
+          context.removeValidators(nameProp.current, validationFN.current);
+        }
+        // ----- remove its own by validators ----- //
+
+        // remove validators inerithed by children
+        if (Object.keys(validators.current).length > 0) {
+          context.removeValidators(nameProp.current, validators.current);
+        }
+
+        if (Object.keys(validatorsAsync.current).length > 0) {
           context.removeValidatorsAsync(
             nameProp.current,
             validatorsAsync.current,
             validatorsMapsAsync.current
           );
         }
-        context.removeValidators(nameProp.current, validators.current);
+        // ----- remove validators inerithed by children ----- //
+
         context.removeProp(
           nameProp.current,
           {
