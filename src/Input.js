@@ -1,7 +1,7 @@
 import React from "react";
 import useField from "./hooks/useField";
 
-export default ({
+export default function Input({
   onFocus,
   onBlur,
   onChange,
@@ -22,7 +22,7 @@ export default ({
   multiple,
   reducers,
   ...extraProps
-}) => {
+}) {
   const props = useField({
     onFocus,
     onBlur,
@@ -44,4 +44,4 @@ export default ({
   });
 
   return <input {...extraProps} {...props} />;
-};
+}

@@ -52,7 +52,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.3",
-    "jest": "^23.6.0",
+    "jest": "^25.0.0",
     "prettier": "^1.9.2",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",

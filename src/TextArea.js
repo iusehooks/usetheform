@@ -1,7 +1,7 @@
 import React from "react";
 import useField from "./hooks/useField";
 
-export default ({
+export default function TextArea({
   onFocus,
   onBlur,
   onChange,
@@ -20,7 +20,7 @@ export default ({
   touched,
   reducers,
   ...extraProps
-}) => {
+}) {
   const props = useField({
     onFocus,
     onBlur,
@@ -40,4 +40,4 @@ export default ({
   });
 
   return <textarea {...extraProps} {...props} />;
-};
+}

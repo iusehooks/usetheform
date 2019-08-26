@@ -198,7 +198,8 @@ export default function useForm({
     } else if (status === STATUS.ON_CHANGE) {
       onChange(state);
     } else if (status === STATUS.ON_INIT) {
-      onInit(state);
+      const updateState = newState => propagateState(newState, false);
+      onInit(state, updateState);
     } else if (status === STATUS.ON_SUBMIT) {
       isValid && onSubmit(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
