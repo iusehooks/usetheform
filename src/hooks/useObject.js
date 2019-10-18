@@ -3,7 +3,7 @@ import useOwnContext from "./useOwnContext";
 import useValidators from "./useValidators";
 import isValidValue from "./../utils/isValidValue";
 import updateState from "./../utils/updateState";
-import chainReducers from "./../utils/chainReducers";
+import { chainReducers } from "./../utils/chainReducers";
 import useValidationFunction from "./commons/useValidationFunction";
 import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
 import { STATUS } from "./../utils/formUtils";

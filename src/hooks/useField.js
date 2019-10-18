@@ -3,7 +3,7 @@ import useOwnContext from "./useOwnContext";
 import useValidationFunction from "./commons/useValidationFunction";
 import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
 import { STATUS, fileList } from "./../utils/formUtils";
-import chainReducers from "./../utils/chainReducers";
+import { chainReducers } from "./../utils/chainReducers";
 import isValidValue from "./../utils/isValidValue";
 
 const noop = () => undefined;

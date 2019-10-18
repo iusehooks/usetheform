@@ -10,8 +10,10 @@ export default function Form({
   initialState,
   onChange,
   onInit,
+  actionDispatcher,
   onReset,
   onSubmit = noop,
+  actionReducers,
   reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
@@ -22,8 +24,10 @@ export default function Form({
     initialState,
     onChange,
     onInit,
+    actionDispatcher,
     onReset,
     onSubmit,
+    actionReducers,
     reducers,
     _getInitilaStateForm_,
     _onMultipleForm_,

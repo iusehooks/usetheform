@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import useValidators from "./useValidators";
 
 import updateState from "./../utils/updateState";
-import chainReducers from "./../utils/chainReducers";
+import { chainActionReducers, chainReducers } from "./../utils/chainReducers";
 import {
   STATUS,
   createForm,
@@ -17,7 +17,9 @@ export default function useForm({
   onReset = noop,
   onInit = noop,
   onSubmit = noop,
+  actionDispatcher = noop,
   reducers = [],
+  actionReducers = [],
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name
@@ -64,6 +66,9 @@ export default function useForm({
   ] = useValidators(undefined, undefined, isMounted, true);
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
+  const { current: applyActionReducers } = useRef(
+    chainActionReducers(actionReducers)
+  );
 
   const { current: changeProp } = useRef(
     (nameProp, value, removeMe = false) => {
@@ -200,6 +205,14 @@ export default function useForm({
     } else if (status === STATUS.ON_INIT) {
       const updateState = newState => propagateState(newState, false);
       onInit(state, updateState);
+
+      const dispatcherActions = action => {
+        const currentState = stateRef.current.state;
+        const newState = applyActionReducers(currentState, action);
+        propagateState(newState, false);
+      };
+      
+      actionDispatcher(dispatcherActions);
     } else if (status === STATUS.ON_SUBMIT) {
       isValid && onSubmit(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
