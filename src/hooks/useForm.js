@@ -17,9 +17,10 @@ export default function useForm({
   onReset = noop,
   onInit = noop,
   onSubmit = noop,
-  actionDispatcher = noop,
+  storeReducers = [],
+  setStoreDispatcher = noop,
+  setStoreState = noop,
   reducers = [],
-  actionReducers = [],
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name
@@ -67,7 +68,7 @@ export default function useForm({
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
   const { current: applyActionReducers } = useRef(
-    chainActionReducers(actionReducers)
+    chainActionReducers(storeReducers)
   );
 
   const { current: changeProp } = useRef(
@@ -199,20 +200,23 @@ export default function useForm({
     const { status, state, isValid } = stateRef.current;
     if (status === STATUS.ON_RESET) {
       onReset(state);
+      setStoreState(state);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
     } else if (status === STATUS.ON_CHANGE) {
       onChange(state);
+      setStoreState(state);
     } else if (status === STATUS.ON_INIT) {
       const updateState = newState => propagateState(newState, false);
       onInit(state, updateState);
+      setStoreState(state);
 
-      const dispatcherActions = action => {
+      const dispatch = action => {
         const currentState = stateRef.current.state;
         const newState = applyActionReducers(currentState, action);
         propagateState(newState, false);
       };
-      
-      actionDispatcher(dispatcherActions);
+
+      setStoreDispatcher(dispatch);
     } else if (status === STATUS.ON_SUBMIT) {
       isValid && onSubmit(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
