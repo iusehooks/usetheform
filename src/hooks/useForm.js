@@ -208,7 +208,6 @@ export default function useForm({
     } else if (status === STATUS.ON_INIT) {
       const updateState = newState => propagateState(newState, false);
       onInit(state, updateState);
-      setStoreState(state);
 
       const dispatch = action => {
         const currentState = stateRef.current.state;
@@ -216,6 +215,7 @@ export default function useForm({
         propagateState(newState, false);
       };
 
+      setStoreState(state);
       setStoreDispatcher(dispatch);
     } else if (status === STATUS.ON_SUBMIT) {
       isValid && onSubmit(state, isValid);
