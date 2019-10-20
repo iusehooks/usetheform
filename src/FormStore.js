@@ -1,8 +1,8 @@
-import React, { createContext } from "react";
+import React from "react";
 
 import {
-  FormStoreContext,
-  FormStoreContextIsolatad
+  FormStoreContextPublic,
+  FormStoreContextPrivate
 } from "./hooks/useFormStore";
 
 export class FormStore extends React.PureComponent {
@@ -10,24 +10,26 @@ export class FormStore extends React.PureComponent {
     super(props);
     const { reducers: storeReducers } = props;
 
-    const setStoreDispatcher = dispatch =>
-      this.setState(prev => ({ store: { ...prev.store, dispatch } }));
-    const setStoreState = state =>
-      this.setState(prev => ({ store: { ...prev.store, state } }));
+    const setFormStore = props =>
+      this.setState(prev => ({ store: { ...prev.store, ...props } }));
 
     this.state = {
-      store: { dispatch: null, state: {} },
-      fn: { storeReducers, setStoreDispatcher, setStoreState }
+      store: {
+        dispatch: null,
+        state: {},
+        meta: { isValid: false, pristine: false }
+      },
+      fn: { storeReducers, setFormStore }
     };
   }
 
   render() {
     return (
-      <FormStoreContext.Provider value={this.state.store}>
-        <FormStoreContextIsolatad.Provider value={this.state.fn}>
+      <FormStoreContextPublic.Provider value={this.state.store}>
+        <FormStoreContextPrivate.Provider value={this.state.fn}>
           {this.props.children}
-        </FormStoreContextIsolatad.Provider>
-      </FormStoreContext.Provider>
+        </FormStoreContextPrivate.Provider>
+      </FormStoreContextPublic.Provider>
     );
   }
 }
