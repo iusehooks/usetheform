@@ -83,6 +83,8 @@ export default function useField(props) {
     valueField.current = state[nameProp.current];
     fileField.current =
       state[nameProp.current] !== undefined ? fileField.current : "";
+  } else if (type === "custom") {
+    valueField.current = state[nameProp.current];
   } else {
     valueField.current =
       state[nameProp.current] !== undefined ? state[nameProp.current] : "";
@@ -219,9 +221,12 @@ export default function useField(props) {
       resetAsyncErr();
     } else {
       const onlyShowOnSubmit = type === "radio" || type === "checkbox";
+      const isCustomCmp = type === "custom";
+
       if (
         validationObj.current !== null &&
         ((!onlyShowOnSubmit && initialValue !== "") ||
+          (isCustomCmp && touched && onSyncBlurState) ||
           context.formStatus === STATUS.ON_SUBMIT ||
           (!onlyShowOnSubmit && ((touched && onSyncBlurState) || !touched)) ||
           (onlyShowOnSubmit && onSyncFocusState))

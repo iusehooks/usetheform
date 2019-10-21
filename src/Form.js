@@ -3,6 +3,8 @@ import React from "react";
 import useForm from "./hooks/useForm";
 import { ContextForm as Context } from "./hooks/useOwnContext";
 
+import { useFormStorePivateAPI } from "./hooks/useFormStore";
+
 const noop = () => undefined;
 
 export default function Form({
@@ -10,24 +12,24 @@ export default function Form({
   initialState,
   onChange,
   onInit,
-  actionDispatcher,
   onReset,
   onSubmit = noop,
-  actionReducers,
   reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
   ...rest
 }) {
+  const { storeReducers, setFormStore } = useFormStorePivateAPI();
+
   const { onSubmitForm, ...value } = useForm({
     initialState,
     onChange,
     onInit,
-    actionDispatcher,
+    storeReducers,
+    setFormStore,
     onReset,
     onSubmit,
-    actionReducers,
     reducers,
     _getInitilaStateForm_,
     _onMultipleForm_,
@@ -36,7 +38,7 @@ export default function Form({
 
   return (
     <Context.Provider value={value}>
-      <form onSubmit={onSubmitForm} {...rest}>
+      <form onSubmit={onSubmitForm} {...rest} name={name}>
         {children}
       </form>
     </Context.Provider>
