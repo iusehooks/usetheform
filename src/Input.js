@@ -43,7 +43,5 @@ export default function Input({
     multiple
   });
 
-  console.log("INPUT");
-
   return <input {...extraProps} {...props} />;
 }
