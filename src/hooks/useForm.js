@@ -87,8 +87,8 @@ export default function useForm({
       memoInitialState.current.state = updateState(
         memoInitialState.current.state,
         {
-          isValid: initialValue,
-          isValidrop
+          value: initialValue,
+          nameProp
         }
       );
 
