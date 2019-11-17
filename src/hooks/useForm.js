@@ -194,7 +194,7 @@ export default function useForm({
     propagateState(newState, false);
   });
 
-  // chenge status form to READY after being reset
+  // change status form to READY after being reset
   useEffect(() => {
     const { status, state, isValid, pristine } = stateRef.current;
     if (status === STATUS.ON_RESET) {

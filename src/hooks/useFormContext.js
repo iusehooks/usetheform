@@ -12,7 +12,7 @@ export const useFormContext = ({
   _onMultipleForm_, // Private API
   name
 }) => {
-  const { onSubmitForm, dispatchNewState, ...value } = useForm({
+  const { onSubmitForm, ...value } = useForm({
     initialState,
     onChange,
     onInit,
@@ -23,5 +23,6 @@ export const useFormContext = ({
     _onMultipleForm_,
     name
   });
-  return [onSubmitForm, value, dispatchNewState];
+  console.log("useFormContext - ", value);
+  return [onSubmitForm, value];
 };
