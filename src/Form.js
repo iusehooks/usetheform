@@ -3,8 +3,6 @@ import React from "react";
 import useForm from "./hooks/useForm";
 import { ContextForm as Context } from "./hooks/useOwnContext";
 
-import { useFormStorePivateAPI } from "./hooks/useFormStore";
-
 const noop = () => undefined;
 
 export default function Form({
@@ -20,14 +18,10 @@ export default function Form({
   name,
   ...rest
 }) {
-  const { storeReducers, setFormStore } = useFormStorePivateAPI();
-
   const { onSubmitForm, ...value } = useForm({
     initialState,
     onChange,
     onInit,
-    storeReducers,
-    setFormStore,
     onReset,
     onSubmit,
     reducers,

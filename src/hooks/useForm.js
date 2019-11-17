@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import useValidators from "./useValidators";
 
 import updateState from "./../utils/updateState";
-import { chainActionReducers, chainReducers } from "./../utils/chainReducers";
+import { chainReducers } from "./../utils/chainReducers";
 import {
   STATUS,
   createForm,
@@ -17,8 +17,6 @@ export default function useForm({
   onReset = noop,
   onInit = noop,
   onSubmit = noop,
-  storeReducers = [],
-  setFormStore = noop,
   reducers = [],
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
@@ -66,9 +64,6 @@ export default function useForm({
   ] = useValidators(undefined, undefined, isMounted, true);
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
-  const { current: applyActionReducers } = useRef(
-    chainActionReducers(storeReducers)
-  );
 
   const { current: changeProp } = useRef(
     (nameProp, value, removeMe = false) => {
@@ -194,10 +189,8 @@ export default function useForm({
     }
   });
 
-  // used only if the Context FormStore
-  const { current: dispatchFormStore } = useRef(action => {
-    const currentState = stateRef.current.state;
-    const newState = applyActionReducers(currentState, action);
+  // used only to replace the entire Form State
+  const { current: dispatchNewState } = useRef(newState => {
     propagateState(newState, false);
   });
 
@@ -206,21 +199,12 @@ export default function useForm({
     const { status, state, isValid, pristine } = stateRef.current;
     if (status === STATUS.ON_RESET) {
       onReset(state);
-      setFormStore({ state, meta: { isValid, pristine } });
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
     } else if (status === STATUS.ON_CHANGE) {
       onChange(state);
-      setFormStore({ state, meta: { isValid, pristine } });
     } else if (status === STATUS.ON_INIT) {
       const updateState = newState => propagateState(newState, false);
       onInit(state, updateState);
-
-      setFormStore({
-        state,
-        dispatch: dispatchFormStore,
-        meta: { isValid, pristine }
-      });
-      // setStoreDispatcher(dispatch);
     } else if (status === STATUS.ON_SUBMIT) {
       isValid && onSubmit(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
@@ -267,6 +251,7 @@ export default function useForm({
     ...formState, // { isValid, state, status, pristine }
     formState: formState.state, // pass the global form state down
     formStatus: formState.status, // pass the global form state down
+    dispatchNewState,
     changeProp,
     initProp,
     onSubmitForm,
