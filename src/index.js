@@ -15,4 +15,3 @@ export { default as useChildren } from "./hooks/useChildren";
 export { default as useField } from "./hooks/useField";
 export { useCollection } from "./hooks/useCollection";
 export { useMultipleForm } from "./hooks/useMultipleForm";
-export { useFormContext } from "./hooks/useFormContext";

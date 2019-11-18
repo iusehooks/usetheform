@@ -10,10 +10,19 @@ export const usePublicContextForm = () => {
     isValid,
     pristine,
     formStatus,
-    dispatchNewState: dispatch
+    dispatchNewState: dispatch,
+    onSubmitForm
   } = useContext(ContextForm);
 
-  return { state, reset, isValid, pristine, formStatus, dispatch };
+  return {
+    state,
+    reset,
+    isValid,
+    pristine,
+    formStatus,
+    dispatch,
+    onSubmitForm
+  };
 };
 
 export const useForm = () => {
