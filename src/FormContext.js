@@ -5,7 +5,7 @@ import { ContextForm as Context } from "./hooks/useOwnContext";
 
 const noop = () => undefined;
 
-export default function Form({
+export function FormContext({
   children,
   initialState,
   onChange,
@@ -15,10 +15,9 @@ export default function Form({
   reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
-  name,
-  ...rest
+  name
 }) {
-  const { onSubmitForm, ...value } = useForm({
+  const value = useForm({
     initialState,
     onChange,
     onInit,
@@ -30,11 +29,5 @@ export default function Form({
     name
   });
 
-  return (
-    <Context.Provider value={value}>
-      <form onSubmit={onSubmitForm} {...rest} name={name}>
-        {children}
-      </form>
-    </Context.Provider>
-  );
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 }

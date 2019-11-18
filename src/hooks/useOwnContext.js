@@ -4,10 +4,32 @@ export const ContextObject = createContext();
 export const ContextForm = createContext();
 
 export const usePublicContextForm = () => {
+  const {
+    state,
+    reset,
+    isValid,
+    pristine,
+    formStatus,
+    dispatchNewState: dispatch,
+    onSubmitForm
+  } = useContext(ContextForm);
+
+  return {
+    state,
+    reset,
+    isValid,
+    pristine,
+    formStatus,
+    dispatch,
+    onSubmitForm
+  };
+};
+
+export const useForm = () => {
   const { state, reset, isValid, pristine, formStatus } = useContext(
     ContextForm
   );
-  return { state, reset, isValid, pristine, formStatus };
+  return { state, reset, isValid, pristine, formStatus, dispatch };
 };
 
 export default function useOwnContext() {

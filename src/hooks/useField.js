@@ -91,7 +91,9 @@ export default function useField(props) {
   }
 
   const onChange = event => {
-    event.persist();
+    if (typeof event.persist === "function") {
+      event.persist();
+    }
     customChange(event);
     const { target } = event;
     let nextValue;
