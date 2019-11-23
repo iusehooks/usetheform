@@ -94,7 +94,6 @@ export default function useField(props) {
     if (typeof event.persist === "function") {
       event.persist();
     }
-    customChange(event);
     const { target } = event;
     let nextValue;
     if (type === "select" && multiple) {
@@ -117,11 +116,14 @@ export default function useField(props) {
           ? Number(target.value)
           : target.value;
     }
+
     const newValue = applyReducers(
       nextValue,
       valueField.current,
       formState.current
     );
+
+    customChange(newValue, event);
     context.changeProp(nameProp.current, newValue, false);
   };
 
