@@ -36,4 +36,26 @@ describe("Component => Select", () => {
     fireEvent.change(select, { target: { value } });
     expect(onChange).toHaveBeenCalledWith({ [name]: value });
   });
+
+  it("should use a reducer to reduce the Select value", () => {
+    const onInit = jest.fn(state => state);
+    const props = { onInit };
+    const reducer = value => value + 2;
+    const value = 1;
+    const name = "test";
+    const children = [
+      <Select
+        key="1"
+        data-testid={dataTestid}
+        name={name}
+        reducers={reducer}
+        value={value}
+      >
+        <option value="" />
+        <option value={value}>{value}</option>
+      </Select>
+    ];
+    mountForm({ props, children });
+    expect(onInit).toHaveReturnedWith({ [name]: 3 });
+  });
 });

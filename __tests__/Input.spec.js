@@ -38,4 +38,24 @@ describe("Component => Input", () => {
     fireEvent.change(input, { target: { value } });
     expect(onChange).toHaveBeenCalledWith({ email: value });
   });
+
+  it("should use a reducer to reduce the Input value", () => {
+    const onInit = jest.fn(state => state);
+    const reducedValue = 3;
+    const reducer = value => value + 2;
+    const props = { onInit };
+    const value = 1;
+    const name = "test";
+    const children = [
+      <Input
+        key="1"
+        type="number"
+        name={name}
+        value={value}
+        reducers={reducer}
+      />
+    ];
+    mountForm({ props, children });
+    expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
+  });
 });
