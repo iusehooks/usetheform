@@ -190,13 +190,18 @@ export default function useForm({
   });
 
   // used only to replace the entire Form State
-  const { current: dispatchNewState } = useRef(newState => {
+  const { current: dispatchNewState } = useRef(nextState => {
+    let newState = nextState;
+    if (typeof nextState === "function") {
+      const { state: currentState } = stateRef.current;
+      newState = nextState(currentState);
+    }
     propagateState(newState, false);
   });
 
   // change status form to READY after being reset
   useEffect(() => {
-    const { status, state, isValid, pristine } = stateRef.current;
+    const { status, state, isValid } = stateRef.current;
     if (status === STATUS.ON_RESET) {
       onReset(state);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });

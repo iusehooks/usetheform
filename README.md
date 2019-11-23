@@ -1,6 +1,6 @@
 # UseTheForm
 
-UseTheForm is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others. It is still an alpha version.
+UseTheForm is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others.
 
 - [Basic Example](#basic-example)
 - [Apply Sync Validation](#apply-sync-validation)
