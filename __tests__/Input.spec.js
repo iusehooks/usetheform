@@ -58,4 +58,18 @@ describe("Component => Input", () => {
     mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
   });
+
+  it("should use a multiple reducers to reduce the Input value", () => {
+    const onInit = jest.fn(state => state);
+    const props = { onInit };
+
+    const reducers = [value => value + 2, value => value + 1];
+    const reducedValue = 4;
+    const name = "test";
+    const children = [
+      <Input key="1" type="number" name={name} value={1} reducers={reducers} />
+    ];
+    mountForm({ props, children });
+    expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
+  });
 });

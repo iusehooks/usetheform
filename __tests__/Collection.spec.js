@@ -1,9 +1,11 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, waitForElement } from "@testing-library/react";
 
 import Form, { Input, Collection } from "./../src";
 
 import CollectionValidation from "./helpers/components/CollectionValidation";
+import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
+
 import AgeRange from "./helpers/components/AgeRange";
 
 const mountForm = ({ props = {}, children } = {}) =>
@@ -80,10 +82,10 @@ describe("Component => Collection", () => {
     expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 18, end: 18 } });
   });
 
-  it("should show an error label if Collection is not valid", () => {
+  it("should show an error label if Collection is not valid due to sync validator", () => {
     const children = [
       <CollectionValidation key="1" />,
-      <button key="2" type="submit" data-testid={"submit"}>
+      <button key="2" type="submit" data-testid="submit">
         Submit
       </button>
     ];
@@ -93,5 +95,23 @@ describe("Component => Collection", () => {
     fireEvent.click(submit);
     const errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
+  });
+
+  it("should show an error label if Collection is not valid due to async validator", async () => {
+    const children = [
+      <CollectionAsyncValidation key="1" />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>
+    ];
+    const { getByTestId } = mountForm({ children });
+    const submit = getByTestId("submit");
+
+    fireEvent.click(submit);
+    const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
+    expect(asyncStart).toBeDefined();
+
+    const asyncError = await waitForElement(() => getByTestId("asyncError"));
+    expect(asyncError).toBeDefined();
   });
 });

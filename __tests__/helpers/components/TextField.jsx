@@ -1,7 +1,12 @@
 import React from "react";
 import { Input } from "./../../../src";
 
-export default function TextField({ label, type, name, ...rest }) {
+export default function TextField({
+  label = "textfield",
+  type,
+  name,
+  ...rest
+}) {
   return (
     <div>
       <label>{label}</label>
