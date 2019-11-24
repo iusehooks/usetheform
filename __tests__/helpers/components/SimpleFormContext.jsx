@@ -3,7 +3,7 @@ import { Input, FormContext, Collection, useForm } from "./../../../src";
 
 const initialState = { tags: ["red", "blue"] };
 
-export default function SimpleFormContext({ onChange, onSubmit }) {
+export default function SimpleFormContext({ onChange, onSubmit, reducers }) {
   const [tags, setTags] = useState(initialState.tags);
   const onChangeState = state => {
     onChange(state);
@@ -12,6 +12,7 @@ export default function SimpleFormContext({ onChange, onSubmit }) {
 
   return (
     <FormContext
+      reducers={reducers}
       initialState={initialState}
       onChange={onChangeState}
       onSubmit={onSubmit}

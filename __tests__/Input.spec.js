@@ -25,6 +25,25 @@ describe("Component => Input", () => {
     expect(getByTestId(type).type).toBe(type);
   });
 
+  it("should trigger onChange event when the Input value changes", () => {
+    const onChangeInput = jest.fn(value => value);
+    const children = [
+      <Input
+        key="1"
+        data-testid="foo"
+        type="text"
+        name="foo"
+        onChange={onChangeInput}
+      />
+    ];
+
+    const { getByTestId } = mountForm({ children });
+    const input = getByTestId(/foo/i);
+
+    fireEvent.change(input, { target: { value: "micky" } });
+    expect(onChangeInput).toHaveReturnedWith("micky");
+  });
+
   it("should render a Input and changing its value", () => {
     const type = "text";
     const value = "test";
@@ -39,7 +58,7 @@ describe("Component => Input", () => {
     expect(onChange).toHaveBeenCalledWith({ email: value });
   });
 
-  it("should use a reducer to reduce the Input value", () => {
+  it("should use a reducer function to reduce the Input value", () => {
     const onInit = jest.fn(state => state);
     const reducedValue = 3;
     const reducer = value => value + 2;

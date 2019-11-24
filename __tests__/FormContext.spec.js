@@ -29,4 +29,23 @@ describe("Component => FormContext", () => {
     fireEvent.click(submit);
     expect(onSubmit).toHaveBeenCalledWith({ tags: [undefined, "blue"] }, true);
   });
+
+  it("should reduce the Form state using reducer functions", async () => {
+    const onSubmit = jest.fn();
+    const onChange = jest.fn();
+    const reducers = [state => ({ ...state, tags: ["blue", "red"] })];
+    const { getByTestId } = render(
+      <SimpleFormContext
+        onChange={onChange}
+        reducers={reducers}
+        onSubmit={onSubmit}
+      />
+    );
+    const button1 = await waitForElement(() => getByTestId("button0"));
+    fireEvent.click(button1);
+
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith({ tags: ["blue", "red"] }, true);
+  });
 });

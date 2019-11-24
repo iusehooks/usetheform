@@ -5,6 +5,7 @@ import Form, { Input, Collection } from "./../src";
 
 import CollectionValidation from "./helpers/components/CollectionValidation";
 import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
+import Reset from "./helpers/components/Reset";
 
 import AgeRange from "./helpers/components/AgeRange";
 
@@ -95,6 +96,22 @@ describe("Component => Collection", () => {
     fireEvent.click(submit);
     const errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
+  });
+
+  it("should reset the Collection state", () => {
+    const children = [<CollectionValidation key="1" />, <Reset key="3" />];
+    const { getByTestId, getAllByTestId } = mountForm({ children });
+
+    const addMember = getByTestId("addMember");
+    fireEvent.click(addMember);
+    fireEvent.click(addMember);
+
+    let members = getAllByTestId("member");
+    expect(members.length).toBe(2);
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(() => getAllByTestId("member")).toThrow();
   });
 
   it("should show an error label if Collection is not valid due to async validator", async () => {
