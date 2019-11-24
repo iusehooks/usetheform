@@ -72,4 +72,23 @@ describe("Component => Input", () => {
     mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
   });
+
+  it("should throw an error for missing 'type'", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [<Input key="1" name="test" />];
+    expect(() => mountForm({ children })).toThrowError(
+      /The prop "type" -> "undefined"/i
+    );
+
+    children = [<Input key="1" type="text" name="test" checked />];
+    expect(() => mountForm({ children })).toThrowError();
+
+    children = [<Input key="1" type="file" name="test" value="test" />];
+    expect(() => mountForm({ children })).toThrowError(
+      /Input of type "file" does not support any default value/i
+    );
+
+    console.error = originalError;
+  });
 });
