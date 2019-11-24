@@ -330,6 +330,7 @@ export default Wizard;
 
 - [Form](#form)
 - [useForm](#useform)
+- [useCollection](#useCollection)
 - [Fields](#fields)
   - [Input](#input)
   - [Select](#select)
@@ -454,6 +455,38 @@ export default function Sumbit() {
   return (
     <button disabled={enabled} type="submit">
       Submit
+    </button>
+  );
+}
+```
+
+## useCollection
+
+It is a custom hook function which provides:
+
+- `value` the current value of the Collection. It can be an array or an object.
+- `updateCollection` a function which can change one prop of the Collection.
+- `state` the current State of the entire Form.
+
+### useCollection - Usage Examples
+
+```js
+import React from "react";
+import { useCollection } from "usetheform";
+
+export default function CollectionWithHooks({ value }) {
+  const { updateCollection } = useCollection({
+    name: "test",
+    type: "object",
+    value // an initialValue if needeed
+  });
+
+  // it changes the prop "name" of the Collection named "test"
+  const onUpdateCollection = () => updateCollection("name", "foo");
+
+  return (
+    <button type="button" onClick={onUpdateCollection}>
+      Update Collection
     </button>
   );
 }
@@ -663,6 +696,7 @@ const [getWizardStatus, wizardApi] = useMultipleForm(state => console.log(state)
 
 - Various Implementation: [Sandbox](https://codesandbox.io/s/035l4l75ln)
 - Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)
+- FormContext: [Sandbox](https://codesandbox.io/s/formcontext-ukvc5)
 
 # License
 

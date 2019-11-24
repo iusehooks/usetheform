@@ -22,7 +22,7 @@ export default function CollectionValidation() {
     <div>
       <label>Members: (Sync Validation)</label>
       <br />
-      <button type="button" onClick={addMember}>
+      <button type="button" data-testid="addMember" onClick={addMember}>
         Add a Member
       </button>
       <button type="button" onClick={removeMember}>
