@@ -9,6 +9,8 @@ import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
 import { STATUS } from "./../utils/formUtils";
 
 const noop = _ => undefined;
+const initArray = [];
+const initObject = {};
 
 export default function useObject(props) {
   const context = useOwnContext();
@@ -23,6 +25,7 @@ export default function useObject(props) {
   const {
     name,
     type,
+    value: initValue,
     reducers = [],
     validators: validatorsFuncs = [],
     onValidation = noop,
@@ -56,7 +59,7 @@ export default function useObject(props) {
     children.current.forEach((fnChild, index) => fnChild(index));
   });
 
-  const init = type && type === "array" ? [] : {};
+  const init = initValue || (type && type === "array" ? initArray : initObject);
   const state = useRef(init);
   const memoInitialState = useRef(init);
 
@@ -358,7 +361,7 @@ export default function useObject(props) {
   };
 }
 
-function validateProps({ name, type, asyncValidator }, contextType) {
+function validateProps({ name, type, value, asyncValidator }, contextType) {
   if (
     typeof asyncValidator !== "undefined" &&
     typeof asyncValidator !== "function"
@@ -366,7 +369,15 @@ function validateProps({ name, type, asyncValidator }, contextType) {
     return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a funcgtion`;
   }
 
+  if (
+    typeof value !== "undefined" &&
+    ((type === "array" && value.constructor.name !== "Array") ||
+      (type === "object" && typeof value !== "object"))
+  ) {
+    return `The prop "value": ${value} of type "${type}" passed to "${name} Collection" it is not allowed as initial value.`;
+  }
+
   if (!isValidValue(name, contextType)) {
-    return `The prop "name": ${name} of type "${typeof name}" passed to "${type}" it is not allowed within context a of type "${contextType}".`;
+    return `The prop "name": ${name} of type "${typeof name}" passed to "${name} Collection" it is not allowed within context a of type "${contextType}".`;
   }
 }

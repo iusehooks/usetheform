@@ -14,7 +14,6 @@ export default function Select({
   resetSyncErr,
   resetAsyncErr,
   index,
-  type: omitType,
   multiple,
   value,
   touched,

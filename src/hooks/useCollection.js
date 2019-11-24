@@ -1,8 +1,10 @@
+import { useCallback } from "react";
 import useObject from "./useObject";
 
 export function useCollection({
   name,
   type,
+  value: initialValue,
   reducers,
   onValidation,
   resetSyncErr,
@@ -14,6 +16,7 @@ export function useCollection({
   const { changeProp, state: value, formState: state } = useObject({
     name,
     type,
+    value: initialValue,
     reducers,
     onValidation,
     validators,
@@ -23,7 +26,10 @@ export function useCollection({
     resetAsyncErr
   });
 
-  const updateCollection = (propName, value) => changeProp(propName, value);
+  const updateCollection = useCallback(
+    (propName, value) => changeProp(propName, value),
+    []
+  );
 
   return { updateCollection, value, state };
 }

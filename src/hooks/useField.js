@@ -94,7 +94,6 @@ export default function useField(props) {
     if (typeof event.persist === "function") {
       event.persist();
     }
-
     const { target } = event;
     let nextValue;
     if (type === "select" && multiple) {
