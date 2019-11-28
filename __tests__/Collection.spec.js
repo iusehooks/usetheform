@@ -114,6 +114,104 @@ describe("Component => Collection", () => {
     expect(() => getAllByTestId("member")).toThrow();
   });
 
+  it("should reset a Collection with to the given initial value", () => {
+    const initalValue = { name: "test" };
+    const onReset = jest.fn(state => state);
+    const onChange = jest.fn(state => state);
+    const props = { onReset, onChange };
+    const children = [
+      <Collection key="1" object name="user" value={initalValue}>
+        <Input data-testid="user" name="name" type="text" />
+      </Collection>,
+      <Reset key="3" />
+    ];
+
+    const { getByTestId } = mountForm({ props, children });
+    const user = getByTestId("user");
+    fireEvent.change(user, { target: { value: "foo" } });
+    expect(onChange).toHaveReturnedWith({ user: { name: "foo" } });
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveReturnedWith({ user: { name: "test" } });
+  });
+
+  it("should reduce a Collection of type object value with the given reducer function", () => {
+    const initalValue = { name: "test" };
+    const onInit = jest.fn(state => state);
+    const props = { onInit };
+    const reducer = jest.fn((state, prevState) => {
+      const newState = { ...state };
+      if (newState.name !== "mickey") newState.name = "foo";
+      return newState;
+    });
+
+    const jestReducer = jest.fn();
+    const reducerN = (state, prevState) => {
+      jestReducer(state, prevState);
+      return state;
+    };
+
+    const children = [
+      <Collection
+        reducers={[reducer, reducerN]}
+        key="1"
+        object
+        name="user"
+        value={initalValue}
+      >
+        <Input data-testid="user" name="name" type="text" />
+      </Collection>
+    ];
+
+    const { getByTestId } = mountForm({ props, children });
+    expect(jestReducer).toHaveBeenCalledWith({ name: "foo" }, {});
+
+    expect(onInit).toHaveReturnedWith({ user: { name: "foo" } });
+
+    jestReducer.mockReset();
+    const user = getByTestId("user");
+    fireEvent.change(user, { target: { value: "mickey" } });
+    expect(jestReducer).toHaveBeenCalledWith(
+      { name: "mickey" },
+      { name: "foo" }
+    );
+  });
+
+  it("should reduce a Collection of type array value with the given reducer function", () => {
+    const initalValue = ["test"];
+    const onInit = jest.fn(state => state);
+    const props = { onInit };
+    const reducer = jest.fn(state => {
+      const newState = [...state];
+      newState[0] = "foo";
+      return newState;
+    });
+
+    const jestReducer = jest.fn();
+    const reducerN = (state, prevState) => {
+      jestReducer(state, prevState);
+      return state;
+    };
+
+    const children = [
+      <Collection
+        reducers={[reducer, reducerN]}
+        key="1"
+        array
+        name="user"
+        value={initalValue}
+      >
+        <Input data-testid="user" type="text" />
+      </Collection>
+    ];
+
+    mountForm({ props, children });
+    expect(jestReducer).toHaveBeenCalledWith(["foo"], []);
+
+    expect(onInit).toHaveReturnedWith({ user: ["foo"] });
+  });
+
   it("should show an error label if Collection is not valid due to async validator", async () => {
     const children = [
       <CollectionAsyncValidation key="1" />,

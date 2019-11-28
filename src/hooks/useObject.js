@@ -285,9 +285,10 @@ export default function useObject(props) {
 
     context.registerReset(nameProp.current, reset);
 
+    const prevInitialState = type === "array" ? initArray : initObject;
     const newState = applyReducers(
       state.current,
-      state.current,
+      prevInitialState,
       formState.current
     );
 

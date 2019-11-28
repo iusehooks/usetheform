@@ -100,6 +100,42 @@ describe("Component => Form", () => {
     expect(onReset).toHaveBeenCalledWith(initialState);
   });
 
+  it("should reduce the Form state with the given reducer function", () => {
+    const initialState = { name: "test" };
+    const onInit = jest.fn(state => state);
+
+    const reducer = jest.fn((state, prevState) => {
+      const newState = { ...state };
+      if (newState.name !== "mickey") newState.name = "foo";
+      return newState;
+    });
+
+    const jestReducer = jest.fn();
+    const reducerN = (state, prevState) => {
+      jestReducer(state, prevState);
+      return state;
+    };
+
+    const props = { onInit, initialState, reducers: [reducer, reducerN] };
+
+    const children = [
+      <Input key="1" data-testid="user" name="name" type="text" />
+    ];
+
+    const { getByTestId } = mountForm({ props, children });
+    expect(jestReducer).toHaveBeenCalledWith({ name: "foo" }, {});
+
+    expect(onInit).toHaveReturnedWith({ name: "foo" });
+
+    jestReducer.mockReset();
+    const user = getByTestId("user");
+    fireEvent.change(user, { target: { value: "mickey" } });
+    expect(jestReducer).toHaveBeenCalledWith(
+      { name: "mickey" },
+      { name: "foo" }
+    );
+  });
+
   it("should submit the Form", () => {
     const onSubmit = jest.fn();
     const initialState = {

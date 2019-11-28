@@ -11,6 +11,8 @@ import {
 } from "./../utils/formUtils";
 
 const noop = _ => undefined;
+const emptyStateValue = {};
+
 export default function useForm({
   initialState,
   onChange = noop,
@@ -34,6 +36,8 @@ export default function useForm({
       const prevState =
         status === STATUS.ON_RESET
           ? memoInitialState.current.state
+          : status === STATUS.ON_INIT
+          ? emptyStateValue
           : stateRef.current.state;
 
       const newState =

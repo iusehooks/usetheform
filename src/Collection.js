@@ -1,12 +1,13 @@
 import React from "react";
-import useObject from "./hooks/useObject";
 
+import useObject from "./hooks/useObject";
 import { ContextObject as Context } from "./hooks/useOwnContext";
 
 export default function Collection({
   children,
   name,
   object,
+  value: initialValue,
   reducers,
   onValidation,
   resetSyncErr,
@@ -19,6 +20,7 @@ export default function Collection({
   const value = useObject({
     name,
     type,
+    value: initialValue,
     reducers,
     onValidation,
     validators,
