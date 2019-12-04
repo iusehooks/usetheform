@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import useOwnContext from "./useOwnContext";
+import { useGetRefName } from "./useGetRefName";
+
 import useValidationFunction from "./commons/useValidationFunction";
 import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
 import { STATUS, fileList } from "./../utils/formUtils";
@@ -42,10 +44,12 @@ export default function useField(props) {
   const formState = useRef(null);
   formState.current = context.formState;
 
-  const nameProp = useRef(name);
-  const { current: setNameProp } = useRef(index => {
-    nameProp.current = index;
-  });
+  // const nameProp = useRef(name);
+  // const { current: setNameProp } = useRef(index => {
+  //   nameProp.current = index;
+  // });
+
+  const nameProp = useGetRefName(context, name);
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
@@ -131,9 +135,9 @@ export default function useField(props) {
     and registers the validators functions if there is any
   */
   useEffect(() => {
-    if (context.type === "array" && nameProp.current === undefined) {
-      nameProp.current = context.getIndex(setNameProp);
-    }
+    // if (context.type === "array" && nameProp.current === undefined) {
+    //   nameProp.current = context.getIndex(setNameProp);
+    // }
 
     if (validators.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);

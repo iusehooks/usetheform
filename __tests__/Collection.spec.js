@@ -5,6 +5,9 @@ import Form, { Input, Collection } from "./../src";
 
 import CollectionValidation from "./helpers/components/CollectionValidation";
 import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
+import CollectionArrayNested, {
+  initialValue as initialValueNested
+} from "./helpers/components/CollectionArrayNested";
 import Reset from "./helpers/components/Reset";
 
 import AgeRange from "./helpers/components/AgeRange";
@@ -228,5 +231,42 @@ describe("Component => Collection", () => {
 
     const asyncError = await waitForElement(() => getByTestId("asyncError"));
     expect(asyncError).toBeDefined();
+  });
+
+  it("should render a nested array Collection", () => {
+    const onInit = jest.fn(state => state);
+    const onSubmit = jest.fn();
+    const onChange = jest.fn();
+
+    const props = { onInit, onSubmit, onChange };
+    const children = [
+      <CollectionArrayNested key="1" />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(onInit).toHaveReturnedWith({ arrayNested: initialValueNested });
+
+    const mostinnerText = getByTestId("mostinnerText");
+    const mostinnerCheckbox = getByTestId("mostinnerCheckbox");
+    fireEvent.change(mostinnerText, { target: { value: "mostinnerText" } });
+    fireEvent.change(mostinnerCheckbox, { target: { value: "" } });
+
+    const nestedResultAfterChange = [...initialValueNested];
+    nestedResultAfterChange[2][2][2][2][0] = "mostinnerText";
+    nestedResultAfterChange[2][2][2][2][1] = undefined;
+
+    expect(onChange).toHaveBeenCalledWith({
+      arrayNested: nestedResultAfterChange
+    });
+
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith(
+      { arrayNested: nestedResultAfterChange },
+      true
+    );
   });
 });

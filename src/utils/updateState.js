@@ -6,8 +6,7 @@ export default function updateState(state, { nameProp, value, removeMe }) {
     removeMe ||
     value === undefined ||
     value === null ||
-    (value.constructor.name === "Array" &&
-      value.every(elm => elm === undefined)) ||
+    (value.constructor === Array && value.every(elm => elm === undefined)) ||
     (typeof value === "object" &&
       value.constructor.name !== "File" &&
       Object.keys(value).length === 0) ||
