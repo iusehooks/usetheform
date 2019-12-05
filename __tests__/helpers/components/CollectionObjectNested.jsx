@@ -66,18 +66,18 @@ export function CollectionObjectNestedValue({ reducers }) {
 }
 
 export const expectedValueObjNested = {
-  1: "input_1",
-  2: "input_2",
+  1: "1_1",
+  2: "2_1",
   lv2: {
-    3: "input_3",
-    4: "input_4",
+    3: "3_1",
+    4: "4_1",
     lv3: {
-      5: "input_5",
-      6: "input_6",
+      5: "5_1",
+      6: "6_1",
       lv4: {
-        7: "input_7",
-        8: "input_8",
-        lv5: { 9: "input_9", 10: "input_10" }
+        7: "7_1",
+        8: "8_1",
+        lv5: { 9: "9_1", 10: "10_1" }
       }
     }
   }
@@ -94,52 +94,73 @@ export const reducerObjectNested = (value, prevValue) => {
   if (prevValue["lv2"] === undefined && newValue["lv2"] && newValue["lv2"][3]) {
     newValue["lv2"][3] = `${newValue["lv2"][3]}_1`;
   }
-  // if (prevValue[2] === undefined && newValue[2] && newValue[2][1]) {
-  //   newValue[2][1] = `${newValue[2][1]}_1`;
-  // }
+  if (prevValue["lv2"] === undefined && newValue["lv2"] && newValue["lv2"][4]) {
+    newValue["lv2"][4] = `${newValue["lv2"][4]}_1`;
+  }
 
-  // if (prevValue[2] !== undefined && newValue[2][2] && newValue[2][2][0]) {
-  //   newValue[2][2][0] = `${newValue[2][2][0]}_1`;
-  // }
+  if (
+    prevValue["lv2"] === undefined &&
+    newValue["lv2"] &&
+    newValue["lv2"]["lv3"] &&
+    newValue["lv2"]["lv3"][5]
+  ) {
+    newValue["lv2"]["lv3"][5] = `${newValue["lv2"]["lv3"][5]}_1`;
+  }
 
-  // if (prevValue[2] !== undefined && newValue[2][2] && newValue[2][2][1]) {
-  //   newValue[2][2][1] = `${newValue[2][2][1]}_1`;
-  // }
+  if (
+    prevValue["lv2"] === undefined &&
+    newValue["lv2"] &&
+    newValue["lv2"]["lv3"] &&
+    newValue["lv2"]["lv3"][6]
+  ) {
+    newValue["lv2"]["lv3"][6] = `${newValue["lv2"]["lv3"][6]}_1`;
+  }
 
-  // if (
-  //   prevValue[2] !== undefined &&
-  //   prevValue[2][2] !== undefined &&
-  //   newValue[2][2][2] &&
-  //   newValue[2][2][2][0]
-  // ) {
-  //   newValue[2][2][2][0] = `${newValue[2][2][2][0]}_1`;
-  // }
+  if (
+    prevValue["lv2"] === undefined &&
+    newValue["lv2"] &&
+    newValue["lv2"]["lv3"] &&
+    newValue["lv2"]["lv3"]["lv4"] &&
+    newValue["lv2"]["lv3"]["lv4"][7]
+  ) {
+    newValue["lv2"]["lv3"]["lv4"][7] = `${newValue["lv2"]["lv3"]["lv4"][7]}_1`;
+  }
 
-  // if (
-  //   prevValue[2] !== undefined &&
-  //   prevValue[2][2] !== undefined &&
-  //   newValue[2][2][2][1]
-  // ) {
-  //   newValue[2][2][2][1] = `${newValue[2][2][2][1]}_1`;
-  // }
+  if (
+    prevValue["lv2"] === undefined &&
+    newValue["lv2"] &&
+    newValue["lv2"]["lv3"] &&
+    newValue["lv2"]["lv3"]["lv4"] &&
+    newValue["lv2"]["lv3"]["lv4"][8]
+  ) {
+    newValue["lv2"]["lv3"]["lv4"][8] = `${newValue["lv2"]["lv3"]["lv4"][8]}_1`;
+  }
 
-  // if (
-  //   prevValue[2] !== undefined &&
-  //   prevValue[2][2] !== undefined &&
-  //   prevValue[2][2][2] !== undefined &&
-  //   newValue[2][2][2][2][0]
-  // ) {
-  //   newValue[2][2][2][2][0] = `${newValue[2][2][2][2][0]}_1`;
-  // }
+  if (
+    prevValue["lv2"] === undefined &&
+    newValue["lv2"] &&
+    newValue["lv2"]["lv3"] &&
+    newValue["lv2"]["lv3"]["lv4"] &&
+    newValue["lv2"]["lv3"]["lv4"]["lv5"] &&
+    newValue["lv2"]["lv3"]["lv4"]["lv5"][9]
+  ) {
+    newValue["lv2"]["lv3"]["lv4"][
+      "lv5"
+    ][9] = `${newValue["lv2"]["lv3"]["lv4"]["lv5"][9]}_1`;
+  }
 
-  // if (
-  //   prevValue[2] !== undefined &&
-  //   prevValue[2][2] !== undefined &&
-  //   prevValue[2][2][2] !== undefined &&
-  //   newValue[2][2][2][2][1]
-  // ) {
-  //   newValue[2][2][2][2][1] = `${newValue[2][2][2][2][1]}_1`;
-  // }
+  if (
+    prevValue["lv2"] === undefined &&
+    newValue["lv2"] &&
+    newValue["lv2"]["lv3"] &&
+    newValue["lv2"]["lv3"]["lv4"] &&
+    newValue["lv2"]["lv3"]["lv4"]["lv5"] &&
+    newValue["lv2"]["lv3"]["lv4"]["lv5"][10]
+  ) {
+    newValue["lv2"]["lv3"]["lv4"][
+      "lv5"
+    ][10] = `${newValue["lv2"]["lv3"]["lv4"]["lv5"][10]}_1`;
+  }
 
   return newValue;
 };

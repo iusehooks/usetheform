@@ -347,7 +347,7 @@ describe("Component => Collection", () => {
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
-      fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
+      fireEvent.change(input, { target: { value: `${dataTestid}_1` } });
     });
 
     const submit = getByTestId("submit");
@@ -379,7 +379,7 @@ describe("Component => Collection", () => {
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
-      fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
+      fireEvent.change(input, { target: { value: `${dataTestid}_1` } });
     });
 
     const submit = getByTestId("submit");
@@ -393,6 +393,22 @@ describe("Component => Collection", () => {
     fireEvent.click(reset);
     expect(onReset).toHaveBeenCalledWith({
       lv1: initialValueObjNested
+    });
+  });
+
+  it("should render a reduced nested object Collection with initial value passed by the inputs field", () => {
+    const props = { onInit, onSubmit, onChange, onReset };
+    const children = [
+      <CollectionObjectNestedValue key="1" reducers={reducerObjectNested} />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>,
+      <Reset key="3" />
+    ];
+    mountForm({ children, props });
+
+    expect(onInit).toHaveReturnedWith({
+      lv1: expectedValueObjNested
     });
   });
 });
