@@ -320,7 +320,7 @@ function validateProps(
   }
 
   if (type === "file" && value && value !== "") {
-    return `The prop "value" -> "${value}" passed to "useField": ${name} of type: ${type} is not allowed. Input of type "file" does not support any default value`;
+    return `The prop "value" -> "${value}" passed to "useField": ${name} of type: ${type} is not allowed. Input of type "file" does not support any default value.`;
   }
 
   if (
@@ -335,11 +335,11 @@ function validateProps(
     typeof asyncValidator !== "undefined" &&
     typeof asyncValidator !== "function"
   ) {
-    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a funcgtion`;
+    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a function.`;
   }
 
   if (type !== "checkbox" && type !== "radio" && checked) {
-    return `The prop "checked" -> "${checked}" passed to "useField": ${name} of type: ${type} is not allowed. You can use "value" prop instead to set an initial value`;
+    return `The prop "checked" -> "${checked}" passed to "useField": ${name} of type: ${type} is not allowed. You can use "value" prop instead to set an initial value.`;
   }
 
   if (!isValidValue(name, contextType)) {

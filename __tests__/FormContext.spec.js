@@ -3,9 +3,15 @@ import { render, fireEvent, waitForElement } from "@testing-library/react";
 
 import SimpleFormContext from "./helpers/components/SimpleFormContext";
 
+const onChange = jest.fn();
+const onSubmit = jest.fn();
 describe("Component => FormContext", () => {
+  beforeEach(() => {
+    onChange.mockClear();
+    onSubmit.mockClear();
+  });
+
   it("should change the Form state due to action", async () => {
-    const onChange = jest.fn();
     const { getByTestId } = render(<SimpleFormContext onChange={onChange} />);
     const button1 = await waitForElement(() => getByTestId("button0"));
     fireEvent.click(button1);
@@ -17,8 +23,6 @@ describe("Component => FormContext", () => {
   });
 
   it("should submit the Form state", async () => {
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
     const { getByTestId } = render(
       <SimpleFormContext onChange={onChange} onSubmit={onSubmit} />
     );
@@ -31,8 +35,6 @@ describe("Component => FormContext", () => {
   });
 
   it("should reduce the Form state using reducer functions", async () => {
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
     const reducers = [state => ({ ...state, tags: ["blue", "red"] })];
     const { getByTestId } = render(
       <SimpleFormContext

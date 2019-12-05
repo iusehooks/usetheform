@@ -7,9 +7,15 @@ import CollectionWithHooks from "./../helpers/components/CollectionWithHooks";
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
 
+const onInit = jest.fn(state => state);
+const onChange = jest.fn();
+
 describe("Hooks => useCollection", () => {
+  beforeEach(() => {
+    onInit.mockClear();
+    onChange.mockClear();
+  });
   it("should change Collection value due to an action", () => {
-    const onChange = jest.fn();
     const props = { onChange };
     const children = [<CollectionWithHooks key="1" />];
     const { getByTestId } = mountForm({ props, children });
@@ -20,7 +26,6 @@ describe("Hooks => useCollection", () => {
   });
 
   it("should create a Collection with an initial value", () => {
-    const onInit = jest.fn(state => state);
     const props = { onInit };
     const children = [<CollectionWithHooks key="1" value={{ name: "test" }} />];
     mountForm({ props, children });

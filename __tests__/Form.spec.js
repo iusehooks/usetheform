@@ -13,7 +13,19 @@ const typeInput = "text";
 const nameInput = "email";
 const valueInput = "foo";
 
+const onInit = jest.fn(state => state);
+const onChange = jest.fn();
+const onReset = jest.fn();
+const onSubmit = jest.fn();
+
 describe("Component => Form", () => {
+  beforeEach(() => {
+    onInit.mockClear();
+    onChange.mockClear();
+    onReset.mockClear();
+    onSubmit.mockClear();
+  });
+
   it("should render a Form with an input", () => {
     const name = "myForm";
     const props = { name };
@@ -33,7 +45,6 @@ describe("Component => Form", () => {
   });
 
   it("should trigger onInit event when Form is ready", () => {
-    const onInit = jest.fn(state => state);
     const props = { onInit };
     const children = [
       <Input
@@ -49,7 +60,6 @@ describe("Component => Form", () => {
   });
 
   it("should trigger onChange event when Form state changes", () => {
-    const onChange = jest.fn();
     const props = { onChange };
     const children = [
       <Input
@@ -66,7 +76,6 @@ describe("Component => Form", () => {
   });
 
   it("should initialized the Form state", () => {
-    const onInit = jest.fn(state => state);
     const initialState = {
       user: { name: "foo", lastname: "anything", email: "anything@google.com" }
     };
@@ -76,8 +85,6 @@ describe("Component => Form", () => {
   });
 
   it("should reset the Form state", () => {
-    const onReset = jest.fn();
-    const onChange = jest.fn();
     const initialState = {
       user: { name: "foo", lastname: "anything", email: "anything@google.com" }
     };
@@ -102,7 +109,6 @@ describe("Component => Form", () => {
 
   it("should reduce the Form state with the given reducer function", () => {
     const initialState = { name: "test" };
-    const onInit = jest.fn(state => state);
 
     const reducer = jest.fn((state, prevState) => {
       const newState = { ...state };
@@ -137,7 +143,6 @@ describe("Component => Form", () => {
   });
 
   it("should submit the Form", () => {
-    const onSubmit = jest.fn();
     const initialState = {
       user: { name: "foo", lastname: "anything", email: "anything@google.com" }
     };
@@ -151,7 +156,6 @@ describe("Component => Form", () => {
   });
 
   it("should not submit an invalid Form", () => {
-    const onSubmit = jest.fn();
     const initialState = {
       user: { name: "foo", lastname: "anything", email: "anything" }
     };

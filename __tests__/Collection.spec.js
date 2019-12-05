@@ -31,12 +31,22 @@ const name = "user";
 const userName = "username";
 const typeInput = "text";
 
+const onInit = jest.fn(state => state);
+const onChange = jest.fn();
+const onReset = jest.fn();
+const onSubmit = jest.fn();
+
 describe("Component => Collection", () => {
+  beforeEach(() => {
+    onInit.mockClear();
+    onChange.mockClear();
+    onReset.mockClear();
+    onSubmit.mockClear();
+  });
+
   it("should render a Collection of type object with an inial value", () => {
-    const onInit = jest.fn(state => state);
     const props = { onInit };
     const value = "foo";
-
     const children = [
       <Collection key="1" object name={name}>
         <Input
@@ -53,7 +63,6 @@ describe("Component => Collection", () => {
   });
 
   it("should render a Collection of type array with an inial value", () => {
-    const onInit = jest.fn(state => state);
     const props = { onInit };
     const value = "foo";
 
@@ -68,9 +77,6 @@ describe("Component => Collection", () => {
   });
 
   it("should apply reducer functions to reduce the Collection value", () => {
-    const onChange = jest.fn();
-    const onInit = jest.fn(state => state);
-
     const props = { onChange, onInit };
     const children = [<AgeRange key="1" />];
 
@@ -130,8 +136,6 @@ describe("Component => Collection", () => {
 
   it("should reset a Collection with to the given initial value", () => {
     const initalValue = { name: "test" };
-    const onReset = jest.fn(state => state);
-    const onChange = jest.fn(state => state);
     const props = { onReset, onChange };
     const children = [
       <Collection key="1" object name="user" value={initalValue}>
@@ -143,16 +147,15 @@ describe("Component => Collection", () => {
     const { getByTestId } = mountForm({ props, children });
     const user = getByTestId("user");
     fireEvent.change(user, { target: { value: "foo" } });
-    expect(onChange).toHaveReturnedWith({ user: { name: "foo" } });
+    expect(onChange).toHaveBeenCalledWith({ user: { name: "foo" } });
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveReturnedWith({ user: { name: "test" } });
+    expect(onReset).toHaveBeenCalledWith({ user: { name: "test" } });
   });
 
   it("should reduce a Collection of type object value with the given reducer function", () => {
     const initalValue = { name: "test" };
-    const onInit = jest.fn(state => state);
     const props = { onInit };
     const reducer = jest.fn((state, prevState) => {
       const newState = { ...state };
@@ -194,7 +197,6 @@ describe("Component => Collection", () => {
 
   it("should reduce a Collection of type array value with the given reducer function", () => {
     const initalValue = ["test"];
-    const onInit = jest.fn(state => state);
     const props = { onInit };
     const reducer = jest.fn(state => {
       const newState = [...state];
@@ -222,8 +224,6 @@ describe("Component => Collection", () => {
 
     mountForm({ props, children });
     expect(jestReducer).toHaveBeenCalledWith(["foo"], []);
-
-    // expect(onInit).toHaveReturnedWith({ user: ["foo"] });
   });
 
   it("should show an error label if Collection is not valid due to async validator", async () => {
@@ -245,11 +245,6 @@ describe("Component => Collection", () => {
   });
 
   it("should render a nested array Collection with initial value passed as prop", () => {
-    const onInit = jest.fn(state => state);
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
-    const onReset = jest.fn();
-
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNested key="1" />,
@@ -286,11 +281,6 @@ describe("Component => Collection", () => {
   });
 
   it("should render a nested array Collection with initial value passed by the input fields", () => {
-    const onInit = jest.fn(state => state);
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
-    const onReset = jest.fn();
-
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNestedValue key="1" />,
@@ -327,11 +317,6 @@ describe("Component => Collection", () => {
   });
 
   it("should render a reduced nested array Collection with initial value passed by the inputs field", () => {
-    const onInit = jest.fn(state => state);
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
-    const onReset = jest.fn();
-
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNestedValue key="1" reducers={reducerArrayNested} />,
@@ -348,11 +333,6 @@ describe("Component => Collection", () => {
   });
 
   it("should render a nested object Collection with initial valued passed as prop of the Collection", () => {
-    const onInit = jest.fn(state => state);
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
-    const onReset = jest.fn();
-
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNested key="1" />,
@@ -385,11 +365,6 @@ describe("Component => Collection", () => {
   });
 
   it("should render a nested object Collection with initial value passed by the input fields", () => {
-    const onInit = jest.fn(state => state);
-    const onSubmit = jest.fn();
-    const onChange = jest.fn();
-    const onReset = jest.fn();
-
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNestedValue key="1" />,

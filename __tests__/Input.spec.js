@@ -6,7 +6,15 @@ import Form, { Input } from "./../src";
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
 
+const onInit = jest.fn(state => state);
+const onChange = jest.fn();
+
 describe("Component => Input", () => {
+  beforeEach(() => {
+    onInit.mockClear();
+    onChange.mockClear();
+  });
+
   it("should render a Input of type text", () => {
     const type = "text";
     const children = [
@@ -47,7 +55,6 @@ describe("Component => Input", () => {
   it("should render a Input and changing its value", () => {
     const type = "text";
     const value = "test";
-    const onChange = jest.fn();
     const props = { onChange };
     const children = [
       <Input key="1" data-testid="email" type={type} name="email" />
@@ -59,7 +66,6 @@ describe("Component => Input", () => {
   });
 
   it("should use a reducer function to reduce the Input value", () => {
-    const onInit = jest.fn(state => state);
     const reducedValue = 3;
     const reducer = value => value + 2;
     const props = { onInit };
@@ -81,7 +87,6 @@ describe("Component => Input", () => {
   it("should override the inital form state given a initial 'value' prop to the input", () => {
     const name = "test";
 
-    const onInit = jest.fn(state => state);
     const initialState = { [name]: 3 };
     const props = { onInit, initialState };
 
@@ -112,10 +117,16 @@ describe("Component => Input", () => {
     children = [<Input key="1" type="custom" name={name} value={{ a: 1 }} />];
     mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: { a: 1 } });
+
+    onInit.mockClear();
+    children = [
+      <Input key="1" type="range" min="0" max="100" name={name} value={10} />
+    ];
+    mountForm({ props, children });
+    expect(onInit).toHaveReturnedWith({ [name]: 10 });
   });
 
   it("should use a multiple reducers to reduce the Input value", () => {
-    const onInit = jest.fn(state => state);
     const props = { onInit };
 
     const reducers = [value => value + 2, value => value + 1];
@@ -147,7 +158,31 @@ describe("Component => Input", () => {
     console.error = originalError;
   });
 
-  it("should throw an error for missing 'value' if the input field is a radio", () => {
+  it("should throw an error for an invalid 'asyncValidator' prop", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [
+      <Input key="1" name="test" type="radio" value="1" asyncValidator={{}} />
+    ];
+    expect(() => mountForm({ children })).toThrowError(
+      /It must be a function/i
+    );
+
+    console.error = originalError;
+  });
+
+  it("should throw an error for invalid 'value' prop if the input field is a file", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [<Input key="1" name="test" type="file" value="123" />];
+    expect(() => mountForm({ children })).toThrowError(
+      /Input of type "file" does not support any default value./i
+    );
+
+    console.error = originalError;
+  });
+
+  it("should throw an error for missing 'value' prop if the input field is a radio", () => {
     const originalError = console.error;
     console.error = jest.fn();
     let children = [<Input key="1" name="test" type="radio" />];
