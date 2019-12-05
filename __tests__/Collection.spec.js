@@ -6,8 +6,19 @@ import Form, { Input, Collection } from "./../src";
 import CollectionValidation from "./helpers/components/CollectionValidation";
 import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
 import CollectionArrayNested, {
-  initialValue as initialValueNested
+  initialValue as initialValueNested,
+  expectedValueArrayNested,
+  CollectionArrayNestedValue,
+  reducerArrayNested,
+  expectedValueArrayNestedReduced
 } from "./helpers/components/CollectionArrayNested";
+import CollectionObjectNested, {
+  initialValue as initialValueObjNested,
+  expectedValueObjNested,
+  CollectionObjectNestedValue,
+  reducerObjectNested
+} from "./helpers/components/CollectionObjectNested";
+
 import Reset from "./helpers/components/Reset";
 
 import AgeRange from "./helpers/components/AgeRange";
@@ -212,7 +223,7 @@ describe("Component => Collection", () => {
     mountForm({ props, children });
     expect(jestReducer).toHaveBeenCalledWith(["foo"], []);
 
-    expect(onInit).toHaveReturnedWith({ user: ["foo"] });
+    // expect(onInit).toHaveReturnedWith({ user: ["foo"] });
   });
 
   it("should show an error label if Collection is not valid due to async validator", async () => {
@@ -233,40 +244,180 @@ describe("Component => Collection", () => {
     expect(asyncError).toBeDefined();
   });
 
-  it("should render a nested array Collection", () => {
+  it("should render a nested array Collection with initial value passed as prop", () => {
     const onInit = jest.fn(state => state);
     const onSubmit = jest.fn();
     const onChange = jest.fn();
+    const onReset = jest.fn();
 
-    const props = { onInit, onSubmit, onChange };
+    const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNested key="1" />,
       <button key="2" type="submit" data-testid="submit">
         Submit
-      </button>
+      </button>,
+      <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
 
     expect(onInit).toHaveReturnedWith({ arrayNested: initialValueNested });
 
-    const mostinnerText = getByTestId("mostinnerText");
-    const mostinnerCheckbox = getByTestId("mostinnerCheckbox");
-    fireEvent.change(mostinnerText, { target: { value: "mostinnerText" } });
-    fireEvent.change(mostinnerCheckbox, { target: { value: "" } });
-
-    const nestedResultAfterChange = [...initialValueNested];
-    nestedResultAfterChange[2][2][2][2][0] = "mostinnerText";
-    nestedResultAfterChange[2][2][2][2][1] = undefined;
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
+      const input = getByTestId(`${dataTestid}`);
+      fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
+    });
 
     expect(onChange).toHaveBeenCalledWith({
-      arrayNested: nestedResultAfterChange
+      arrayNested: expectedValueArrayNested
+    });
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      arrayNested: initialValueNested
     });
 
     const submit = getByTestId("submit");
     fireEvent.click(submit);
     expect(onSubmit).toHaveBeenCalledWith(
-      { arrayNested: nestedResultAfterChange },
+      { arrayNested: initialValueNested },
       true
     );
+  });
+
+  it("should render a nested array Collection with initial value passed by the input fields", () => {
+    const onInit = jest.fn(state => state);
+    const onSubmit = jest.fn();
+    const onChange = jest.fn();
+    const onReset = jest.fn();
+
+    const props = { onInit, onSubmit, onChange, onReset };
+    const children = [
+      <CollectionArrayNestedValue key="1" />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>,
+      <Reset key="3" />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(onInit).toHaveReturnedWith({ arrayNested: initialValueNested });
+
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
+      const input = getByTestId(`${dataTestid}`);
+      fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
+    });
+
+    expect(onChange).toHaveBeenCalledWith({
+      arrayNested: expectedValueArrayNested
+    });
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      arrayNested: initialValueNested
+    });
+
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith(
+      { arrayNested: initialValueNested },
+      true
+    );
+  });
+
+  it("should render a reduced nested array Collection with initial value passed by the inputs field", () => {
+    const onInit = jest.fn(state => state);
+    const onSubmit = jest.fn();
+    const onChange = jest.fn();
+    const onReset = jest.fn();
+
+    const props = { onInit, onSubmit, onChange, onReset };
+    const children = [
+      <CollectionArrayNestedValue key="1" reducers={reducerArrayNested} />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>,
+      <Reset key="3" />
+    ];
+    mountForm({ children, props });
+
+    expect(onInit).toHaveReturnedWith({
+      arrayNested: expectedValueArrayNestedReduced
+    });
+  });
+
+  it("should render a nested object Collection with initial valued passed as prop of the Collection", () => {
+    const onInit = jest.fn(state => state);
+    const onSubmit = jest.fn();
+    const onChange = jest.fn();
+    const onReset = jest.fn();
+
+    const props = { onInit, onSubmit, onChange, onReset };
+    const children = [
+      <CollectionObjectNested key="1" />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>,
+      <Reset key="3" />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(onInit).toHaveReturnedWith({ lv1: initialValueObjNested });
+
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
+      const input = getByTestId(`${dataTestid}`);
+      fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
+    });
+
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith(
+      { lv1: expectedValueObjNested },
+      true
+    );
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      lv1: initialValueObjNested
+    });
+  });
+
+  it("should render a nested object Collection with initial value passed by the input fields", () => {
+    const onInit = jest.fn(state => state);
+    const onSubmit = jest.fn();
+    const onChange = jest.fn();
+    const onReset = jest.fn();
+
+    const props = { onInit, onSubmit, onChange, onReset };
+    const children = [
+      <CollectionObjectNestedValue key="1" />,
+      <button key="2" type="submit" data-testid="submit">
+        Submit
+      </button>,
+      <Reset key="3" />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(onInit).toHaveReturnedWith({ lv1: initialValueObjNested });
+
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
+      const input = getByTestId(`${dataTestid}`);
+      fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
+    });
+
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith(
+      { lv1: expectedValueObjNested },
+      true
+    );
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      lv1: initialValueObjNested
+    });
   });
 });

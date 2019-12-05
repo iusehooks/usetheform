@@ -66,6 +66,7 @@ export default function useObject(props) {
   const init = initValue || (type && type === "array" ? initArray : initObject);
   const state = useRef(init);
   const memoInitialState = useRef(init);
+  const prevState = useRef(type && type === "array" ? initArray : initObject);
 
   const resetObj = useRef(init);
   const { current: registerReset } = useRef((namePropExt, fnReset) => {
@@ -136,6 +137,8 @@ export default function useObject(props) {
       state.current,
       formState.current
     );
+
+    prevState.current = newState;
 
     if (isMounted.current) {
       context.initProp(
@@ -290,10 +293,10 @@ export default function useObject(props) {
 
     context.registerReset(nameProp.current, reset);
 
-    const prevInitialState = type === "array" ? initArray : initObject;
+    // const prevInitialState = type === "array" ? initArray : initObject;
     const newState = applyReducers(
       state.current,
-      prevInitialState,
+      prevState.current,
       formState.current
     );
 

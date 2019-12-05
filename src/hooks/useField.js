@@ -154,16 +154,6 @@ export default function useField(props) {
 
     context.registerReset(nameProp.current, reset);
 
-    // TO-DO it must be improved
-    // if initialValue has been set from <Form initialState={} />
-    if (
-      initialValue === "" &&
-      valueField.current !== undefined &&
-      valueField.current !== ""
-    ) {
-      initialValue = valueField.current;
-    }
-
     if (
       (type !== "checkbox" && type !== "radio" && initialValue !== "") ||
       ((type === "checkbox" || type === "radio") && initialChecked)
@@ -178,6 +168,16 @@ export default function useField(props) {
 
       const newValue = applyReducers(val, initialValue, formState.current);
       context.initProp(nameProp.current, newValue, val);
+    }
+
+    // TO-DO it must be improved
+    // if initialValue has been set from <Form initialState={} />
+    if (
+      initialValue === "" &&
+      valueField.current !== undefined &&
+      valueField.current !== ""
+    ) {
+      initialValue = valueField.current;
     }
 
     return () => {
@@ -321,6 +321,14 @@ function validateProps(
 
   if (type === "file" && value && value !== "") {
     return `The prop "value" -> "${value}" passed to "useField": ${name} of type: ${type} is not allowed. Input of type "file" does not support any default value`;
+  }
+
+  if (
+    type === "radio" &&
+    (value === undefined ||
+      (typeof value === "string" && value.replace(/ /g, "") === ""))
+  ) {
+    return `Input of type => ${type}, must have a valid prop "value".`;
   }
 
   if (
