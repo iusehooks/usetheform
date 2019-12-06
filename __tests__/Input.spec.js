@@ -1,18 +1,23 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, waitForElement } from "@testing-library/react";
 
 import Form, { Input } from "./../src";
+
+import InputAsync from "./helpers/components/InputAsync";
+import Submit from "./helpers/components/Submit";
 
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
 
 const onInit = jest.fn(state => state);
 const onChange = jest.fn();
+const onSubmit = jest.fn();
 
 describe("Component => Input", () => {
   beforeEach(() => {
     onInit.mockClear();
     onChange.mockClear();
+    onSubmit.mockClear();
   });
 
   it("should render a Input of type text", () => {
@@ -82,6 +87,38 @@ describe("Component => Input", () => {
     ];
     mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
+  });
+
+  it("should use an async validator function to validate the Input", async () => {
+    const value = 1;
+    const name = "test";
+    const props = { onSubmit };
+    const children = [
+      <InputAsync key="1" name={name} value={value} />,
+      <Submit key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    const submit = getByTestId("submit");
+
+    fireEvent.click(submit);
+    const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
+    expect(asyncStart).toBeDefined();
+
+    const asyncError = await waitForElement(() => getByTestId("asyncError"));
+    expect(asyncError).toBeDefined();
+    expect(asyncError.textContent).toBe("Error");
+
+    const asyncinput = getByTestId("asyncinput");
+    fireEvent.change(asyncinput, { target: { value: "1234" } });
+    fireEvent.click(submit);
+
+    const asyncSuccess = await waitForElement(() =>
+      getByTestId("asyncSuccess")
+    );
+    expect(asyncSuccess).toBeDefined();
+    expect(asyncSuccess.textContent).toBe("Success");
+    expect(onSubmit).toHaveBeenCalledWith({ [name]: "1234" }, true);
   });
 
   it("should override the inital form state given a initial 'value' prop to the input", () => {
