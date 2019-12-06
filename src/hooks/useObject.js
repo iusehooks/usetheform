@@ -68,6 +68,21 @@ export default function useObject(props) {
   const memoInitialState = useRef(init);
   const prevState = useRef(type && type === "array" ? initArray : initObject);
 
+  // getValue from parent context
+  if (!isMounted.current) {
+    state.current =
+      context.state[nameProp.current] !== undefined
+        ? context.state[nameProp.current]
+        : init;
+  } else {
+    state.current =
+      context.state[nameProp.current] ||
+      (type === "array" ? initArray : initObject);
+  }
+
+  const formState = useRef(null);
+  formState.current = context.formState;
+
   const resetObj = useRef(init);
   const { current: registerReset } = useRef((namePropExt, fnReset) => {
     resetObj.current =
@@ -99,14 +114,6 @@ export default function useObject(props) {
         : undefined;
     return newValue;
   });
-
-  state.current =
-    context.state[nameProp.current] !== undefined
-      ? context.state[nameProp.current]
-      : init;
-
-  const formState = useRef(null);
-  formState.current = context.formState;
 
   const { current: changeProp } = useRef((namePropExt, value, removeMe) => {
     const nexState = updateState(state.current, {

@@ -1,9 +1,14 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import Form, { Input } from "./../src";
 
 import SimpleForm from "./helpers/components/SimpleForm";
+import {
+  ComplexForm,
+  initialState as initialStateComplexForm
+} from "./helpers/components/ComplexForm";
 
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
@@ -105,6 +110,58 @@ describe("Component => Form", () => {
 
     fireEvent.click(reset);
     expect(onReset).toHaveBeenCalledWith(initialState);
+  });
+
+  it("should render a Form with dynamic inputs", () => {
+    const onReset = jest.fn();
+    const props = { onInit, onChange, onReset };
+    const { getByTestId } = render(<ComplexForm {...props} />);
+    expect(onInit).toHaveReturnedWith(initialStateComplexForm);
+
+    const addmore = getByTestId("addinput");
+    fireEvent.click(addmore);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1
+    });
+
+    fireEvent.click(addmore);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1,
+      2: 2
+    });
+
+    const select = getByTestId("select");
+    fireEvent.change(select, { target: { value: "3" } });
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      select: "3",
+      1: 1,
+      2: 2
+    });
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+
+    expect(onReset).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1,
+      2: 2
+    });
+
+    const sexM = getByTestId("sexm");
+    onChange.mockClear();
+    fireEvent.click(sexM);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "M",
+      1: 1,
+      2: 2
+    });
   });
 
   it("should reduce the Form state with the given reducer function", () => {

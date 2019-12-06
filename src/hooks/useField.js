@@ -40,7 +40,6 @@ export default function useField(props) {
   } = props;
 
   const { state } = context;
-
   const formState = useRef(null);
   formState.current = context.formState;
 
@@ -49,29 +48,21 @@ export default function useField(props) {
   //   nameProp.current = index;
   // });
 
+  const isMounted = useRef(false);
   const nameProp = useGetRefName(context, name);
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
+  const initialCheckedFieldRef = useRef(initialChecked);
   const fileField = useRef("");
 
-  const { current: applyReducers } = useRef(chainReducers(reducers));
-
-  const { current: reset } = useRef(formState => {
-    let val = initialValue;
-    if (type === "number" || type === "range") {
-      val = initialValue !== "" ? Number(initialValue) : initialValue;
-    } else if (type === "checkbox" || type === "radio") {
-      val = "";
-    }
-
-    let value = applyReducers(val, val, formState);
-    value = value === "" ? undefined : value;
-    return value;
-  });
+  const initialValueRef = useRef(initialValue);
 
   if (type === "checkbox" || type === "radio") {
-    valueField.current = initialValue;
+    valueField.current =
+      state[nameProp.current] !== undefined && !isMounted.current
+        ? state[nameProp.current]
+        : initialValue;
     checkedField.current =
       type === "checkbox"
         ? state[nameProp.current] !== undefined
@@ -93,6 +84,25 @@ export default function useField(props) {
     valueField.current =
       state[nameProp.current] !== undefined ? state[nameProp.current] : "";
   }
+
+  const { current: applyReducers } = useRef(chainReducers(reducers));
+
+  const { current: reset } = useRef(formState => {
+    let val = initialValueRef.current;
+
+    if (type === "number" || type === "range") {
+      val =
+        initialValueRef.current !== ""
+          ? Number(initialValueRef.current)
+          : initialValueRef.current;
+    } else if (type === "checkbox" || type === "radio") {
+      checkedField.current = initialCheckedFieldRef.current;
+    }
+
+    let value = applyReducers(val, valueField.current, formState);
+    value = value === "" ? undefined : value;
+    return value;
+  });
 
   const onChange = event => {
     if (typeof event.persist === "function") {
@@ -134,10 +144,13 @@ export default function useField(props) {
   /* it runs once and set the inital `value` if passed
     and registers the validators functions if there is any
   */
+
   useEffect(() => {
     // if (context.type === "array" && nameProp.current === undefined) {
     //   nameProp.current = context.getIndex(setNameProp);
     // }
+
+    isMounted.current = true;
 
     if (validators.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
@@ -178,6 +191,8 @@ export default function useField(props) {
       valueField.current !== ""
     ) {
       initialValue = valueField.current;
+      initialValueRef.current = valueField.current;
+      initialCheckedFieldRef.current = checkedField.current;
     }
 
     return () => {

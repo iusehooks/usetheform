@@ -12,7 +12,13 @@ export default function Email({ name }) {
   return (
     <div>
       <label>Email: </label>
-      <Input touched name={name} {...validation} type="text" />
+      <Input
+        touched
+        name={name}
+        {...validation}
+        type="text"
+        data-testid="email"
+      />
       {status.error && <label>{status.error}</label>}
     </div>
   );
