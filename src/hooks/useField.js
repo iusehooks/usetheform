@@ -53,20 +53,30 @@ export default function useField(props) {
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
-  const initialCheckedFieldRef = useRef(initialChecked);
   const fileField = useRef("");
 
-  const initialValueRef = useRef(initialValue);
+  // const initialValueRef = useRef(initialValue);
+
+  const [initialValueRef, initialCheckedRef] = getInitialValue(
+    type,
+    state,
+    nameProp,
+    initialValue,
+    initialChecked,
+    isMounted
+  );
 
   if (type === "checkbox" || type === "radio") {
-    valueField.current =
+    /* valueField.current =
       state[nameProp.current] !== undefined && !isMounted.current
         ? state[nameProp.current]
-        : initialValue;
+        : initialValueRef.current; */
+
+    valueField.current = initialValueRef.current;
     checkedField.current =
       type === "checkbox"
         ? state[nameProp.current] !== undefined
-        : state[nameProp.current] === initialValue;
+        : state[nameProp.current] === initialValueRef.current;
   } else if (type === "select") {
     valueField.current =
       state[nameProp.current] !== undefined
@@ -96,7 +106,7 @@ export default function useField(props) {
           ? Number(initialValueRef.current)
           : initialValueRef.current;
     } else if (type === "checkbox" || type === "radio") {
-      checkedField.current = initialCheckedFieldRef.current;
+      checkedField.current = initialCheckedRef.current;
     }
 
     let value = applyReducers(val, valueField.current, formState);
@@ -185,15 +195,15 @@ export default function useField(props) {
 
     // TO-DO it must be improved
     // if initialValue has been set from <Form initialState={} />
-    if (
+    /* if (
       initialValue === "" &&
       valueField.current !== undefined &&
       valueField.current !== ""
     ) {
       initialValue = valueField.current;
       initialValueRef.current = valueField.current;
-      initialCheckedFieldRef.current = checkedField.current;
-    }
+      initialCheckedRef.current = checkedField.current;
+    }*/
 
     return () => {
       if (context.stillMounted()) {
@@ -361,4 +371,26 @@ function validateProps(
     const nameContext = contextType || "<Form />";
     return `The prop "name": ${name} of type "${typeof name}" passed to "${type}" it is not allowed within context a of type "${nameContext}".`;
   }
+}
+
+function getInitialValue(
+  type,
+  state,
+  nameProp,
+  initialValue,
+  initialChecked,
+  isMounted
+) {
+  const initialValueRef = useRef(initialValue);
+  const initialCheckedRef = useRef(initialChecked);
+  if (state[nameProp.current] !== undefined && !isMounted.current) {
+    // Radio input must have an initialValue passed as prop so we do not need to check it
+    if (type !== "radio") {
+      initialValueRef.current = state[nameProp.current];
+    }
+    if (type === "checkbox" || type === "radio") {
+      initialCheckedRef.current = true;
+    }
+  }
+  return [initialValueRef, initialCheckedRef];
 }

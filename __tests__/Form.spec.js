@@ -153,7 +153,6 @@ describe("Component => Form", () => {
     });
 
     const sexM = getByTestId("sexm");
-    onChange.mockClear();
     fireEvent.click(sexM);
 
     expect(onChange).toHaveBeenCalledWith({
@@ -161,6 +160,67 @@ describe("Component => Form", () => {
       sex: "M",
       1: 1,
       2: 2
+    });
+
+    const removeinput = getByTestId("removeinput");
+    fireEvent.click(removeinput);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "M",
+      1: 1
+    });
+
+    fireEvent.click(addmore);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "M",
+      1: 1,
+      3: 3
+    });
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1,
+      3: 3
+    });
+
+    const other1 = getByTestId("other1");
+    fireEvent.click(other1);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      other: [undefined, "3"],
+      1: 1,
+      3: 3
+    });
+
+    fireEvent.click(other1);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      other: ["1", "3"],
+      1: 1,
+      3: 3
+    });
+
+    const sexF = getByTestId("sexf");
+    fireEvent.click(sexF);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "F",
+      1: 1,
+      3: 3
+    });
+
+    const other2 = getByTestId("other2");
+    onChange.mockClear();
+    fireEvent.click(other2);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      other: ["1", undefined],
+      1: 1,
+      3: 3
     });
   });
 

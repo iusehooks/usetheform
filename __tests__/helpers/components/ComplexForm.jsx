@@ -26,6 +26,11 @@ export const ComplexForm = props => {
     counter.current++;
     addInput(prev => [...prev, { id: counter.current }]);
   };
+
+  const remove = () => {
+    addInput(prev => prev.slice(0, -1));
+  };
+
   return (
     <>
       <Form initialState={initialState} {...props}>
@@ -56,6 +61,9 @@ export const ComplexForm = props => {
       </Form>
       <button type="button" onClick={add} data-testid="addinput">
         ADD MORE
+      </button>
+      <button type="button" onClick={remove} data-testid="removeinput">
+        Remove
       </button>
     </>
   );
