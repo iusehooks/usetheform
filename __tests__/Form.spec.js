@@ -1,12 +1,12 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 
 import Form, { Input } from "./../src";
 
 import SimpleForm from "./helpers/components/SimpleForm";
 import {
   ComplexForm,
+  ComplexFormInitValueAsProps,
   initialState as initialStateComplexForm
 } from "./helpers/components/ComplexForm";
 
@@ -112,10 +112,122 @@ describe("Component => Form", () => {
     expect(onReset).toHaveBeenCalledWith(initialState);
   });
 
-  it("should render a Form with dynamic inputs", () => {
+  it("should render a Form with dynamic inputs and initial state passed to Form prop", () => {
     const onReset = jest.fn();
     const props = { onInit, onChange, onReset };
     const { getByTestId } = render(<ComplexForm {...props} />);
+    expect(onInit).toHaveReturnedWith(initialStateComplexForm);
+
+    const addmore = getByTestId("addinput");
+    fireEvent.click(addmore);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1
+    });
+
+    fireEvent.click(addmore);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1,
+      2: 2
+    });
+
+    const select = getByTestId("select");
+    fireEvent.change(select, { target: { value: "3" } });
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      select: "3",
+      1: 1,
+      2: 2
+    });
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+
+    expect(onReset).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1,
+      2: 2
+    });
+
+    const sexM = getByTestId("sexm");
+    fireEvent.click(sexM);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "M",
+      1: 1,
+      2: 2
+    });
+
+    const removeinput = getByTestId("removeinput");
+    fireEvent.click(removeinput);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "M",
+      1: 1
+    });
+
+    fireEvent.click(addmore);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "M",
+      1: 1,
+      3: 3
+    });
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      1: 1,
+      3: 3
+    });
+
+    const other1 = getByTestId("other1");
+    fireEvent.click(other1);
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      other: [undefined, "3"],
+      1: 1,
+      3: 3
+    });
+
+    fireEvent.click(other1);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      other: ["1", "3"],
+      1: 1,
+      3: 3
+    });
+
+    const sexF = getByTestId("sexf");
+    fireEvent.click(sexF);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      sex: "F",
+      1: 1,
+      3: 3
+    });
+
+    const other2 = getByTestId("other2");
+    onChange.mockClear();
+    fireEvent.click(other2);
+    expect(onChange).toHaveBeenCalledWith({
+      ...initialStateComplexForm,
+      other: ["1", undefined],
+      1: 1,
+      3: 3
+    });
+  });
+
+  it("should render a Form with dynamic inputs and initial state passed to each input as 'value' prop", () => {
+    const onReset = jest.fn();
+    const props = { onInit, onChange, onReset };
+    const { getByTestId } = render(<ComplexFormInitValueAsProps {...props} />);
     expect(onInit).toHaveReturnedWith(initialStateComplexForm);
 
     const addmore = getByTestId("addinput");

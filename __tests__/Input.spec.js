@@ -5,6 +5,7 @@ import Form, { Input } from "./../src";
 
 import InputAsync from "./helpers/components/InputAsync";
 import Submit from "./helpers/components/Submit";
+import Reset from "./helpers/components/Reset";
 
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
@@ -12,12 +13,14 @@ const mountForm = ({ props = {}, children } = {}) =>
 const onInit = jest.fn(state => state);
 const onChange = jest.fn();
 const onSubmit = jest.fn();
+const onReset = jest.fn();
 
 describe("Component => Input", () => {
   beforeEach(() => {
     onInit.mockClear();
     onChange.mockClear();
     onSubmit.mockClear();
+    onReset.mockClear();
   });
 
   it("should render a Input of type text", () => {
@@ -90,18 +93,24 @@ describe("Component => Input", () => {
   });
 
   it("should use an async validator function to validate the Input", async () => {
-    const value = 1;
+    const value = "33";
     const name = "test";
-    const props = { onSubmit };
+    const props = { onSubmit, onReset };
     const children = [
       <InputAsync key="1" name={name} value={value} />,
-      <Submit key="2" />
+      <Submit key="2" />,
+      <Reset key="3" />
     ];
 
     const { getByTestId } = mountForm({ children, props });
-    const submit = getByTestId("submit");
 
-    fireEvent.click(submit);
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+    const asyncinput = getByTestId("asyncinput");
+
+    asyncinput.focus();
+    asyncinput.blur();
+
     const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
     expect(asyncStart).toBeDefined();
 
@@ -109,7 +118,7 @@ describe("Component => Input", () => {
     expect(asyncError).toBeDefined();
     expect(asyncError.textContent).toBe("Error");
 
-    const asyncinput = getByTestId("asyncinput");
+    asyncinput.focus();
     fireEvent.change(asyncinput, { target: { value: "1234" } });
     fireEvent.click(submit);
 
@@ -119,6 +128,13 @@ describe("Component => Input", () => {
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.textContent).toBe("Success");
     expect(onSubmit).toHaveBeenCalledWith({ [name]: "1234" }, true);
+
+    fireEvent.click(reset);
+    const asyncNotStartedYet = await waitForElement(() =>
+      getByTestId("asyncNotStartedYet")
+    );
+    expect(asyncNotStartedYet.textContent).toBe("asyncNotStartedYet");
+    expect(onReset).toHaveBeenCalledWith({ [name]: value });
   });
 
   it("should override the inital form state given a initial 'value' prop to the input", () => {

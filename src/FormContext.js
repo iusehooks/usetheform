@@ -3,15 +3,13 @@ import React from "react";
 import useForm from "./hooks/useForm";
 import { ContextForm as Context } from "./hooks/useOwnContext";
 
-const noop = () => undefined;
-
 export function FormContext({
   children,
   initialState,
   onChange,
   onInit,
   onReset,
-  onSubmit = noop,
+  onSubmit,
   reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
