@@ -7,12 +7,19 @@ const email = value =>
     : "Mail not Valid";
 const required = value => (value && value !== "" ? undefined : "Required");
 
-export default function Email({ name }) {
+export default function Email({ name, value }) {
   const [status, validation] = useValidation([required, email]);
   return (
     <div>
       <label>Email: </label>
-      <Input touched name={name} {...validation} type="text" />
+      <Input
+        touched
+        name={name}
+        {...validation}
+        type="text"
+        data-testid="email"
+        value={value}
+      />
       {status.error && <label>{status.error}</label>}
     </div>
   );

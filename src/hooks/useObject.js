@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import useOwnContext from "./useOwnContext";
 import useValidators from "./useValidators";
+import { useGetRefName } from "./useGetRefName";
 import isValidValue from "./../utils/isValidValue";
 import updateState from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
@@ -34,18 +35,21 @@ export default function useObject(props) {
     asyncValidator,
     onAsyncValidation = noop
   } = props;
-  const nameProp = useRef(name);
+  // const nameProp = useRef(name);
+
+  const nameProp = useGetRefName(context, name);
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const isMounted = useRef(false);
   const { current: stillMounted } = useRef(() => isMounted.current);
 
+  // const { current: setNameProp } = useRef(index => {
+  //   nameProp.current = index;
+  // });
+
   // if it is an array collection it keeps the children and update their indexes
   const children = useRef([]);
-  const { current: setNameProp } = useRef(index => {
-    nameProp.current = index;
-  });
   const { current: getIndex } = useRef(childFn => {
     if (children.current.indexOf(childFn) === -1) {
       children.current.push(childFn);
@@ -62,6 +66,22 @@ export default function useObject(props) {
   const init = initValue || (type && type === "array" ? initArray : initObject);
   const state = useRef(init);
   const memoInitialState = useRef(init);
+  const prevState = useRef(type && type === "array" ? initArray : initObject);
+
+  // getValue from parent context
+  if (!isMounted.current) {
+    state.current =
+      context.state[nameProp.current] !== undefined
+        ? context.state[nameProp.current]
+        : init;
+  } else {
+    state.current =
+      context.state[nameProp.current] ||
+      (type === "array" ? initArray : initObject);
+  }
+
+  const formState = useRef(null);
+  formState.current = context.formState;
 
   const resetObj = useRef(init);
   const { current: registerReset } = useRef((namePropExt, fnReset) => {
@@ -95,14 +115,6 @@ export default function useObject(props) {
     return newValue;
   });
 
-  state.current =
-    context.state[nameProp.current] !== undefined
-      ? context.state[nameProp.current]
-      : init;
-
-  const formState = useRef(null);
-  formState.current = context.formState;
-
   const { current: changeProp } = useRef((namePropExt, value, removeMe) => {
     const nexState = updateState(state.current, {
       value,
@@ -122,30 +134,33 @@ export default function useObject(props) {
       value,
       nameProp: namePropExt
     });
-    if (isMounted.current) {
-      memoInitialState.current = updateState(memoInitialState.current, {
-        value: intialValue,
-        nameProp: namePropExt
-      });
+    memoInitialState.current = updateState(memoInitialState.current, {
+      value: intialValue,
+      nameProp: namePropExt
+    });
 
-      const reducedState = applyReducers(
-        newState,
-        state.current,
-        formState.current
-      );
+    const reducedState = applyReducers(
+      newState,
+      state.current,
+      formState.current
+    );
+
+    prevState.current = newState;
+
+    if (isMounted.current) {
       context.initProp(
         nameProp.current,
         reducedState,
         memoInitialState.current
       );
     } else {
-      const newInitialState = updateState(memoInitialState.current, {
-        value: intialValue,
-        nameProp: namePropExt
-      });
+      // const newInitialState = updateState(memoInitialState.current, {
+      //   value: intialValue,
+      //   nameProp: namePropExt
+      // });
 
-      memoInitialState.current = newInitialState;
-      state.current = newState;
+      // memoInitialState.current = newInitialState;
+      state.current = reducedState;
     }
   });
 
@@ -251,9 +266,9 @@ export default function useObject(props) {
     isMounted.current = true;
 
     // if I am children of a context of type "array" I must get my index
-    if (context.type === "array" && nameProp.current === undefined) {
-      nameProp.current = context.getIndex(setNameProp);
-    }
+    // if (context.type === "array" && nameProp.current === undefined) {
+    //   nameProp.current = context.getIndex(setNameProp);
+    // }
 
     // Add the its own validators
     if (validatorsFuncs.length > 0) {
@@ -285,10 +300,10 @@ export default function useObject(props) {
 
     context.registerReset(nameProp.current, reset);
 
-    const prevInitialState = type === "array" ? initArray : initObject;
+    // const prevInitialState = type === "array" ? initArray : initObject;
     const newState = applyReducers(
       state.current,
-      prevInitialState,
+      prevState.current,
       formState.current
     );
 
@@ -372,7 +387,7 @@ function validateProps({ name, type, value, asyncValidator }, contextType) {
 
   if (
     typeof value !== "undefined" &&
-    ((type === "array" && value.constructor.name !== "Array") ||
+    ((type === "array" && value.constructor !== Array) ||
       (type === "object" && typeof value !== "object"))
   ) {
     return `The prop "value": ${value} of type "${type}" passed to "${name} Collection" it is not allowed as initial value.`;

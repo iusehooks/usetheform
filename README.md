@@ -23,7 +23,7 @@ UseTheForm is a React library for composing declarative forms and managing their
 npm install --save usetheform
 ```
 
-# Basic Example
+# Basic Example with Collections
 
 UseTheForm allows to declarative defining our form output, managing its state, handling its validation and much more.
 
@@ -694,6 +694,7 @@ const [getWizardStatus, wizardApi] = useMultipleForm(state => console.log(state)
 
 # CodeSandbox Examples
 
+- Examples: Slider, Select, Collections etc..: [Sandbox](https://codesandbox.io/s/formexample2-mmcjs)
 - Various Implementation: [Sandbox](https://codesandbox.io/s/035l4l75ln)
 - Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)
 - FormContext: [Sandbox](https://codesandbox.io/s/formcontext-ukvc5)
