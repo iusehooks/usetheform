@@ -1,4 +1,4 @@
-export default function isValidValue(value, contextType) {
+export function isValidValue(value, contextType) {
   if (contextType === "array") {
     return typeof value === "undefined";
   } else {

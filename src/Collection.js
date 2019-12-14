@@ -1,13 +1,13 @@
 import React from "react";
 
-import useObject from "./hooks/useObject";
+import { useObject } from "./hooks/useObject";
 import { ContextObject as Context } from "./hooks/useOwnContext";
 
-export default function Collection({
+export function Collection({
   children,
   name,
   object,
-  value: initialValue,
+  value,
   reducers,
   onValidation,
   resetSyncErr,
@@ -17,10 +17,10 @@ export default function Collection({
   resetAsyncErr
 }) {
   const type = object ? "object" : "array";
-  const value = useObject({
+  const ctx = useObject({
     name,
     type,
-    value: initialValue,
+    value,
     reducers,
     onValidation,
     validators,
@@ -29,5 +29,5 @@ export default function Collection({
     onAsyncValidation,
     resetAsyncErr
   });
-  return <Context.Provider value={value}>{children}</Context.Provider>;
+  return <Context.Provider value={ctx}>{children}</Context.Provider>;
 }

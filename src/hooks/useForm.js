@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
-import useValidators from "./useValidators";
+import { useValidators } from "./useValidators";
 
-import updateState from "./../utils/updateState";
+import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
 import {
   STATUS,
@@ -13,7 +13,7 @@ import {
 const noop = _ => undefined;
 const emptyStateValue = {};
 
-export default function useForm({
+export function useForm({
   initialState,
   onChange = noop,
   onReset = noop,

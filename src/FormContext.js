@@ -1,6 +1,6 @@
 import React from "react";
 
-import useForm from "./hooks/useForm";
+import { useForm } from "./hooks/useForm";
 import { ContextForm as Context } from "./hooks/useOwnContext";
 
 export function FormContext({
@@ -15,7 +15,7 @@ export function FormContext({
   _onMultipleForm_, // Private API
   name
 }) {
-  const value = useForm({
+  const ctx = useForm({
     initialState,
     onChange,
     onInit,
@@ -27,5 +27,5 @@ export function FormContext({
     name
   });
 
-  return <Context.Provider value={value}>{children}</Context.Provider>;
+  return <Context.Provider value={ctx}>{children}</Context.Provider>;
 }

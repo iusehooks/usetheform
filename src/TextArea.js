@@ -1,12 +1,11 @@
 import React from "react";
-import useField from "./hooks/useField";
+import { useField } from "./hooks/useField";
 
-export default function TextArea({
+export function TextArea({
   onFocus,
   onBlur,
   onChange,
-  children,
-  path,
+  children: omitChildren,
   name,
   validators,
   asyncValidator,
@@ -14,7 +13,6 @@ export default function TextArea({
   onAsyncValidation,
   resetSyncErr,
   resetAsyncErr,
-  index,
   value,
   touched,
   reducers,
@@ -26,7 +24,6 @@ export default function TextArea({
     onChange,
     type: "text",
     name,
-    index,
     value,
     validators,
     asyncValidator,

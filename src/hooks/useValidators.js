@@ -1,12 +1,7 @@
 import { useRef } from "react";
 import { mergeValidators } from "../utils/utilValidators";
 
-export default function useValidators(
-  context,
-  nameProp,
-  isMounted,
-  isAsync = false
-) {
+export function useValidators(context, nameProp, isMounted, isAsync = false) {
   const validators = useRef({});
   const validatorsMaps = useRef({});
 

@@ -1,5 +1,5 @@
 //  https://gist.github.com/ghinda/8442a57f22099bdb2e34
-export default function toFormData(obj, form, namespace) {
+export function toFormData(obj, form, namespace) {
   let fd = form || new FormData();
   let formKey;
 

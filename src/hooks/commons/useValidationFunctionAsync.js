@@ -1,9 +1,6 @@
 import { useRef } from "react";
 
-export default function useValidationFunctionAsync(
-  asyncValidator,
-  onAsyncValidation
-) {
+export function useValidationFunctionAsync(asyncValidator, onAsyncValidation) {
   const validationMsg = useRef(undefined);
   const validationFN = useRef(value => {
     const newValue = value === undefined ? "" : value;

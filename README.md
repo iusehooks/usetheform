@@ -587,7 +587,7 @@ The `<TextArea />` is a Field component which defines a multi-line text input co
 
 ## Collection
 
-`<Collection />` allows to created nested piece of state within a `<Form />`.
+`<Collection />` allows to create a nested piece of state within a `<Form />`.
 It creates either a Collection of type object or array.
 
 ### Collection - Props

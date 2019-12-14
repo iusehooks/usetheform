@@ -1,0 +1,122 @@
+---
+name: Collection
+menu: Components
+---
+
+import { useState } from "react";
+import { Playground } from 'docz';
+import { Form } from "./helpers/Form";
+import { Collection, useValidation, Input } from './../src';
+
+# Collection
+
+It creates a nested piece of state within a Form. <br />
+A Collection can be of type: *object* or *array*.
+
+### Props
+
+**`object`**: `boolean`
+
+It creates a collecion of type **object** if "true".
+
+**`array`**: `boolean`
+
+It creates a collecion of type **array** if "true".
+
+**`name`**: `string`
+
+A field's name in Usetheform state.
+
+**`value`**: `array` | `object`
+
+Specifies the initial value of a *Collection*.
+
+**`reducers`**: `array` | `function`
+
+*`(nextValue, prevValue, formState) => nextValue`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the Collection's value change.
+
+## Basic usage
+
+<Playground>
+  <Form>
+    <Collection object name="myObject">
+      <Input type="text" name="name" value="foo" />
+      <Input type="radio" name="sex" value="M" />
+      <Input type="radio" name="sex" value="F" />
+      <Input type="checkbox" name="one" checked />
+      <Input type="checkbox" name="second" />
+      <Input type="file" name="file" />
+    </Collection>
+    <Collection array name="myArray">
+      <Input type="number" value="1" />
+      <Input type="number" value="2" />
+      <Input type="number" value="3" />
+    </Collection>
+  </Form>
+</Playground>
+
+### Nested Collections
+
+<Playground>
+  <Form>
+    <Collection object name="myObject">
+      <Collection object name="user">
+        <Input type="text" name="name" value="foo" />
+        <Input type="text" name="lastname" value="foo" />
+        <Collection object name="info">
+          <Input type="tel" name="tel" value="1234" />
+          <Input type="text" name="website" value="www.google.com" />
+        </Collection>
+      </Collection>
+      <Collection array name="sex">
+        <Input type="radio" value="M" />
+        <Input type="radio" value="F" />
+      </Collection>
+    </Collection>
+  </Form>
+</Playground>
+
+## Reducers
+
+<Playground>
+{() => {
+    const sum = nextValue => {
+      const sumAB = nextValue["A"] + nextValue["B"];
+      const newValue = { ...nextValue, sumAB };
+      return newValue;
+    };
+    return (
+      <Form>
+        <Collection object name="sum" reducers={sum}>
+          <Input type="number" name="A" value="1" />
+          <Input type="number" name="B" value="2" />
+          <Input type="text" name="sumAB" readOnly />
+        </Collection>
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation
+
+<Playground>
+{() => {
+    const graterThan10 = value => ((value && (value["A"] + value["B"] > 10)) ? undefined : "A+B must be > 10");
+    const [status, validation] = useValidation([graterThan10]);
+    return (
+      <Form>
+        <Collection object name="sum" {...validation}>
+          <Input type="number" name="A" value="1" />
+          <Input type="number" name="B" value="2" />
+        </Collection>
+        {status.error && <label>{status.error}</label>}
+        <button type="submit">Press to see results</button>
+      </Form>
+    )
+  }
+}
+</Playground>

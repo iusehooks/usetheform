@@ -1,7 +1,7 @@
 import React from "react";
-import useField from "./hooks/useField";
+import { useField } from "./hooks/useField";
 
-export default function Select({
+export function Select({
   onFocus,
   onBlur,
   onChange,
@@ -13,7 +13,6 @@ export default function Select({
   onAsyncValidation,
   resetSyncErr,
   resetAsyncErr,
-  index,
   multiple,
   value,
   touched,
@@ -26,7 +25,6 @@ export default function Select({
     onChange,
     type: "select",
     name,
-    index,
     value,
     validators,
     asyncValidator,

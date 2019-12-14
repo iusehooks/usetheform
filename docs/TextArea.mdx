@@ -1,0 +1,73 @@
+---
+name: TextArea
+menu: Components
+---
+
+import { useState } from "react";
+import { Playground } from 'docz';
+import { Form } from "./helpers/Form";
+import { TextArea, useValidation } from './../src';
+
+# TextArea
+It renders a *textarea* element: [W3schools Textarea](https://www.w3schools.com/tags/tag_textarea.asp) and accepts as props any html attribute listed at: [Html Textarea Attributes](https://www.w3schools.com/tags/tag_textarea.asp).
+
+### Props
+
+**`name`**: `string`
+
+A field's name in Usetheform state.
+
+**`value`**: `string`
+
+Specifies the initial value of an *textarea* element.
+
+
+**`reducers`**: `array` | `function`
+
+*`(nextValue, prevValue, formState) => nextValue`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the TextArea's value change.
+
+## Basic usage
+
+<Playground>
+  <Form>
+    <TextArea name="textarea" value="foo" />
+  </Form>
+</Playground>
+
+## Reducers
+
+<Playground>
+{() => {
+    const noHtmlTags = (nextValue, prevValue) => nextValue.replace(/(<([^>]+)>)/ig, "");
+    const notNumber = (nextValue, prevValue) => nextValue.replace(/[0-9]+/ig, "");
+    return (
+      <Form>
+        <TextArea name="textareaReducer" reducers={[noHtmlTags, notNumber]} value="foo" />
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation
+
+<Playground>
+{() => {
+    const notNumber = value =>
+    !(value && !/^[A-Za-z ]+$/i.test(value))
+      ? undefined
+      : "Numbers not allowed";
+    const required = value => (value && value.trim() !== "" ? undefined : "Required");
+    const [status, validation] = useValidation([required, notNumber]);
+    return (
+      <Form>
+        <TextArea name="notEmpty" touched {...validation} />
+        {status.error && <label>{status.error}</label>}
+      </Form>
+    )
+  }
+}
+</Playground>
