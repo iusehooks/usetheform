@@ -1,0 +1,105 @@
+---
+name: Select
+menu: Components
+---
+
+import { useState } from "react";
+import { Playground } from 'docz';
+import { Form } from "./helpers/Form";
+import { Select, useValidation } from './../src';
+
+# Select
+The *select* element is used to create a drop-down list. <br />
+It accepts as props any html attribute listed at: [Html Select Attributes](https://www.w3schools.com/tags/tag_select.asp).
+
+### Props
+
+**`name`**: `string`
+
+A field's name in Usetheform state.
+
+**`value`**: `string`
+
+Specifies the initial value of a *select* element.
+
+**`reducers`**: `array` | `function`
+
+*`(nextValue, prevValue, formState) => nextValue`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the Select's value change.
+
+## Basic usage 
+
+### Single options
+
+<Playground>
+  <Form>
+    <Select name="select">
+      <option value="">Select an option</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </Select>
+  </Form>
+</Playground>
+
+### Multiple options
+
+<Playground>
+  <Form>
+    <Select name="select" multiple>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </Select>
+  </Form>
+</Playground>
+
+
+## Reducers
+
+<Playground>
+{() => {
+    const tenIfEven = (nextValue, prevValue) => nextValue !== "" && Number(nextValue) % 2 === 0 ? "10" : nextValue;
+    const elevenIfOdd = (nextValue, prevValue) => nextValue !== "" && Number(nextValue) % 2 !== 0 ? "11" : nextValue;
+    return (
+      <Form>
+        <Select name="select" reducers={[tenIfEven, elevenIfOdd]}>
+          <option value="">Select an option</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+        </Select>
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation
+
+<Playground>
+{() => {
+    const required = value => (value && value.trim() !== "" ? undefined : "Required");
+    const [status, validation] = useValidation([required]);
+    return (
+      <Form>
+        <Select name="selectRequired" touched {...validation}>
+          <option value="">Select an option</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </Select>
+        {status.error && <label>{status.error}</label>}
+      </Form>
+    )
+  }
+}
+</Playground>

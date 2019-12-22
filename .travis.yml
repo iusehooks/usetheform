@@ -1,10 +1,19 @@
 language: node_js
 node_js:
-  - "node"
-install:
-  - npm i -g npm@6.5.0
-  - npm ci
+  - "10.16.3"
 branches:
   only:
     - master
 cache: npm
+script:
+  - echo 'Build docs!'
+  - npm run docz:build
+before_deploy:
+  script: cd docs/
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  local_dir: .docz/*
+  on:
+    branch: master

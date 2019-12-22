@@ -25,14 +25,7 @@ export const usePublicContextForm = () => {
   };
 };
 
-/* export const useForm = () => {
-  const { state, reset, isValid, pristine, formStatus } = useContext(
-    ContextForm
-  );
-  return { state, reset, isValid, pristine, formStatus, dispatch };
-}; */
-
-export default function useOwnContext() {
+export function useOwnContext() {
   const contextObject = useContext(ContextObject);
   const contextForm = useContext(ContextForm);
   const context = contextObject || contextForm;

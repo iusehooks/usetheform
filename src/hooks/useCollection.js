@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import useObject from "./useObject";
+import { useObject } from "./useObject";
 
 export function useCollection({
   name,

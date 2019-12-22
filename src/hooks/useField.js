@@ -1,16 +1,16 @@
 import { useEffect, useState, useRef } from "react";
-import useOwnContext from "./useOwnContext";
+import { useOwnContext } from "./useOwnContext";
 import { useGetRefName } from "./useGetRefName";
 
-import useValidationFunction from "./commons/useValidationFunction";
-import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
+import { useValidationFunction } from "./commons/useValidationFunction";
+import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { STATUS, fileList } from "./../utils/formUtils";
 import { chainReducers } from "./../utils/chainReducers";
-import isValidValue from "./../utils/isValidValue";
+import { isValidValue } from "./../utils/isValidValue";
 
 const noop = () => undefined;
 
-export default function useField(props) {
+export function useField(props) {
   const context = useOwnContext();
 
   if (process.env.NODE_ENV !== "production") {
@@ -43,19 +43,12 @@ export default function useField(props) {
   const formState = useRef(null);
   formState.current = context.formState;
 
-  // const nameProp = useRef(name);
-  // const { current: setNameProp } = useRef(index => {
-  //   nameProp.current = index;
-  // });
-
   const isMounted = useRef(false);
   const nameProp = useGetRefName(context, name);
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
   const fileField = useRef("");
-
-  // const initialValueRef = useRef(initialValue);
 
   const [initialValueRef, initialCheckedRef] = getInitialValue(
     type,
@@ -67,11 +60,6 @@ export default function useField(props) {
   );
 
   if (type === "checkbox" || type === "radio") {
-    /* valueField.current =
-      state[nameProp.current] !== undefined && !isMounted.current
-        ? state[nameProp.current]
-        : initialValueRef.current; */
-
     valueField.current = initialValueRef.current;
     checkedField.current =
       type === "checkbox"
@@ -154,12 +142,7 @@ export default function useField(props) {
   /* it runs once and set the inital `value` if passed
     and registers the validators functions if there is any
   */
-
   useEffect(() => {
-    // if (context.type === "array" && nameProp.current === undefined) {
-    //   nameProp.current = context.getIndex(setNameProp);
-    // }
-
     isMounted.current = true;
 
     if (validators.length > 0) {
@@ -192,18 +175,6 @@ export default function useField(props) {
       const newValue = applyReducers(val, initialValue, formState.current);
       context.initProp(nameProp.current, newValue, val);
     }
-
-    // TO-DO it must be improved
-    // if initialValue has been set from <Form initialState={} />
-    /* if (
-      initialValue === "" &&
-      valueField.current !== undefined &&
-      valueField.current !== ""
-    ) {
-      initialValue = valueField.current;
-      initialValueRef.current = valueField.current;
-      initialCheckedRef.current = checkedField.current;
-    }*/
 
     return () => {
       if (context.stillMounted()) {

@@ -1,6 +1,7 @@
 node_modules
-.log
-.git
+.docz
+*.log
+*.git
 .DS_Store
 dist
 build

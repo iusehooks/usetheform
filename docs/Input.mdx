@@ -1,0 +1,86 @@
+---
+name: Input
+menu: Components
+---
+
+import { useState } from "react";
+import { Playground } from 'docz';
+import { Form } from "./helpers/Form";
+import { Input, useValidation } from './../src';
+
+# Input
+It renders all the inputs of type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) and accepts as props any html attribute listed at: [Html Input Attributes](https://www.w3schools.com/tags/tag_input.asp).
+
+### Props
+
+**`type`**: `string`
+
+Type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp).
+It also supports a `custom` type (type="custom").
+
+**`name`**: `string`
+
+A field's name in Usetheform state.
+
+**`value`**: `string` | `number` | `object`
+
+Specifies the initial value of an *input* element.
+
+**`checked`**: `boolean`
+
+Specifies that an *input* element should be pre-selected when the page loads (for type="checkbox" or type="radio").
+
+**`reducers`**: `array` | `function`
+
+*`(nextValue, prevValue, formState) => nextValue`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the Input's value change.
+
+## Basic usage
+
+<Playground>
+  <Form>
+    <Input type="text" name="name" value="foo" />
+    <Input type="radio" name="sex" value="M" />
+    <Input type="radio" name="sex" value="F" />
+    <Input type="checkbox" name="one" checked />
+    <Input type="checkbox" name="second" />
+    <Input type="file" name="file" />
+  </Form>
+</Playground>
+
+## Reducers
+
+<Playground>
+{() => {
+    const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
+    const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
+    return (
+      <Form>
+        <Input type="number" name="numberWithReducer" reducers={[minNumber1, maxNumber10]} value="1" />
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation
+
+<Playground>
+{() => {
+    const email = value =>
+    !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
+      ? undefined
+      : "Mail not Valid";
+    const required = value => (value && value.trim() !== "" ? undefined : "Required");
+    const [status, validation] = useValidation([required, email]);
+    return (
+      <Form>
+        <Input type="text" name="email" touched {...validation} />
+        {status.error && <label>{status.error}</label>}
+      </Form>
+    )
+  }
+}
+</Playground>

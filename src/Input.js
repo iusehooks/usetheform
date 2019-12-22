@@ -1,12 +1,11 @@
 import React from "react";
-import useField from "./hooks/useField";
+import { useField } from "./hooks/useField";
 
-export default function Input({
+export function Input({
   onFocus,
   onBlur,
   onChange,
-  children,
-  path,
+  children: omitChildren,
   name,
   checked,
   validators,
@@ -15,7 +14,6 @@ export default function Input({
   onAsyncValidation,
   resetSyncErr,
   resetAsyncErr,
-  index,
   type,
   value,
   touched,
@@ -29,7 +27,6 @@ export default function Input({
     onChange,
     type,
     name,
-    index,
     checked,
     value,
     validators,

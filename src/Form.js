@@ -1,6 +1,6 @@
 import React from "react";
 
-import useForm from "./hooks/useForm";
+import { useForm } from "./hooks/useForm";
 import { ContextForm as Context } from "./hooks/useOwnContext";
 
 export default function Form({
@@ -16,7 +16,7 @@ export default function Form({
   name,
   ...rest
 }) {
-  const { onSubmitForm, ...value } = useForm({
+  const { onSubmitForm, ...ctx } = useForm({
     initialState,
     onChange,
     onInit,
@@ -29,7 +29,7 @@ export default function Form({
   });
 
   return (
-    <Context.Provider value={value}>
+    <Context.Provider value={ctx}>
       <form onSubmit={onSubmitForm} {...rest} name={name}>
         {children}
       </form>

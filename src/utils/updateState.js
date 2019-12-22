@@ -1,4 +1,4 @@
-export default function updateState(state, { nameProp, value, removeMe }) {
+export function updateState(state, { nameProp, value, removeMe }) {
   let newState = state.constructor === Array ? [...state] : { ...state };
   newState[nameProp] = value;
 

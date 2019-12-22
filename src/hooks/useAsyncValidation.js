@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const initialStatus = { status: undefined, value: undefined };
-export default function useAsyncValidation(asyncValidator) {
+export function useAsyncValidation(asyncValidator) {
   const [status, setStatus] = useState(() => ({ ...initialStatus }));
   const onAsyncValidation = newStatus => setStatus({ ...status, ...newStatus });
   const resetAsyncErr = () => setStatus({ ...initialStatus });

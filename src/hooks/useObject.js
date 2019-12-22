@@ -1,19 +1,19 @@
 import { useRef, useEffect } from "react";
-import useOwnContext from "./useOwnContext";
-import useValidators from "./useValidators";
+import { useOwnContext } from "./useOwnContext";
+import { useValidators } from "./useValidators";
 import { useGetRefName } from "./useGetRefName";
-import isValidValue from "./../utils/isValidValue";
-import updateState from "./../utils/updateState";
+import { isValidValue } from "./../utils/isValidValue";
+import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
-import useValidationFunction from "./commons/useValidationFunction";
-import useValidationFunctionAsync from "./commons/useValidationFunctionAsync";
+import { useValidationFunction } from "./commons/useValidationFunction";
+import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { STATUS } from "./../utils/formUtils";
 
 const noop = _ => undefined;
 const initArray = [];
 const initObject = {};
 
-export default function useObject(props) {
+export function useObject(props) {
   const context = useOwnContext();
 
   if (process.env.NODE_ENV !== "production") {
