@@ -8,22 +8,12 @@ cache: npm
 script:
   - echo 'Build docs!'
   - npm run docz:build
-<<<<<<< HEAD
-before_deploy:
-  script: cd .docz/
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  local_dir: .docz/*
-=======
   - rm .gitignore
 deploy:
   provider: pages
   skip_cleanup: true
   verbose: true
   local_dir: .docz/dist
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
->>>>>>> master
+  github_token: $GITHUB_TOKEN
   on:
     branch: master
