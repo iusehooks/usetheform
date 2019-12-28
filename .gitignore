@@ -6,3 +6,4 @@ node_modules
 dist
 build
 coverage
+_config.yml
