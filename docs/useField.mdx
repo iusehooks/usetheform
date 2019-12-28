@@ -6,30 +6,43 @@ menu: Hooks
 # useField
 It is a custom React hook which allows to build a custom input primitives.
 
-### Props
+```javascript
+  useField(options)
+```
 
-**`type`**: `string`
+## Arguments
 
-Strings accepted: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) - "select" - "custom"
+**`options`**: `object`
 
-**`name`**: `string`
+  - **`type`**: `string`
 
-A field's name in Usetheform state.
+  Strings accepted: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) - "select" - "custom"
 
-**`value`**: `string` | `number` | `object`
+  - **`name`**: `string`
 
-Specifies the initial value of an *input* element.
+  A field's name in Usetheform state.
 
-**`checked`**: `boolean`
+  - **`value`**: `string` | `number` | `object`
 
-Specifies that an *input* element should be pre-selected when the page loads (for type="checkbox" or type="radio").
+  Specifies the initial value of an *input* element.
 
-**`reducers`**: `array` | `function`
+  - **`checked`**: `boolean`
 
-*`(nextValue, prevValue, formState) => nextValue`*
+  Specifies that an *input* element should be pre-selected when the page loads (for type="checkbox" or type="radio").
+
+  - **`reducers`**: `array` | `function`
+
+  *`(nextValue, prevValue, formState) => nextValue`*
  
-An array whose values correspond to different reducing functions.
-Reducers functions specify how the Input's value change.
+  An array whose values correspond to different reducing functions.
+  Reducers functions specify how the Input's value change.
+
+## Returns
+
+(**`attributes`**): `object`
+
+An object that holds all the attributes of your field.
+
 
 ## Basic usage
 

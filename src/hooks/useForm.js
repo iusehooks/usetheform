@@ -235,9 +235,10 @@ export function useForm({
 
     // It is using the useMultipleForm hook
     const pristine =
-      isMultipleForm &&
-      (_getInitilaStateForm_(name) == undefined ||
-        Object.keys(_getInitilaStateForm_(name)).length === 0);
+      (isMultipleForm &&
+        (_getInitilaStateForm_(name) == undefined ||
+          Object.keys(_getInitilaStateForm_(name)).length === 0)) ||
+      !isMultipleForm;
 
     const state = isMultipleForm
       ? _getInitilaStateForm_(name) || stateRef.current.state
