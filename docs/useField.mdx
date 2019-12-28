@@ -1,0 +1,88 @@
+---
+name: useField
+menu: Hooks
+---
+
+# useField
+It is a custom React hook which allows to build a custom input primitives.
+
+### Props
+
+**`type`**: `string`
+
+Strings accepted: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) - "select" - "custom"
+
+**`name`**: `string`
+
+A field's name in Usetheform state.
+
+**`value`**: `string` | `number` | `object`
+
+Specifies the initial value of an *input* element.
+
+**`checked`**: `boolean`
+
+Specifies that an *input* element should be pre-selected when the page loads (for type="checkbox" or type="radio").
+
+**`reducers`**: `array` | `function`
+
+*`(nextValue, prevValue, formState) => nextValue`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the Input's value change.
+
+## Basic usage
+
+```javascript
+const CustomInput = props => {
+  const input = useField({
+    type: "text",
+    name: "simple",
+    value: "foo"
+  });
+  return <input {...input} />;
+}
+```
+
+## Reducers
+
+```javascript
+const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
+const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
+
+const CustomInput = props => {
+  const input = useField({
+      type: "number",
+      name: "numberWithReducer",
+      reducers: [minNumber1, maxNumber10],
+      value: "1"
+    });
+  return <input {...input} />;
+}
+```
+
+## Validation
+
+```javascript
+const email = value =>
+    !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
+      ? undefined
+      : "Mail not Valid";
+const required = value => (value && value.trim() !== "" ? undefined : "Required");
+
+const CustomInput = props => {
+  const [status, validation] = useValidation([required, email]);
+  const input = useField({
+      type: "text",
+      touched: true,
+      name: "email",
+      ...validation
+  });
+  return (
+    <div>
+      <input {...input} />
+      {status.error && <label>{status.error}</label>}
+    </div>
+  )
+}
+```

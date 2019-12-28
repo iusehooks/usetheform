@@ -103,6 +103,8 @@ Reducers functions specify how the Collection's value change.
 
 ## Validation
 
+Validation for Collection starts only on form submission.
+
 <Playground>
 {() => {
     const graterThan10 = value => ((value && (value["A"] + value["B"] > 10)) ? undefined : "A+B must be > 10");
