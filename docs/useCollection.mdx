@@ -1,0 +1,140 @@
+---
+name: useCollection
+menu: Hooks
+---
+
+# useCollection
+It is a custom React hook which allows to build a custom Collection.
+A Collection can be of type: *object* or *array*.
+
+The custom hook function provides:
+
+  - **`value`**: the current value of the Collection. It can be an array or an object.
+  - **`updateCollection`**: a function which can change one prop of the Collection.
+  - **`state`**: the current State of the entire Form.
+
+### Props
+
+**`object`**: `boolean`
+
+It creates a collecion of type **object** if "true".
+
+**`array`**: `boolean`
+
+It creates a collecion of type **array** if "true".
+
+**`name`**: `string`
+
+A field's name in Usetheform state.
+
+**`value`**: `array` | `object`
+
+Specifies the initial value of an *Collection* which can be either an array or an object.
+
+**`reducers`**: `array` | `function`
+
+*`(nextValue, prevValue, formState) => nextValue`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the Collection's value change.
+
+## Basic usage
+
+```javascript
+import { useCollection } from "usetheform";
+
+const CustomCollection = props => {
+  const { value, state, updateCollection } = useCollection({
+    name: "test",
+    type: "object",
+    value: { name: "foo" } // an initialValue if needeed
+  });
+
+  // it changes the prop "name" of the Collection named "test"
+  const onUpdateCollection = () => updateCollection("name", "mickey");
+  
+  return (
+    <div>
+      <span>{value.name}<span>
+      <button type="button" onClick={onUpdateCollection}>
+        Update Collection
+      </button>
+    </div>
+  );
+}
+```
+
+## Reducers
+
+```javascript
+import { useCollection } from "usetheform";
+
+const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
+const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
+
+const CustomCollection = props => {
+  const { value, state, updateCollection } = useCollection({
+    name: "test",
+    type: "object",
+    value: { number: 10 } // an initialValue if needeed
+    reducers: [minNumber1, maxNumber10],
+  });
+  
+  const onIncrement = () => updateCollection("number", value.number + 1 );
+  const onDecrement = () => updateCollection("number", value.number - 1 );
+
+  return (
+    <div>
+      <span>{value.number}<span>
+      <button type="button" onClick={onIncrement}>
+        Increment
+      </button>
+      <button type="button" onClick={onDecrement}>
+        Decrement
+      </button>
+    </div>
+  );
+}
+```
+
+## Validation
+
+Validation for Collection starts only on form submission.
+
+```javascript
+import { useValidation, useCollection } from "usetheform";
+
+const lessThan10 = value => {
+  return value && value.number && value.number <= 10
+    ? undefined
+    : "Number not valid";
+};
+const graterThan0 = value =>
+  value && value.number && value.number >= 0 ? undefined : "Number not valid";
+
+const CustomCollection = props => {
+  const [status, validation] = useValidation([lessThan10, graterThan0]);
+  const { value, updateCollection } = useCollection({
+    name: "test",
+    type: "object",
+    value: { number: 9 }, // an initialValue if needeed
+    ...validation
+  });
+
+  const onIncrement = () => updateCollection("number", value.number + 1);
+  const onDecrement = () => updateCollection("number", value.number - 1);
+
+  return (
+    <div>
+      <span>{value.number}</span>
+      {status.error && <label>{status.error}</label>}
+      <button type="button" onClick={onIncrement}>
+        Increment
+      </button>
+      <button type="button" onClick={onDecrement}>
+        Decrement
+      </button>
+    </div>
+  );
+}
+```
