@@ -1,5 +1,5 @@
 import React from "react";
-import { useForm } from "../../src";
+import { useForm } from "./../../src";
 
 export const Reset = () => {
   const { reset, pristine } = useForm();

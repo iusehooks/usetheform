@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { default as FormUsetheform } from "../../src";
+import { default as FormUsetheform } from "./../../src";
 import JSONTree from "react-json-tree";
 
 export const Form = ({ onInit, onChange, ...props }) => {
