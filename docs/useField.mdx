@@ -3,11 +3,13 @@ name: useField
 menu: Hooks
 ---
 
+# Getting Started
+
 # useField
 It is a custom React hook which allows to build a custom input primitives.
 
 ```javascript
-  useField(options)
+  const fieldInputProps = useField(options)
 ```
 
 ## Arguments
@@ -28,7 +30,7 @@ It is a custom React hook which allows to build a custom input primitives.
 
   - **`checked`**: `boolean`
 
-  Specifies that an *input* element should be pre-selected when the page loads (for type="checkbox" or type="radio").
+  Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
 
   - **`reducers`**: `array` | `function`
 
@@ -39,7 +41,7 @@ It is a custom React hook which allows to build a custom input primitives.
 
 ## Returns
 
-(**`attributes`**): `object`
+(**`FieldInputProps`**): `object`
 
 An object that holds all the attributes of your field.
 
@@ -48,12 +50,12 @@ An object that holds all the attributes of your field.
 
 ```javascript
 const CustomInput = props => {
-  const input = useField({
+  const fieldInputProps = useField({
     type: "text",
     name: "simple",
     value: "foo"
   });
-  return <input {...input} />;
+  return <input {...fieldInputProps} />;
 }
 ```
 
@@ -64,13 +66,13 @@ const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextV
 const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
 
 const CustomInput = props => {
-  const input = useField({
+  const fieldInputProps = useField({
       type: "number",
       name: "numberWithReducer",
       reducers: [minNumber1, maxNumber10],
       value: "1"
     });
-  return <input {...input} />;
+  return <input {...fieldInputProps} />;
 }
 ```
 
@@ -85,7 +87,7 @@ const required = value => (value && value.trim() !== "" ? undefined : "Required"
 
 const CustomInput = props => {
   const [status, validation] = useValidation([required, email]);
-  const input = useField({
+  const fieldInputProps = useField({
       type: "text",
       touched: true,
       name: "email",
@@ -93,7 +95,7 @@ const CustomInput = props => {
   });
   return (
     <div>
-      <input {...input} />
+      <input {...fieldInputProps} />
       {status.error && <label>{status.error}</label>}
     </div>
   )
