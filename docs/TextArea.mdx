@@ -3,7 +3,6 @@ name: TextArea
 menu: Components
 ---
 
-import { useState } from "react";
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
 import { TextArea, useValidation } from './../src';
@@ -31,6 +30,10 @@ Reducers functions specify how the TextArea's value change.
 
 ## Basic usage
 
+```javascript
+  import Form, { TextArea } from 'usetheform'
+```
+
 <Playground>
   <Form>
     <TextArea name="textarea" value="foo" />
@@ -38,6 +41,10 @@ Reducers functions specify how the TextArea's value change.
 </Playground>
 
 ## Reducers
+
+```javascript
+  import Form, { TextArea } from 'usetheform'
+```
 
 <Playground>
 {() => {
@@ -53,6 +60,10 @@ Reducers functions specify how the TextArea's value change.
 </Playground>
 
 ## Validation
+
+```javascript
+  import { useValidation } from 'usetheform'
+```
 
 <Playground>
 {() => {

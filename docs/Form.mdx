@@ -1,0 +1,91 @@
+---
+name: Form
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Form } from "./helpers/Form";
+import { Input } from './../src';
+
+# Form
+The Form is the most important component in Usetheform. It renders all the Fields and keeps synchronized the entire form state.
+
+### Props
+
+**`onInit`**: `function`
+
+A function invoked when the Form is initialized.
+
+**`onChange`**: `function`
+
+A function invoked when any Form Field change its value.
+
+**`onReset`**: `function`
+
+A function invoked when the form has been reset to its initial State.
+
+**`onSubmit`**: `function`
+
+A function invoked when the form has been submitted.
+It will be only invoked if your form passes all the validations added at any level (Collections or Fields).
+
+**`initialState`**: `object`
+
+It is a plain object that rappresent the initial state of the form.
+
+**`reducers`**: `array` | `function`
+
+*`(nextState, prevState) => nextState`*
+ 
+An array whose values correspond to different reducing functions.
+Reducers functions specify how the Form's state change.
+
+## Basic usage
+
+```javascript
+  import Form, { Input } from 'usetheform'
+```
+<Playground>
+  <Form
+    initialState={{ name: "foo", sex: "M", option1: "option1" }}
+    onInit={state => console.log("INIT", state)}
+    onChange={state => console.log("CHANGE", state)}
+    onSubmit={state => console.log("SUBMIT", state)}
+  >
+    <Input type="text" name="name" value="foo" />
+    <Input type="radio" name="sex" value="M" />
+    <Input type="radio" name="sex" value="F" />
+    <Input type="checkbox" name="option1" value="option1" />
+    <Input type="checkbox" name="option2" value="option2"  />
+    <button type="submit">Submit</button>
+  </Form>
+</Playground>
+
+## Reducers
+
+```javascript
+  import Form, { Input } from 'usetheform'
+```
+
+<Playground>
+{() => {
+    const maxNumber10 = (nextState, prevState) => { 
+      if (nextState.myNumber > 10) {
+        nextState.myNumber = 10;
+      }
+      return nextState;
+    };
+    const minNumber1 = (nextState, prevState) => { 
+      if (nextState.myNumber <= 0) {
+        nextState.myNumber = 0;
+      }
+      return nextState;
+    };
+    return (
+      <Form reducers={[minNumber1, maxNumber10]}>
+        <Input type="number" name="myNumber" value="1" />
+      </Form>
+    )
+  }
+}
+</Playground>

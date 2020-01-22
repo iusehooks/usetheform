@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { default as FormUsetheform } from "./../../src";
+import { FormContext as FormUsetheform, useForm } from "./../../src";
 import JSONTree from "react-json-tree";
 
-export const Form = ({ onInit, onChange, ...props }) => {
+export const FormContext = ({ onInit, onChange, ...props }) => {
   const [formState, setState] = useState({});
   const onInitFN = state => {
     onInit && onInit(state);
@@ -20,4 +20,9 @@ export const Form = ({ onInit, onChange, ...props }) => {
       <JSONTree data={formState} />
     </>
   );
+};
+
+export const Form = ({ children }) => {
+  const { onSubmitForm } = useForm();
+  return <form onSubmit={onSubmitForm}>{children}</form>;
 };

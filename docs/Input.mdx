@@ -3,7 +3,6 @@ name: Input
 menu: Components
 ---
 
-import { useState } from "react";
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
 import { Input, useValidation } from './../src';
@@ -28,7 +27,7 @@ Specifies the initial value of an *input* element.
 
 **`checked`**: `boolean`
 
-Specifies that an *input* element should be pre-selected when the page loads (for type="checkbox" or type="radio").
+Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
 
 **`reducers`**: `array` | `function`
 
@@ -38,6 +37,10 @@ An array whose values correspond to different reducing functions.
 Reducers functions specify how the Input's value change.
 
 ## Basic usage
+
+```javascript
+  import Form, { Input, Collection } from 'usetheform'
+```
 
 <Playground>
   <Form>
@@ -51,6 +54,10 @@ Reducers functions specify how the Input's value change.
 </Playground>
 
 ## Reducers
+
+```javascript
+  import Form, { Input } from 'usetheform'
+```
 
 <Playground>
 {() => {
@@ -66,6 +73,10 @@ Reducers functions specify how the Input's value change.
 </Playground>
 
 ## Validation
+
+```javascript
+  import { useValidation } from 'usetheform'
+```
 
 <Playground>
 {() => {
