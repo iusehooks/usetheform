@@ -32,6 +32,10 @@ Reducers functions specify how the Select's value change.
 
 ### Single options
 
+```javascript
+  import Form, { Select } from 'usetheform'
+```
+
 <Playground>
   <Form>
     <Select name="select">
@@ -60,6 +64,10 @@ Reducers functions specify how the Select's value change.
 
 ## Reducers
 
+```javascript
+  import Form, { Select } from 'usetheform'
+```
+
 <Playground>
 {() => {
     const tenIfEven = (nextValue, prevValue) => nextValue !== "" && Number(nextValue) % 2 === 0 ? "10" : nextValue;
@@ -82,6 +90,10 @@ Reducers functions specify how the Select's value change.
 </Playground>
 
 ## Validation
+
+```javascript
+  import { useValidation } from 'usetheform'
+```
 
 <Playground>
 {() => {
