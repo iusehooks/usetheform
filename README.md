@@ -1,6 +1,6 @@
-# UseTheForm
+# <img src='https://iusehooks.github.io/usetheform/docs/gatsby-theme-docz/assets/logo.png' width="233" height='51' alt='Usetheform Logo' />
 
-UseTheForm is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others.
+Usetheform is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others.
 
 - [Documentation](https://iusehooks.github.io/usetheform/)
 - [Installation](#Installation)
