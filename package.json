@@ -1,6 +1,6 @@
 {
   "name": "usetheform",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
