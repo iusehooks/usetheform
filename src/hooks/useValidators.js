@@ -1,10 +1,42 @@
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { mergeValidators } from "../utils/utilValidators";
 
 export function useValidators(context, nameProp, isMounted, isAsync = false) {
   const validators = useRef({});
   const validatorsMaps = useRef({});
 
+  const updateValidatorsMap = useCallback((path, isValid, counter) => {
+    // It propagates up to the form context
+    if (context !== undefined) {
+      context.updateValidatorsMap(
+        `${nameProp.current}/${path}`,
+        isValid,
+        counter
+      );
+    } else {
+      validatorsMaps.current[path] = {
+        ...validatorsMaps.current[path],
+        isValid,
+        counter
+      };
+
+      console.log(validatorsMaps.current, "path - ", path, "context ", context);
+    }
+  }, []);
+
+  // resetValidatorsMap only used in useForm
+  const resetValidatorsMap = useCallback(() => {
+    Object.keys(validatorsMaps.current).forEach(key => {
+      const { type } = validatorsMaps.current[key];
+      validatorsMaps.current[key].counter = 0;
+      validatorsMaps.current[key].isValid =
+        type === "collection" ? null : false;
+    });
+    return validatorsMaps.current;
+  }, []);
+
+  // validatorsFN type depends on its context - can be function or object
+  // validatorsMapsFN type depends on its context - can be boolean, null or object
   const { current: addValidators } = useRef(
     (path, validatorsFN, validatorsMapsFN) => {
       validators.current = {
@@ -64,7 +96,14 @@ export function useValidators(context, nameProp, isMounted, isAsync = false) {
       }
     }
   );
-  return [validators, addValidators, removeValidators, validatorsMaps];
+  return [
+    validators,
+    addValidators,
+    removeValidators,
+    validatorsMaps,
+    updateValidatorsMap,
+    resetValidatorsMap
+  ];
 }
 
 function cleanValidators(validatorObj) {

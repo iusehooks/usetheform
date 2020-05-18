@@ -13,7 +13,8 @@ export function FormContext({
   reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
-  name
+  name,
+  action
 }) {
   const ctx = useForm({
     initialState,
@@ -24,7 +25,8 @@ export function FormContext({
     reducers,
     _getInitilaStateForm_,
     _onMultipleForm_,
-    name
+    name,
+    action
   });
 
   return <Context.Provider value={ctx}>{children}</Context.Provider>;

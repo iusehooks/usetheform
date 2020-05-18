@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import Reset from "./helpers/components/Reset";
@@ -15,6 +15,8 @@ const value = "test";
 const onInit = jest.fn(state => state);
 const onChange = jest.fn();
 const onReset = jest.fn();
+
+afterEach(cleanup);
 
 describe("Component => Select", () => {
   beforeEach(() => {

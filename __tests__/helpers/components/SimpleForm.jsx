@@ -6,7 +6,7 @@ import TextField from "./TextField";
 import Reset from "./Reset";
 
 const SimpleForm = props => (
-  <Form {...props}>
+  <Form data-testid="form" {...props}>
     <Collection object name="user">
       <TextField label="Name" name="name" />
       <TextField label="LastName" name="lastname" />

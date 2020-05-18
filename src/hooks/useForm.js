@@ -7,7 +7,9 @@ import {
   STATUS,
   createForm,
   isFormValid,
-  isFormValidAsync
+  isFormValidAsync,
+  generateAsynFuncs,
+  shouldRunAsyncValidator
 } from "./../utils/formUtils";
 
 const noop = _ => undefined;
@@ -22,7 +24,8 @@ export function useForm({
   reducers = [],
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
-  name
+  name,
+  action
 }) {
   const [formState, dispatch] = useState(() => createForm(initialState));
   const stateRef = useRef(formState);
@@ -64,7 +67,10 @@ export function useForm({
   const [
     validatorsAsync,
     addValidatorsAsync,
-    removeValidatorsAsync
+    removeValidatorsAsync,
+    validatorsMapsAsync,
+    updateValidatorsMap,
+    resetValidatorsMap
   ] = useValidators(undefined, undefined, isMounted, true);
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
@@ -143,7 +149,11 @@ export function useForm({
         changePristine !== undefined
           ? changePristine
           : stateRef.current.pristine;
-      const isValid = isFormValid(validators.current, state);
+
+      const isValid =
+        isFormValid(validators.current, state) &&
+        isFormValidAsync(validatorsMapsAsync.current);
+
       dispatchFormState({
         ...stateRef.current,
         state,
@@ -170,26 +180,76 @@ export function useForm({
       return acc;
     }, {});
 
-    const isValid = isFormValid(validators.current, state);
+    const validatorsMapsAsync = resetValidatorsMap();
+
+    const isValid =
+      isFormValid(validators.current, state) &&
+      isFormValidAsync(validatorsMapsAsync);
+
     const status = STATUS.ON_RESET;
 
     dispatchFormState({ ...memoInitialState.current, state, status, isValid });
   });
 
   const { current: onSubmitForm } = useRef(e => {
-    e.preventDefault();
-
+    e.persist();
+    const { isValid, submitted } = stateRef.current;
     const status = STATUS.ON_SUBMIT;
-    const { isValid } = stateRef.current;
-    if (isValid && Object.keys(validatorsAsync.current).length > 0) {
-      const { state } = stateRef.current;
 
-      const asyncArrayProm = isFormValidAsync(validatorsAsync.current, state);
+    if (typeof action !== "string" || !isValid) {
+      e.preventDefault();
+    }
+
+    console.log(validatorsMapsAsync.current, validatorsAsync.current);
+
+    Object.keys(validatorsAsync.current).length > 0 &&
+      console.log(
+        "shouldRunAsyncValidator",
+        shouldRunAsyncValidator(validatorsMapsAsync.current)
+      );
+
+    if (
+      isValid &&
+      Object.keys(validatorsAsync.current).length > 0 &&
+      shouldRunAsyncValidator(validatorsMapsAsync.current)
+    ) {
+      const { state } = stateRef.current;
+      const asyncArrayProm = generateAsynFuncs(
+        validatorsAsync.current,
+        validatorsMapsAsync.current,
+        state,
+        updateValidatorsMap
+      );
+      const { target } = e;
+      e.preventDefault();
+
+      // Se isValid to false until it ends the async checks
+      dispatchFormState({ ...stateRef.current, isValid: false });
+
       Promise.all(asyncArrayProm)
-        .then(() => dispatchFormState({ ...stateRef.current, status }))
-        .catch(() => undefined);
+        .then(() => {
+          dispatchFormState({
+            ...stateRef.current,
+            status,
+            isValid: true,
+            submitted: submitted + 1
+          });
+          if (
+            typeof action === "string" &&
+            typeof target.submit === "function"
+          ) {
+            target.submit();
+          }
+        })
+        .catch(() => {
+          dispatchFormState({ ...stateRef.current, isValid: false });
+        });
     } else {
-      dispatchFormState({ ...stateRef.current, status });
+      dispatchFormState({
+        ...stateRef.current,
+        status,
+        submitted: submitted + 1
+      });
     }
   });
 
@@ -244,7 +304,9 @@ export function useForm({
       ? _getInitilaStateForm_(name) || stateRef.current.state
       : stateRef.current.state;
 
-    const isValid = isFormValid(validators.current, state);
+    const isValid =
+      isFormValid(validators.current, state) &&
+      isFormValidAsync(validatorsMapsAsync.current);
 
     stateRef.current = {
       ...stateRef.current,
@@ -260,7 +322,7 @@ export function useForm({
   return {
     ...formState, // { isValid, state, status, pristine }
     formState: formState.state, // pass the global form state down
-    formStatus: formState.status, // pass the global form state down
+    formStatus: formState.status, // pass the global form status down
     dispatchNewState,
     changeProp,
     initProp,
@@ -272,6 +334,7 @@ export function useForm({
     removeValidators,
     addValidatorsAsync,
     removeValidatorsAsync,
+    updateValidatorsMap,
     registerReset,
     unRegisterReset
   };

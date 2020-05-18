@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 import Form from "./../../src";
 
 import CollectionWithHooks from "./../helpers/components/CollectionWithHooks";
@@ -9,6 +9,7 @@ const mountForm = ({ props = {}, children } = {}) =>
 
 const onInit = jest.fn(state => state);
 const onChange = jest.fn();
+afterEach(cleanup);
 
 describe("Hooks => useCollection", () => {
   beforeEach(() => {

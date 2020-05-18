@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 
 import Form, { TextArea } from "./../src";
 
@@ -9,6 +9,7 @@ const mountForm = ({ props = {}, children } = {}) =>
 const dataTestid = "TextArea";
 const name = "TextArea";
 const value = "test";
+afterEach(cleanup);
 
 describe("Component => TextArea", () => {
   it("should render a TextArea", () => {

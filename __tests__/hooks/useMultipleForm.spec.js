@@ -1,7 +1,8 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
-
+import { render, fireEvent, cleanup } from "@testing-library/react";
 import Wizard from "./../helpers/components/Wizard";
+
+afterEach(cleanup);
 
 describe("Hooks => useMultipleForm", () => {
   it("should handle multiple Forms as a Wizard", () => {

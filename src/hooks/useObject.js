@@ -35,18 +35,12 @@ export function useObject(props) {
     asyncValidator,
     onAsyncValidation = noop
   } = props;
-  // const nameProp = useRef(name);
-
   const nameProp = useGetRefName(context, name);
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const isMounted = useRef(false);
   const { current: stillMounted } = useRef(() => isMounted.current);
-
-  // const { current: setNameProp } = useRef(index => {
-  //   nameProp.current = index;
-  // });
 
   // if it is an array collection it keeps the children and update their indexes
   const children = useRef([]);
@@ -112,6 +106,7 @@ export function useObject(props) {
       newValue !== undefined && Object.keys(newValue).length > 0
         ? newValue
         : undefined;
+
     return newValue;
   });
 
@@ -154,12 +149,6 @@ export function useObject(props) {
         memoInitialState.current
       );
     } else {
-      // const newInitialState = updateState(memoInitialState.current, {
-      //   value: intialValue,
-      //   nameProp: namePropExt
-      // });
-
-      // memoInitialState.current = newInitialState;
       state.current = reducedState;
     }
   });
@@ -218,7 +207,8 @@ export function useObject(props) {
     validatorsAsync,
     addValidatorsAsync,
     removeValidatorsAsync,
-    validatorsMapsAsync
+    validatorsMapsAsync,
+    updateValidatorsMap
   ] = useValidators(context, nameProp, isMounted, true);
 
   const { validationMsg, validationObj, validationFN } = useValidationFunction(
@@ -234,7 +224,7 @@ export function useObject(props) {
     if (context.formStatus === STATUS.ON_RESET) {
       resetSyncErr();
       resetAsyncErr();
-    } else {
+    } else if (context.formStatus !== STATUS.READY) {
       if (
         validationObj.current !== null &&
         context.formStatus === STATUS.ON_SUBMIT
@@ -243,7 +233,7 @@ export function useObject(props) {
         onValidation(checks, isValid);
       }
 
-      if (
+      /*  if (
         ((validationObj.current !== null && validationObj.current.isValid) ||
           validatorsFuncs.length === 0) &&
         context.formStatus === STATUS.ON_SUBMIT &&
@@ -252,11 +242,9 @@ export function useObject(props) {
         validationFNAsync
           .current(state.current)
           .then(val => val)
-          .catch(err => err);
-      } else if (
-        validationObj.current !== null &&
-        !validationObj.current.isValid
-      ) {
+          .catch(err => err); 
+      } else */
+      if (validationObj.current !== null && !validationObj.current.isValid) {
         resetAsyncErr();
       }
     }
@@ -264,11 +252,6 @@ export function useObject(props) {
 
   useEffect(() => {
     isMounted.current = true;
-
-    // if I am children of a context of type "array" I must get my index
-    // if (context.type === "array" && nameProp.current === undefined) {
-    //   nameProp.current = context.getIndex(setNameProp);
-    // }
 
     // Add the its own validators
     if (validatorsFuncs.length > 0) {
@@ -279,12 +262,12 @@ export function useObject(props) {
       context.addValidatorsAsync(
         nameProp.current,
         validationFNAsync.current,
-        false
+        null
       );
     }
-    // --- Add the its own validators --- //
+    // --- Add its own validators --- //
 
-    // Add the its children validators
+    // Add its children validators
     if (Object.keys(validators.current).length > 0) {
       context.addValidators(nameProp.current, validators.current);
     }
@@ -300,7 +283,6 @@ export function useObject(props) {
 
     context.registerReset(nameProp.current, reset);
 
-    // const prevInitialState = type === "array" ? initArray : initObject;
     const newState = applyReducers(
       state.current,
       prevState.current,
@@ -372,6 +354,7 @@ export function useObject(props) {
     removeValidators,
     addValidatorsAsync,
     removeValidatorsAsync,
+    updateValidatorsMap,
     registerReset,
     unRegisterReset
   };

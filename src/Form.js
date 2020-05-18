@@ -14,6 +14,7 @@ export default function Form({
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
+  action,
   ...rest
 }) {
   const { onSubmitForm, ...ctx } = useForm({
@@ -25,12 +26,13 @@ export default function Form({
     reducers,
     _getInitilaStateForm_,
     _onMultipleForm_,
-    name
+    name,
+    action
   });
 
   return (
     <Context.Provider value={ctx}>
-      <form onSubmit={onSubmitForm} {...rest} name={name}>
+      <form action={action} onSubmit={onSubmitForm} {...rest} name={name}>
         {children}
       </form>
     </Context.Provider>

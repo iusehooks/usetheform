@@ -99,6 +99,7 @@ export function useField(props) {
 
     let value = applyReducers(val, valueField.current, formState);
     value = value === "" ? undefined : value;
+
     return value;
   });
 
@@ -223,7 +224,7 @@ export function useField(props) {
       setSyncOnFocus(false);
       resetSyncErr();
       resetAsyncErr();
-    } else {
+    } else if (context.formStatus !== STATUS.READY) {
       const onlyShowOnSubmit = type === "radio" || type === "checkbox";
       const isCustomCmp = type === "custom";
 
@@ -250,8 +251,14 @@ export function useField(props) {
       ) {
         validationFNAsync
           .current(valueField.current)
-          .then(val => val)
-          .catch(err => err);
+          .then(() => {
+            context.updateValidatorsMap(nameProp.current, true, 1);
+          })
+          .catch(err => {
+            if (err !== "cancelled") {
+              context.updateValidatorsMap(nameProp.current, false, 1);
+            }
+          });
       }
     }
   }, [
@@ -298,11 +305,11 @@ function filterProps(allProps) {
       return { ...props, value: fileValue };
     }
     case "select": {
-      const { type: omitType, fileValue, ...props } = allProps;
+      const { type: omitType, fileValue: omitfileValue, ...props } = allProps;
       return props;
     }
     default:
-      const { fileValue, ...props } = allProps;
+      const { fileValue: omitfileValue, ...props } = allProps;
       return props;
   }
 }

@@ -1,10 +1,17 @@
 import React from "react";
-import { render, fireEvent, waitForElement } from "@testing-library/react";
+import {
+  render,
+  fireEvent,
+  waitForElement,
+  cleanup
+} from "@testing-library/react";
 
 import SimpleFormContext from "./helpers/components/SimpleFormContext";
 
 const onChange = jest.fn();
 const onSubmit = jest.fn();
+afterEach(cleanup);
+
 describe("Component => FormContext", () => {
   beforeEach(() => {
     onChange.mockClear();

@@ -1,5 +1,10 @@
 import React from "react";
-import { render, fireEvent, waitForElement } from "@testing-library/react";
+import {
+  render,
+  fireEvent,
+  waitForElement,
+  cleanup
+} from "@testing-library/react";
 
 import Form, { Input } from "./../src";
 
@@ -14,6 +19,7 @@ const onInit = jest.fn(state => state);
 const onChange = jest.fn();
 const onSubmit = jest.fn();
 const onReset = jest.fn();
+afterEach(cleanup);
 
 describe("Component => Input", () => {
   beforeEach(() => {

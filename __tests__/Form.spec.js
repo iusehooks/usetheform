@@ -1,14 +1,21 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import {
+  render,
+  cleanup,
+  fireEvent,
+  waitForElement
+} from "@testing-library/react";
 
 import Form, { Input } from "./../src";
 
 import SimpleForm from "./helpers/components/SimpleForm";
+import SimpleFormWithAsync from "./helpers/components/SimpleFormWithAsync";
 import {
   ComplexForm,
   ComplexFormInitValueAsProps,
   initialState as initialStateComplexForm
 } from "./helpers/components/ComplexForm";
+import { exec } from "child_process";
 
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
@@ -22,6 +29,8 @@ const onInit = jest.fn(state => state);
 const onChange = jest.fn();
 const onReset = jest.fn();
 const onSubmit = jest.fn();
+
+afterEach(cleanup);
 
 describe("Component => Form", () => {
   beforeEach(() => {
@@ -395,5 +404,110 @@ describe("Component => Form", () => {
 
     fireEvent.click(submit);
     expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("should not `preventDefault` Form submission if action props is present and Form is Valid", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const initialState = {
+      user: { name: "foo", lastname: "anything", email: "anything@google.com" }
+    };
+
+    const props = {
+      initialState,
+      action: "http://yourapiserver.com/submit"
+    };
+
+    const { getByTestId } = render(<SimpleForm {...props} />);
+    const form = getByTestId("form");
+
+    const isNotPrevented = fireEvent.submit(form);
+
+    expect(isNotPrevented).toBe(true);
+    console.error = originalError;
+  });
+
+  it("should submit a valid Form with an action and not `preventDefault` form submission", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const initialState = {
+      user: { name: "foo", lastname: "anything", email: "anything@google.com" }
+    };
+
+    const props = {
+      initialState,
+      onSubmit,
+      action: "http://yourapiserver.com/submit",
+      method: "POST"
+    };
+
+    const { getByTestId } = render(<SimpleForm {...props} />);
+    const form = getByTestId("form");
+
+    expect(form.action).toBe(props.action);
+    expect(form.method).toMatch(/POST/i);
+
+    const isNotPrevented = fireEvent.submit(form);
+
+    expect(onSubmit).toHaveBeenCalled();
+    expect(isNotPrevented).toBe(true);
+
+    console.error = originalError;
+  });
+
+  it("should not submit a invalid Form with an action and `preventDefault` form submission", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const initialState = {
+      user: { name: "foo", lastname: "anything", email: "anything_google.com" }
+    };
+
+    const props = {
+      initialState,
+      onSubmit,
+      action: "http://yourapiserver.com/submit",
+      method: "POST"
+    };
+
+    const { getByTestId } = render(<SimpleForm {...props} />);
+    const form = getByTestId("form");
+
+    expect(form.action).toBe(props.action);
+    expect(form.method).toMatch(/POST/i);
+
+    const isNotPrevented = fireEvent.submit(form);
+
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(isNotPrevented).toBe(false);
+    console.error = originalError;
+  });
+
+  it("should <Submit /> button being disabled for an a invalid Form with Async Fields validators functions", async () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const initialState = {
+      user: { username: "foo" }
+    };
+
+    const props = {
+      initialState,
+      onSubmit
+    };
+
+    const { getByTestId } = render(<SimpleFormWithAsync {...props} />);
+    const form = getByTestId("form");
+    const submitbutton = getByTestId("submit");
+
+    fireEvent.submit(form);
+
+    const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
+    expect(asyncStart).toBeDefined();
+
+    const asyncError = await waitForElement(() => getByTestId("asyncError"));
+    expect(asyncError).toBeDefined();
+
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(submitbutton.disabled).toBe(true);
+    console.error = originalError;
   });
 });

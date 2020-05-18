@@ -1,16 +1,22 @@
-export function mergeValidators(path, validatorFN, clean) {
+export function mergeValidators(path, value, clean) {
   let newValidators = {};
-  if (typeof validatorFN === "object") {
-    newValidators = Object.keys(validatorFN).reduce((acc, key) => {
+  if (typeof value === "object" && value !== null) {
+    newValidators = Object.keys(value).reduce((acc, key) => {
       if (clean) {
         acc[`${path}/${key}`] = undefined;
-      } else if (validatorFN[key] !== undefined) {
-        acc[`${path}/${key}`] = validatorFN[key];
+      } else if (value[key] !== undefined) {
+        acc[`${path}/${key}`] = value[key];
       }
       return acc;
     }, {});
-  } else if (typeof validatorFN === "function") {
-    newValidators = clean ? { [path]: undefined } : { [path]: validatorFN };
+  } else if (typeof value === "function") {
+    newValidators = clean ? { [path]: undefined } : { [path]: value };
+  } else if (typeof value === "boolean" || value === null) {
+    const pathValue =
+      value === null
+        ? { type: "collection", isValid: value, counter: 0 }
+        : { type: "field", isValid: value, counter: 0 };
+    newValidators = clean ? { [path]: undefined } : { [path]: pathValue };
   }
   return newValidators;
 }
