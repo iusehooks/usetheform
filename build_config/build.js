@@ -22,7 +22,7 @@ exec("babel src -d build/es --ignore __tests__", {
 
 console.log("\nBuilding ES modules through Rollup ...");
 
-exec("rollup -c -f es -o build/index.es.js", {
+exec("rollup -c -f es -o build/index.es.mjs", {
   BABEL_ENV: "es-rollup",
   NODE_ENV: "production"
 });
