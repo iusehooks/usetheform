@@ -486,7 +486,7 @@ describe("Component => Form", () => {
     const originalError = console.error;
     console.error = jest.fn();
     const initialState = {
-      user: { username: "foo" }
+      username: "foo"
     };
 
     const props = {

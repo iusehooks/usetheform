@@ -1,7 +1,6 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useOwnContext } from "./useOwnContext";
 import { useValidators } from "./useValidators";
-import { useGetRefName } from "./useGetRefName";
 import { isValidValue } from "./../utils/isValidValue";
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
@@ -25,6 +24,7 @@ export function useObject(props) {
 
   const {
     name,
+    index,
     type,
     value: initValue,
     reducers = [],
@@ -35,7 +35,12 @@ export function useObject(props) {
     asyncValidator,
     onAsyncValidation = noop
   } = props;
-  const nameProp = useGetRefName(context, name);
+  const nameProp = useRef(name || index);
+  nameProp.current = name || index;
+
+  /* const { current: setNameProp } = useRef(index => {
+    nameProp.current = index;
+  }); */
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
@@ -43,11 +48,13 @@ export function useObject(props) {
   const { current: stillMounted } = useRef(() => isMounted.current);
 
   // if it is an array collection it keeps the children and update their indexes
-  const children = useRef([]);
-  const { current: getIndex } = useRef(childFn => {
-    if (children.current.indexOf(childFn) === -1) {
-      children.current.push(childFn);
+  /* const children = useRef([]);
+  const { current: getIndex } = useRef(childFNsetName => {
+    if (children.current.indexOf(childFNsetName) === -1) {
+      children.current.push(childFNsetName);
     }
+    // console.log("children.current ", children.current);
+
     return children.current.length - 1;
   });
 
@@ -55,7 +62,7 @@ export function useObject(props) {
     children.current.splice(targeIndex, 1);
     // update children index
     children.current.forEach((fnChild, index) => fnChild(index));
-  });
+  });*/
 
   const init = initValue || (type && type === "array" ? initArray : initObject);
   const state = useRef(init);
@@ -77,13 +84,19 @@ export function useObject(props) {
   const formState = useRef(null);
   formState.current = context.formState;
 
-  const resetObj = useRef(init);
+  const resetObj = useRef(type === "array" ? [] : {});
   const { current: registerReset } = useRef((namePropExt, fnReset) => {
-    resetObj.current =
-      resetObj.current.constructor === Array
-        ? [...resetObj.current]
-        : { ...resetObj.current };
-    resetObj.current[namePropExt] = fnReset;
+    const isArray = type === "array";
+
+    resetObj.current = isArray
+      ? [...resetObj.current]
+      : { ...resetObj.current };
+
+    if (isArray && typeof resetObj.current[namePropExt] !== "undefined") {
+      resetObj.current.splice(Number(namePropExt), 0, fnReset);
+    } else {
+      resetObj.current[namePropExt] = fnReset;
+    }
   });
 
   const { current: unRegisterReset } = useRef(namePropExt => {
@@ -124,34 +137,40 @@ export function useObject(props) {
     context.changeProp(nameProp.current, newState, removeProp);
   });
 
-  const { current: initProp } = useRef((namePropExt, value, intialValue) => {
-    const newState = updateState(state.current, {
-      value,
-      nameProp: namePropExt
-    });
-    memoInitialState.current = updateState(memoInitialState.current, {
-      value: intialValue,
-      nameProp: namePropExt
-    });
+  const { current: initProp } = useRef(
+    (namePropExt, value, intialValue, add = true) => {
+      const newState = updateState(state.current, {
+        value,
+        nameProp: namePropExt,
+        add: isMounted.current && add
+      });
 
-    const reducedState = applyReducers(
-      newState,
-      state.current,
-      formState.current
-    );
+      memoInitialState.current = updateState(memoInitialState.current, {
+        value: intialValue,
+        nameProp: namePropExt,
+        add: isMounted.current && add
+      });
 
-    prevState.current = newState;
-
-    if (isMounted.current) {
-      context.initProp(
-        nameProp.current,
-        reducedState,
-        memoInitialState.current
+      const reducedState = applyReducers(
+        newState,
+        state.current,
+        formState.current
       );
-    } else {
-      state.current = reducedState;
+
+      prevState.current = newState;
+
+      if (isMounted.current) {
+        context.initProp(
+          nameProp.current,
+          reducedState,
+          memoInitialState.current,
+          false
+        );
+      } else {
+        state.current = reducedState;
+      }
     }
-  });
+  );
 
   const { current: removeProp } = useRef(
     (
@@ -224,7 +243,10 @@ export function useObject(props) {
     if (context.formStatus === STATUS.ON_RESET) {
       resetSyncErr();
       resetAsyncErr();
-    } else if (context.formStatus !== STATUS.READY) {
+    } else if (
+      context.formStatus !== STATUS.READY &&
+      context.formStatus !== STATUS.ON_INIT_ASYNC
+    ) {
       if (
         validationObj.current !== null &&
         context.formStatus === STATUS.ON_SUBMIT
@@ -233,22 +255,17 @@ export function useObject(props) {
         onValidation(checks, isValid);
       }
 
-      /*  if (
-        ((validationObj.current !== null && validationObj.current.isValid) ||
-          validatorsFuncs.length === 0) &&
-        context.formStatus === STATUS.ON_SUBMIT &&
-        typeof asyncValidator === "function"
-      ) {
-        validationFNAsync
-          .current(state.current)
-          .then(val => val)
-          .catch(err => err); 
-      } else */
       if (validationObj.current !== null && !validationObj.current.isValid) {
         resetAsyncErr();
       }
     }
   }, [validationMsg.current, context.formStatus]);
+
+  // used to register async validation Actions
+  const asyncInitValidation = useRef({});
+  const registerAsyncInitValidation = useCallback((nameProp, asyncFunc) => {
+    asyncInitValidation.current[nameProp] = asyncFunc;
+  }, []);
 
   useEffect(() => {
     isMounted.current = true;
@@ -263,6 +280,14 @@ export function useObject(props) {
         nameProp.current,
         validationFNAsync.current,
         null
+      );
+    }
+
+    // register to parent any initial async Validators to be run ON_INIT
+    if (Object.keys(asyncInitValidation.current).length > 0) {
+      context.registerAsyncInitValidation(
+        nameProp.current,
+        asyncInitValidation.current
       );
     }
     // --- Add its own validators --- //
@@ -280,6 +305,8 @@ export function useObject(props) {
       );
     }
     // --- Add the its children validators --- //
+
+    // console.log("reset Obj - ", reset);
 
     context.registerReset(nameProp.current, reset);
 
@@ -332,9 +359,6 @@ export function useObject(props) {
         );
 
         context.unRegisterReset(nameProp.current);
-        if (context.type === "array") {
-          context.removeIndex(nameProp.current);
-        }
       }
     };
   }, []);
@@ -343,13 +367,15 @@ export function useObject(props) {
     state: state.current, // pass the state of the current context down
     formState: context.formState, // pass the global form state down
     formStatus: context.formStatus, // pass the global form status down
+    runAsyncValidation: context.runAsyncValidation,
+    registerAsyncInitValidation,
     changeProp,
     initProp,
     removeProp,
     stillMounted,
     type,
-    getIndex,
-    removeIndex,
+    // getIndex,
+    // removeIndex,
     addValidators,
     removeValidators,
     addValidatorsAsync,

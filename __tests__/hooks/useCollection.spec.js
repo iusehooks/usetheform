@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, cleanup } from "@testing-library/react";
-import Form from "./../../src";
+import Form, { Collection } from "./../../src";
 
 import CollectionWithHooks from "./../helpers/components/CollectionWithHooks";
 
@@ -18,26 +18,68 @@ describe("Hooks => useCollection", () => {
   });
   it("should change Collection value due to an action", () => {
     const props = { onChange };
-    const children = [<CollectionWithHooks key="1" />];
+    const children = [
+      <CollectionWithHooks key="1" name="test" propToChange="lastname" />
+    ];
     const { getByTestId } = mountForm({ props, children });
 
     const changeCollection = getByTestId("changeCollection");
     fireEvent.click(changeCollection);
-    expect(onChange).toHaveBeenCalledWith({ hook: { name: "foo" } });
+    expect(onChange).toHaveBeenCalledWith({ test: { lastname: "foo" } });
   });
 
   it("should create a Collection with an initial value", () => {
     const props = { onInit };
-    const children = [<CollectionWithHooks key="1" value={{ name: "test" }} />];
+    const children = [
+      <CollectionWithHooks key="1" name="test" value={{ name: "foo" }} />
+    ];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ hook: { name: "test" } });
+    expect(onInit).toHaveReturnedWith({ test: { name: "foo" } });
+  });
+
+  it("should create a nested Collection with an initial value", () => {
+    const props = { onInit };
+    const children = [
+      <Collection
+        array
+        name="array"
+        key="1"
+        value={[{ name: "foo" }, { lastname: "foo" }]}
+      >
+        <CollectionWithHooks />
+        <CollectionWithHooks />
+      </Collection>
+    ];
+    mountForm({ props, children });
+    expect(onInit).toHaveReturnedWith({
+      array: [{ name: "foo" }, { lastname: "foo" }]
+    });
+  });
+
+  it("should change a nested Collection value due to an action", () => {
+    const props = { onChange };
+    const children = [
+      <Collection array name="array" key="1">
+        <CollectionWithHooks />
+      </Collection>
+    ];
+    const { getByTestId } = mountForm({ props, children });
+
+    const changeCollection = getByTestId("changeCollection");
+    fireEvent.click(changeCollection);
+    expect(onChange).toHaveBeenCalledWith({ array: [{ 0: "foo" }] });
   });
 
   it("should throw an error for invalids initial values", () => {
     const originalError = console.error;
     console.error = jest.fn();
     const children = [
-      <CollectionWithHooks key="1" type="array" value={{ name: "test" }} />
+      <CollectionWithHooks
+        name="test"
+        key="1"
+        type="array"
+        value={{ test: "test" }}
+      />
     ];
     expect(() => mountForm({ children })).toThrowError(
       /it is not allowed as initial value/i

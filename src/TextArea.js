@@ -7,6 +7,8 @@ export function TextArea({
   onChange,
   children: omitChildren,
   name,
+  index,
+  indexAuto,
   validators,
   asyncValidator,
   onValidation,
@@ -24,6 +26,7 @@ export function TextArea({
     onChange,
     type: "text",
     name,
+    index,
     value,
     validators,
     asyncValidator,
@@ -37,3 +40,7 @@ export function TextArea({
 
   return <textarea {...extraProps} {...props} />;
 }
+
+TextArea.defaultProps = {
+  indexAuto: true
+};

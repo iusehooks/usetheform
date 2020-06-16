@@ -5,6 +5,7 @@ menu: Components
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
+import CustomInput from "./helpers/CustomInput"
 import { Collection, useValidation, Input } from './../src';
 
 # Collection
@@ -22,9 +23,13 @@ It creates a collecion of type **object** if "true".
 
 It creates a collecion of type **array** if "true".
 
-**`name`**: `string`
+**`name`**: `string` - (excpet for **Collection** children of Collection of type array)
 
 A field's name in Usetheform state.
+
+**`index`**: `string` - (only for **Collection** children of Collection of type array)
+
+A field's index in array Collection.
 
 **`value`**: `array` | `object`
 
@@ -136,4 +141,52 @@ Validation for Collection starts only on form submission.
     )
   }
 }
+</Playground>
+
+## Array Collection
+
+Array Collection of Input with indexes handled maunally.
+
+```javascript
+  import Form, { Input, Collection } from 'usetheform'
+```
+
+<Playground>
+      <Form>
+        <Collection array name="numberList"  >
+          <label>
+            One: 
+            <Input type="number" index="1" value="1" />
+          </label>
+           <label>
+             Two:
+            <Input type="number" index="2" value="2" />
+          </label>
+        </Collection>
+      </Form>
+</Playground>
+
+<br />
+Array Collection of Input with indexes handled automatically.
+
+```javascript
+import React from "react";
+import { Input, withIndex } from "usetheform";
+
+const CustomInput = ({ index, label, value, type }) => (
+  <label>
+    {label}: <Input type={type} index={index} value={value} /> 
+  </label>
+);
+
+export default withIndex(CustomInput);
+```
+
+<Playground>
+      <Form>
+        <Collection array name="numberList">
+          <CustomInput label="One" type="number" value="1" />
+          <CustomInput label="Two" type="number" value="2" />
+        </Collection>
+      </Form>
 </Playground>

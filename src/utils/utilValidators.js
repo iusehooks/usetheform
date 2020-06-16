@@ -12,6 +12,8 @@ export function mergeValidators(path, value, clean) {
   } else if (typeof value === "function") {
     newValidators = clean ? { [path]: undefined } : { [path]: value };
   } else if (typeof value === "boolean" || value === null) {
+    // typeof value === "boolean" || value === null only for async validators
+    // value === null if it is an asycn func added on a Collection
     const pathValue =
       value === null
         ? { type: "collection", isValid: value, counter: 0 }

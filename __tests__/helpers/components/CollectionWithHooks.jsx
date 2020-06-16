@@ -1,14 +1,23 @@
 import React from "react";
-import { useCollection } from "./../../../src";
+import { useCollection, withIndex } from "./../../../src";
 
-export default function CollectionWithHooks({ value, type = "object" }) {
+export function CollectionWithHooks({
+  value,
+  type = "object",
+  index,
+  name,
+  propToChange
+}) {
   const { updateCollection } = useCollection({
-    name: "hook",
+    index,
+    name,
     type,
     value
   });
 
-  const onUpdateCollection = () => updateCollection("name", "foo");
+  const propName = propToChange || name || index;
+
+  const onUpdateCollection = () => updateCollection(propName, "foo");
 
   return (
     <button
@@ -20,3 +29,5 @@ export default function CollectionWithHooks({ value, type = "object" }) {
     </button>
   );
 }
+
+export default withIndex(CollectionWithHooks);

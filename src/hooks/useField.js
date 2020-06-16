@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { useOwnContext } from "./useOwnContext";
-import { useGetRefName } from "./useGetRefName";
 
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
@@ -22,6 +21,7 @@ export function useField(props) {
 
   let {
     name,
+    index,
     validators = [],
     asyncValidator,
     type,
@@ -44,11 +44,13 @@ export function useField(props) {
   formState.current = context.formState;
 
   const isMounted = useRef(false);
-  const nameProp = useGetRefName(context, name);
+  const nameProp = useRef(name || index);
+  nameProp.current = name || index;
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
   const fileField = useRef("");
+  const valueFieldLastAsyncCheck = useRef(null);
 
   const [initialValueRef, initialCheckedRef] = getInitialValue(
     type,
@@ -56,7 +58,8 @@ export function useField(props) {
     nameProp,
     initialValue,
     initialChecked,
-    isMounted
+    isMounted,
+    context
   );
 
   if (type === "checkbox" || type === "radio") {
@@ -86,21 +89,47 @@ export function useField(props) {
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const { current: reset } = useRef(formState => {
-    let val = initialValueRef.current;
+    switch (type) {
+      case "number":
+      case "range": {
+        let val =
+          initialValueRef.current !== ""
+            ? Number(initialValueRef.current)
+            : initialValueRef.current;
+        const value = applyReducers(val, valueField.current, formState);
+        return value === "" ? undefined : value;
+      }
+      case "radio":
+      case "checkbox": {
+        checkedField.current = initialCheckedRef.current;
+        let val = initialValueRef.current;
+        const value = applyReducers(val, valueField.current, formState);
+        return initialCheckedRef.current === false ? undefined : value;
+      }
+      default: {
+        let val = initialValueRef.current;
+        const value = applyReducers(val, valueField.current, formState);
+        return value === "" ? undefined : value;
+      }
+    }
 
+    /* let val = initialValueRef.current;
     if (type === "number" || type === "range") {
       val =
         initialValueRef.current !== ""
           ? Number(initialValueRef.current)
           : initialValueRef.current;
     } else if (type === "checkbox" || type === "radio") {
+      if (initialCheckedRef.current === false) {
+        val = "";
+      }
       checkedField.current = initialCheckedRef.current;
     }
 
     let value = applyReducers(val, valueField.current, formState);
     value = value === "" ? undefined : value;
 
-    return value;
+    return value; */
   });
 
   const onChange = event => {
@@ -122,7 +151,11 @@ export function useField(props) {
       fileField.current = target.value;
     } else if (type === "checkbox") {
       nextValue =
-        state[nameProp.current] !== undefined ? "" : target.value || true;
+        state[nameProp.current] !== undefined
+          ? ""
+          : initialValueRef.current || target.value || true;
+    } else if (type === "radio") {
+      nextValue = initialValueRef.current || target.value || true;
     } else {
       nextValue =
         type === "number" || type === "range"
@@ -157,10 +190,27 @@ export function useField(props) {
         validationFNAsync.current,
         false
       );
+      if (initialValue !== "" || initialValueRef.current !== "") {
+        context.registerAsyncInitValidation(nameProp.current, () => {
+          valueFieldLastAsyncCheck.current = initialValueRef.current;
+          return validationFNAsync
+            .current(initialValueRef.current)
+            .then(() => {
+              context.updateValidatorsMap(nameProp.current, true, 1);
+            })
+            .catch(err => {
+              if (err !== "cancelled") {
+                context.updateValidatorsMap(nameProp.current, false, 1);
+              }
+              throw err;
+            });
+        });
+      }
     }
 
     context.registerReset(nameProp.current, reset);
 
+    /* if a initialValue or initialChecked is passed as prop */
     if (
       (type !== "checkbox" && type !== "radio" && initialValue !== "") ||
       ((type === "checkbox" || type === "radio") && initialChecked)
@@ -197,9 +247,6 @@ export function useField(props) {
           true
         );
         context.unRegisterReset(nameProp.current);
-        if (context.type === "array") {
-          context.removeIndex(nameProp.current);
-        }
       }
     };
   }, []);
@@ -224,10 +271,12 @@ export function useField(props) {
       setSyncOnFocus(false);
       resetSyncErr();
       resetAsyncErr();
-    } else if (context.formStatus !== STATUS.READY) {
+    } else if (
+      context.formStatus !== STATUS.READY &&
+      context.formStatus !== STATUS.ON_INIT_ASYNC
+    ) {
       const onlyShowOnSubmit = type === "radio" || type === "checkbox";
       const isCustomCmp = type === "custom";
-
       if (
         validationObj.current !== null &&
         ((!onlyShowOnSubmit && initialValue !== "") ||
@@ -247,18 +296,24 @@ export function useField(props) {
           validators.length === 0) &&
         onAsyncBlurState &&
         context.formStatus !== STATUS.ON_SUBMIT &&
+        context.formStatus !== STATUS.ON_INIT_ASYNC &&
         typeof asyncValidator === "function"
       ) {
-        validationFNAsync
-          .current(valueField.current)
-          .then(() => {
-            context.updateValidatorsMap(nameProp.current, true, 1);
-          })
-          .catch(err => {
-            if (err !== "cancelled") {
-              context.updateValidatorsMap(nameProp.current, false, 1);
-            }
-          });
+        if (valueFieldLastAsyncCheck.current !== valueField.current) {
+          valueFieldLastAsyncCheck.current = valueField.current;
+          context.runAsyncValidation({ start: true });
+          validationFNAsync
+            .current(valueField.current)
+            .then(() => {
+              context.updateValidatorsMap(nameProp.current, true, 1);
+              context.runAsyncValidation({ end: true, value: true });
+            })
+            .catch(err => {
+              if (err !== "cancelled") {
+                context.updateValidatorsMap(nameProp.current, false, 1);
+              }
+            });
+        }
       }
     }
   }, [
@@ -315,7 +370,7 @@ function filterProps(allProps) {
 }
 
 function validateProps(
-  { name, value, checked, type, asyncValidator },
+  { name, index, value, checked, type, asyncValidator },
   contextType
 ) {
   if (type === undefined) {
@@ -345,6 +400,14 @@ function validateProps(
     return `The prop "checked" -> "${checked}" passed to "useField": ${name} of type: ${type} is not allowed. You can use "value" prop instead to set an initial value.`;
   }
 
+  if (
+    contextType === "array" &&
+    typeof index !== "number" &&
+    typeof index !== "string"
+  ) {
+    return `The prop "index": ${index} of type "${typeof index}" passed to "${type}" must be either a string or number represent as integers.`;
+  }
+
   if (!isValidValue(name, contextType)) {
     const nameContext = contextType || "<Form />";
     return `The prop "name": ${name} of type "${typeof name}" passed to "${type}" it is not allowed within context a of type "${nameContext}".`;
@@ -357,18 +420,27 @@ function getInitialValue(
   nameProp,
   initialValue,
   initialChecked,
-  isMounted
+  isMounted,
+  context
 ) {
-  const initialValueRef = useRef(initialValue);
-  const initialCheckedRef = useRef(initialChecked);
-  if (state[nameProp.current] !== undefined && !isMounted.current) {
-    // Radio input must have an initialValue passed as prop so we do not need to check it
-    if (type !== "radio") {
-      initialValueRef.current = state[nameProp.current];
+  let initValueRef = initialValue;
+  let initCheckRef = initialChecked;
+
+  if (
+    state[nameProp.current] !== undefined &&
+    !isMounted.current &&
+    !context.stillMounted()
+  ) {
+    if (type !== "radio" && initValueRef === "") {
+      initValueRef = state[nameProp.current];
     }
-    if (type === "checkbox" || type === "radio") {
-      initialCheckedRef.current = true;
+    if (initialChecked === false && (type === "checkbox" || type === "radio")) {
+      initCheckRef = true;
     }
   }
+
+  const initialValueRef = useRef(initValueRef);
+  const initialCheckedRef = useRef(initCheckRef);
+
   return [initialValueRef, initialCheckedRef];
 }

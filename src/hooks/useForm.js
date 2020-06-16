@@ -1,15 +1,16 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useValidators } from "./useValidators";
-
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
+
 import {
   STATUS,
   createForm,
   isFormValid,
   isFormValidAsync,
   generateAsynFuncs,
-  shouldRunAsyncValidator
+  shouldRunAsyncValidator,
+  flatAsyncValidationMap
 } from "./../utils/formUtils";
 
 const noop = _ => undefined;
@@ -200,14 +201,6 @@ export function useForm({
       e.preventDefault();
     }
 
-    console.log(validatorsMapsAsync.current, validatorsAsync.current);
-
-    Object.keys(validatorsAsync.current).length > 0 &&
-      console.log(
-        "shouldRunAsyncValidator",
-        shouldRunAsyncValidator(validatorsMapsAsync.current)
-      );
-
     if (
       isValid &&
       Object.keys(validatorsAsync.current).length > 0 &&
@@ -223,7 +216,7 @@ export function useForm({
       const { target } = e;
       e.preventDefault();
 
-      // Se isValid to false until it ends the async checks
+      // Set isValid to false until it ends the async checks
       dispatchFormState({ ...stateRef.current, isValid: false });
 
       Promise.all(asyncArrayProm)
@@ -242,7 +235,8 @@ export function useForm({
           }
         })
         .catch(() => {
-          dispatchFormState({ ...stateRef.current, isValid: false });
+          const isValid = shouldRunAsyncValidator(validatorsMapsAsync.current);
+          dispatchFormState({ ...stateRef.current, isValid });
         });
     } else {
       dispatchFormState({
@@ -263,6 +257,50 @@ export function useForm({
     propagateState(newState, false);
   });
 
+  // used to register async validation Actions
+  const asyncInitValidation = useRef({});
+  const registerAsyncInitValidation = useCallback((nameProp, asyncFunc) => {
+    asyncInitValidation.current[nameProp] = asyncFunc;
+  }, []);
+
+  const runInitialAsyncValidators = useCallback(() => {
+    const keyAsyncValitions = Object.keys(asyncInitValidation.current);
+    if (keyAsyncValitions.length > 0) {
+      const promises = flatAsyncValidationMap(asyncInitValidation.current);
+      const status = STATUS.ON_INIT_ASYNC;
+      Promise.all(promises)
+        .then(() => {
+          const isValid = isFormValid(
+            validators.current,
+            stateRef.current.state
+          );
+          dispatchFormState({
+            ...stateRef.current,
+            status,
+            isValid
+          });
+        })
+        .catch(() => {
+          dispatchFormState({
+            ...stateRef.current,
+            status,
+            isValid: false
+          });
+        });
+    }
+  }, []);
+
+  const runAsyncValidation = useCallback(({ start, end }) => {
+    if (start) {
+      dispatchFormState({ ...stateRef.current, isValid: false });
+    } else if (end) {
+      const isValid =
+        isFormValid(validators.current, stateRef.current.state) &&
+        isFormValidAsync(validatorsMapsAsync.current);
+      dispatchFormState({ ...stateRef.current, isValid });
+    }
+  }, []);
+
   // change status form to READY after being reset
   useEffect(() => {
     const { status, state, isValid } = stateRef.current;
@@ -274,6 +312,7 @@ export function useForm({
     } else if (status === STATUS.ON_INIT) {
       const updateState = newState => propagateState(newState, false);
       onInit(state, updateState);
+      runInitialAsyncValidators();
     } else if (status === STATUS.ON_SUBMIT) {
       isValid && onSubmit(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.READY });
@@ -323,6 +362,8 @@ export function useForm({
     ...formState, // { isValid, state, status, pristine }
     formState: formState.state, // pass the global form state down
     formStatus: formState.status, // pass the global form status down
+    registerAsyncInitValidation,
+    runAsyncValidation,
     dispatchNewState,
     changeProp,
     initProp,

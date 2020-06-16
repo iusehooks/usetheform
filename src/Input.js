@@ -7,6 +7,8 @@ export function Input({
   onChange,
   children: omitChildren,
   name,
+  index,
+  indexAuto,
   checked,
   validators,
   asyncValidator,
@@ -27,6 +29,7 @@ export function Input({
     onChange,
     type,
     name,
+    index,
     checked,
     value,
     validators,
@@ -42,3 +45,7 @@ export function Input({
 
   return <input {...extraProps} {...props} />;
 }
+
+Input.defaultProps = {
+  indexAuto: true
+};

@@ -3,7 +3,8 @@ export const STATUS = {
   READY: "READY",
   ON_CHANGE: "ON_CHANGE",
   ON_INIT: "ON_INIT",
-  ON_SUBMIT: "ON_SUBMIT"
+  ON_SUBMIT: "ON_SUBMIT",
+  ON_INIT_ASYNC: "ON_INIT_ASYNC"
 };
 
 export const createForm = (state = {}) => ({
@@ -55,7 +56,7 @@ export const generateAsynFuncs = (
         })
         .catch(err => {
           updateValidatorsMap(key, false, 1);
-          return err;
+          throw err;
         });
     });
 
@@ -66,6 +67,19 @@ export const shouldRunAsyncValidator = validatorsMaps =>
       const { isValid, counter } = validatorsMaps[key];
       return (counter === 0 && !isValid) || (counter === 1 && isValid);
     });
+
+export const flatAsyncValidationMap = asyncInitMap =>
+  Object.keys(asyncInitMap).reduce((acc, key) => {
+    const target = asyncInitMap[key];
+    if (typeof target === "function") {
+      acc.push(target());
+    } else {
+      const funcs = flatAsyncValidationMap(target);
+
+      acc.push(...funcs);
+    }
+    return acc;
+  }, []);
 
 export const fileList = files =>
   Object.keys(files).reduce((acc, key) => [...acc, files[key]], []);

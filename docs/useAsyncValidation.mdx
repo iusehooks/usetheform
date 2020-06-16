@@ -60,8 +60,19 @@ An array that holds:
     return (
       <Form>
         <Input type="text" name="anyname" touched {...validationAttr} />
-        {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
-      </Form>
+        {asyncStatus.status === undefined && (
+          <label data-testid="asyncNotStartedYet">asyncNotStartedYet</label>
+        )}
+        {asyncStatus.status === "asyncStart" && (
+          <label data-testid="asyncStart">Checking...</label>
+        )}
+        {asyncStatus.status === "asyncError" && (
+          <label data-testid="asyncError">{asyncStatus.value}</label>
+        )}
+        {asyncStatus.status === "asyncSuccess" && (
+          <label data-testid="asyncSuccess">{asyncStatus.value}</label>
+        )}
+       </Form>
     )
   }
 }

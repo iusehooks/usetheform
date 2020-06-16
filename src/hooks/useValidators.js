@@ -19,8 +19,6 @@ export function useValidators(context, nameProp, isMounted, isAsync = false) {
         isValid,
         counter
       };
-
-      console.log(validatorsMaps.current, "path - ", path, "context ", context);
     }
   }, []);
 
@@ -35,19 +33,19 @@ export function useValidators(context, nameProp, isMounted, isAsync = false) {
     return validatorsMaps.current;
   }, []);
 
-  // validatorsFN type depends on its context - can be function or object
-  // validatorsMapsFN type depends on its context - can be boolean, null or object
+  // syncValidatorsValue type depends on its context - can be function or object
+  // asyncValidatorsValue type depends on its context - can be boolean, null or object
   const { current: addValidators } = useRef(
-    (path, validatorsFN, validatorsMapsFN) => {
+    (path, syncValidatorsValue, asyncValidatorsValue) => {
       validators.current = {
         ...validators.current,
-        ...mergeValidators(path, validatorsFN)
+        ...mergeValidators(path, syncValidatorsValue)
       };
 
       if (isAsync) {
         validatorsMaps.current = {
           ...validatorsMaps.current,
-          ...mergeValidators(path, validatorsMapsFN)
+          ...mergeValidators(path, asyncValidatorsValue)
         };
       }
 

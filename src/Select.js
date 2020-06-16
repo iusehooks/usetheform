@@ -7,6 +7,8 @@ export function Select({
   onChange,
   children,
   name,
+  index,
+  indexAuto,
   validators,
   asyncValidator,
   onValidation,
@@ -25,6 +27,7 @@ export function Select({
     onChange,
     type: "select",
     name,
+    index,
     value,
     validators,
     asyncValidator,
@@ -43,3 +46,7 @@ export function Select({
     </select>
   );
 }
+
+Select.defaultProps = {
+  indexAuto: true
+};

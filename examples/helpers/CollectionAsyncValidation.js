@@ -1,10 +1,6 @@
-import React from "react";
-import {
-  Input,
-  Collection,
-  useAsyncValidation,
-  useChildren
-} from "./../../../src";
+/* eslint-disable react/react-in-jsx-scope */
+
+const { Input, Collection, useAsyncValidation, useChildren } = UseTheForm;
 
 const asyncTest = value =>
   new Promise((resolve, reject) => {
@@ -12,11 +8,12 @@ const asyncTest = value =>
       if (value.length <= 1) {
         reject("Add at least two Inputs");
       } else resolve();
-    }, 200);
+    }, 1000);
   });
 
 let index = 0;
-export default function CollectionAsyncValidation() {
+
+window.CollectionAsyncValidation = function() {
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
   const [inputs, setInputs] = useChildren([]);
   const addInput = () => {
@@ -32,10 +29,10 @@ export default function CollectionAsyncValidation() {
     <div>
       <label>Inputs: (Async Validation) </label>
       <br />
-      <button type="button" data-testid="addInput" onClick={addInput}>
+      <button type="button" onClick={addInput}>
         Add an Input
       </button>
-      <button type="button" data-testid="removeInput" onClick={removeInput}>
+      <button type="button" onClick={removeInput}>
         Remove an Input
       </button>
       <br />
@@ -55,4 +52,4 @@ export default function CollectionAsyncValidation() {
       )}
     </div>
   );
-}
+};

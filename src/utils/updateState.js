@@ -1,6 +1,12 @@
-export function updateState(state, { nameProp, value, removeMe }) {
-  let newState = state.constructor === Array ? [...state] : { ...state };
-  newState[nameProp] = value;
+export function updateState(state, { nameProp, value, removeMe, add = false }) {
+  const isArray = state.constructor === Array;
+  let newState = isArray ? [...state] : { ...state };
+
+  if (add && isArray && typeof newState[nameProp] !== "undefined") {
+    newState.splice(nameProp, 0, value);
+  } else {
+    newState[nameProp] = value;
+  }
 
   if (
     removeMe ||

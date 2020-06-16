@@ -124,15 +124,23 @@ describe("Component => Input", () => {
     expect(asyncError).toBeDefined();
     expect(asyncError.textContent).toBe("Error");
 
-    asyncinput.focus();
     fireEvent.change(asyncinput, { target: { value: "1234" } });
-    fireEvent.click(submit);
+    asyncinput.focus();
+    asyncinput.blur();
 
     const asyncSuccess = await waitForElement(() =>
       getByTestId("asyncSuccess")
     );
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.textContent).toBe("Success");
+
+    fireEvent.click(submit);
+
+    const submittedCounter = await waitForElement(() =>
+      getByTestId("submittedCounter")
+    );
+    expect(submittedCounter.textContent).toBe("1");
+
     expect(onSubmit).toHaveBeenCalledWith({ [name]: "1234" }, true);
 
     fireEvent.click(reset);
