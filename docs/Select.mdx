@@ -13,21 +13,23 @@ It accepts as props any html attribute listed at: [Html Select Attributes](https
 
 ### Props
 
-**`name`**: `string` - (excpet for **Select** children of Collection of type array)
+**`name`**: string - (excpet for **Select** children of Collection of type array)
 
 A field's name in Usetheform state.
 
-**`index`**: `string` - (only for **Select** children of Collection of type array)
+**`index`**: string - (only for **Select** children of Collection of type array)
 
 A field's index in array Collection.
 
-**`value`**: `string`
+**`value`**: string
 
 Specifies the initial value of a *select* element.
 
-**`reducers`**: `array` | `function`
+**`reducers`**: array | function
 
-*`(nextValue, prevValue, formState) => nextValue`*
+```javascript
+(nextValue, prevValue, formState) => nextValue
+```
  
 An array whose values correspond to different reducing functions.
 Reducers functions specify how the Select's value change.
