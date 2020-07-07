@@ -5,8 +5,9 @@ menu: Components
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
+import { Submit } from "./helpers/Submit";
 import CustomInput from "./helpers/CustomInput"
-import { Collection, useValidation, Input } from './../src';
+import { Collection, useValidation, Input, useAsyncValidation } from './../src';
 
 # Collection
 
@@ -117,7 +118,7 @@ Reducers functions specify how the Collection's value change.
 }
 </Playground>
 
-## Validation
+## Validation - Sync
 
 Validation for Collection starts only on form submission.
 
@@ -137,6 +138,56 @@ Validation for Collection starts only on form submission.
         </Collection>
         {status.error && <label>{status.error}</label>}
         <button type="submit">Press to see results</button>
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation - Async
+
+Async Validation for Collections are triggered on Sumbit event, the form submission is prevented if the validation fails.
+
+```javascript
+import { useAsyncValidation, useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+
+```
+
+<Playground>
+{() => {
+     const asyncTest = value =>
+      new Promise((resolve, reject) => {
+        // it could be an API call or any async operation
+        setTimeout(() => {
+          if (value.a + value.b !== 5) {
+            reject("Error values not allowed");
+          } else {
+            resolve("Success");
+          }
+        }, 1000);
+    });
+    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+    return (
+      <Form>
+        <Collection object name="sum" {...asyncValidation}>
+          <Input type="number" name="a" value="1" />
+          <Input type="number" name="b" value="2" />
+        </Collection>
+        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+        {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
+        <br />
+        <Submit />
       </Form>
     )
   }

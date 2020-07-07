@@ -5,7 +5,8 @@ menu: Components
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { TextArea, useValidation } from './../src';
+import { Submit } from "./helpers/Submit";
+import { TextArea, useValidation, useAsyncValidation } from './../src';
 
 # TextArea
 It renders a *textarea* element: [W3schools Textarea](https://www.w3schools.com/tags/tag_textarea.asp) and accepts as props any html attribute listed at: [Html Textarea Attributes](https://www.w3schools.com/tags/tag_textarea.asp).
@@ -63,7 +64,7 @@ Reducers functions specify how the TextArea's value change.
 }
 </Playground>
 
-## Validation
+## Validation - Sync
 
 ```javascript
   import { useValidation } from 'usetheform'
@@ -81,6 +82,51 @@ Reducers functions specify how the TextArea's value change.
       <Form>
         <TextArea name="notEmpty" touched {...validation} />
         {status.error && <label>{status.error}</label>}
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation - Async
+
+```javascript
+import { useAsyncValidation, useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+
+```
+
+<Playground>
+{() => {
+     const asyncTest = value =>
+      new Promise((resolve, reject) => {
+        // it could be an API call or any async operation
+        setTimeout(() => {
+          if (value === "foo") {
+            reject("text not allowed");
+          } else {
+            resolve("Success");
+          }
+        }, 1000);
+    });
+    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+    return (
+      <Form>
+        <TextArea name="text" touched {...asyncValidation} />
+        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+        {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
+        <br />
+        <Submit />
       </Form>
     )
   }
