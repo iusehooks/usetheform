@@ -38,31 +38,10 @@ export function useObject(props) {
   const nameProp = useRef(name || index);
   nameProp.current = name || index;
 
-  /* const { current: setNameProp } = useRef(index => {
-    nameProp.current = index;
-  }); */
-
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const isMounted = useRef(false);
   const { current: stillMounted } = useRef(() => isMounted.current);
-
-  // if it is an array collection it keeps the children and update their indexes
-  /* const children = useRef([]);
-  const { current: getIndex } = useRef(childFNsetName => {
-    if (children.current.indexOf(childFNsetName) === -1) {
-      children.current.push(childFNsetName);
-    }
-    // console.log("children.current ", children.current);
-
-    return children.current.length - 1;
-  });
-
-  const { current: removeIndex } = useRef(targeIndex => {
-    children.current.splice(targeIndex, 1);
-    // update children index
-    children.current.forEach((fnChild, index) => fnChild(index));
-  });*/
 
   const init = initValue || (type && type === "array" ? initArray : initObject);
   const state = useRef(init);
@@ -306,8 +285,6 @@ export function useObject(props) {
     }
     // --- Add the its children validators --- //
 
-    // console.log("reset Obj - ", reset);
-
     context.registerReset(nameProp.current, reset);
 
     const newState = applyReducers(
@@ -374,8 +351,6 @@ export function useObject(props) {
     removeProp,
     stillMounted,
     type,
-    // getIndex,
-    // removeIndex,
     addValidators,
     removeValidators,
     addValidatorsAsync,

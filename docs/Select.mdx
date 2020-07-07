@@ -5,7 +5,8 @@ menu: Components
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { Select, useValidation } from './../src';
+import { Submit } from "./helpers/Submit";
+import { Select, useValidation, useAsyncValidation } from './../src';
 
 # Select
 The *select* element is used to create a drop-down list. <br />
@@ -13,21 +14,23 @@ It accepts as props any html attribute listed at: [Html Select Attributes](https
 
 ### Props
 
-**`name`**: `string` - (excpet for **Select** children of Collection of type array)
+**`name`**: string - (excpet for **Select** children of Collection of type array)
 
 A field's name in Usetheform state.
 
-**`index`**: `string` - (only for **Select** children of Collection of type array)
+**`index`**: string - (only for **Select** children of Collection of type array)
 
 A field's index in array Collection.
 
-**`value`**: `string`
+**`value`**: string
 
 Specifies the initial value of a *select* element.
 
-**`reducers`**: `array` | `function`
+**`reducers`**: array | function
 
-*`(nextValue, prevValue, formState) => nextValue`*
+```javascript
+(nextValue, prevValue, formState) => nextValue
+```
  
 An array whose values correspond to different reducing functions.
 Reducers functions specify how the Select's value change.
@@ -93,7 +96,7 @@ Reducers functions specify how the Select's value change.
 }
 </Playground>
 
-## Validation
+## Validation - Sync
 
 ```javascript
   import { useValidation } from 'usetheform'
@@ -113,6 +116,56 @@ Reducers functions specify how the Select's value change.
           <option value="4">4</option>
         </Select>
         {status.error && <label>{status.error}</label>}
+      </Form>
+    )
+  }
+}
+</Playground>
+
+## Validation - Async
+
+```javascript
+import { useAsyncValidation, useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+
+```
+
+<Playground>
+{() => {
+    const asyncTest = value =>
+      new Promise((resolve, reject) => {
+        // it could be an API call or any async operation
+        setTimeout(() => {
+          if (value !== "3") {
+            reject("Selection not valid");
+          } else {
+            resolve("Success");
+          }
+        }, 1000);
+    });
+    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+    return (
+      <Form>
+         <Select name="selectRequired" touched {...asyncValidation}>
+          <option value="">Select an option</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </Select>
+        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+        {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
+        <br />
+        <Submit />
       </Form>
     )
   }

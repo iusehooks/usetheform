@@ -33,27 +33,6 @@ window.SimpleForm = ({ children }) => {
           <div> End an array collection of inputs</div>
           {" --- End --- "}
         </Collection>
-        {/* <Collection array>
-          {""}
-          <Input type="text" value="1" />
-
-          {inputs}
-          <div> other children </div>
-          <Input type="text" value="3" />
-          <Collection object>
-            <Input
-              type="text"
-              name="test"
-              value="a"
-              reducers={(state, prev) => {
-                console.log("pippo prev - ", prev);
-                console.log("pippo state  ", state);
-                return state + 1;
-              }}
-            />
-          </Collection>
-        </Collection>
-        <div> other children </div>*/}
       </Collection>
       <button
         type="button"
@@ -111,75 +90,6 @@ window.SimpleForm = ({ children }) => {
 
       <br />
       <br />
-      {/* <Collection array name="arrayNested1">
-        <Input type="text" value="2" />
-        <Collection array>
-          <Input type="text" value="3" />
-        </Collection>
-      </Collection>
-
-        <CollectionArrayNested />
-      <Input
-        type="text"
-        name="test"
-        value="ciccio1"
-        reducers={(state, prev) => {
-          console.log("prev - ", prev);
-          console.log("state  ", state);
-          return state;
-        }}
-      />
-      <Collection object name="pippo">
-        <Input
-          type="text"
-          name="test"
-          value="a"
-          reducers={(state, prev) => {
-            console.log("pippo prev - ", prev);
-            console.log("pippo state  ", state);
-            return state + 1;
-          }}
-        />
-      </Collection>
-
-      <Collection array name="arrayNested"  >
-        <Input type="text" value="input1" />
-        <Input type="text" value="input2" />
-      </Collection>
-
-      <Collection
-        name="nested"
-        array
-        value={[
-          3,
-          [2, [4, { mostinner: "hello", mostinnerarray: ["mostinnerarray"] }]]
-        ]}
-      >
-        <Input type="text" />
-        <Collection array>
-          <Input type="text" />
-          <Collection array>
-            <Input type="text" />
-            <Collection object>
-              <Input name="mostinner" type="text" />
-              <Collection name="mostinnerarray" array>
-                <Input type="text" />
-              </Collection>
-            </Collection>
-          </Collection>
-        </Collection>
-      </Collection>
-      <br />
-      <br />
-      <br />
-      {/* <Collection name="nestedsimple" array value={[6, 7]}>
-        <Input type="text" />
-        <Input type="text" />
-      </Collection>
-      <br />
-      <br />
-
-      <CollectionArrayNested />*/}
 
       <Reset />
     </Form>
