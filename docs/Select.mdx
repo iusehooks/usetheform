@@ -14,7 +14,7 @@ It accepts as props any html attribute listed at: [Html Select Attributes](https
 
 ### Props
 
-**`name`**: string - (excpet for **Select** children of Collection of type array)
+**`name`**: string - (except for **Select** children of Collection of type array)
 
 A field's name in Usetheform state.
 
@@ -164,7 +164,6 @@ const Submit = () => {
         {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
         {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
-        <br />
         <Submit />
       </Form>
     )
