@@ -13,30 +13,32 @@ It renders all the inputs of type listed at: [W3schools Input Types](https://www
 
 ### Props
 
-**`type`**: `string`
+**`type`**: string
 
 Type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp).
 It also supports a `custom` type (type="custom").
 
-**`name`**: `string` - (excpet for **Input** children of Collection of type array)
+**`name`**: string - (excpet for **Input** children of Collection of type array)
 
 A field's name in Usetheform state.
 
-**`index`**: `string` - (only for **Input** children of Collection of type array)
+**`index`**: string - (only for **Input** children of Collection of type array)
 
 A field's index in array Collection.
 
-**`value`**: `string` | `number` | `object`
+**`value`**: string | number | object
 
 Specifies the initial value of an *input* element.
 
-**`checked`**: `boolean`
+**`checked`**: boolean
 
 Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
 
-**`reducers`**: `array` | `function`
+**`reducers`**: array | function
 
-*`(nextValue, prevValue, formState) => nextValue`*
+```javascript
+(nextValue, prevValue, formState) => nextValue
+```
  
 An array whose values correspond to different reducing functions.
 Reducers functions specify how the Input's value change.

@@ -16,17 +16,17 @@ It is a custom hook function which provides the async validation logic to any Fi
 
 ## Arguments
 
-**`validator`**: `function`
+**`validator`**: function
 
   - validator is function that returns a Promise which is resolved if it passes the validation, rejected otherwise.
 
 ## Returns
 
-(**`asyncValidationProps`**): `array`
+(**`asyncValidationProps`**): array
 
 An array that holds:
 
-  - **`asyncStatus`**: `object`
+  - **`asyncStatus`**: object
 
   A plain object which contains a prop named `status` that is a string which can be one of the following value:
 
@@ -34,7 +34,7 @@ An array that holds:
       - "asyncSuccess": when the async fucntion complete with success.
       - "asyncError: when the async fucntion complete with error.
 
-  - **`validationAttr`**: `object`
+  - **`validationAttr`**: object
 
   A plain object which contains all the props that must be spreaded to the Field.
 
