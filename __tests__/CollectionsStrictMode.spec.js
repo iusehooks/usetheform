@@ -66,6 +66,7 @@ describe("Collections Nested StrictMode => Collections", () => {
 
     for (let i = 1; i <= 4; i++) {
       const input = getByTestId(`input_${i}`);
+      expect(input.value).toBe(`${i}`);
       fireEvent.change(input, { target: { value: `input_${i}` } });
     }
 
@@ -73,6 +74,11 @@ describe("Collections Nested StrictMode => Collections", () => {
     expect(onSubmit).toHaveReturnedWith({
       dynamic: ["input_1", "input_2", "input_3", "input_4"]
     });
+
+    for (let i = 1; i <= 4; i++) {
+      const input = getByTestId(`input_${i}`);
+      expect(input.value).toBe(`input_${i}`);
+    }
 
     fireEvent.click(reset);
     expect(onReset).toHaveReturnedWith({
@@ -190,16 +196,27 @@ describe("Collections Nested StrictMode => Collections", () => {
 
     for (let i = 1; i <= 4; i++) {
       const checkbox = getByTestId(`checkbox_${i}`);
+      expect(checkbox.checked).toBe(true);
       fireEvent.click(checkbox);
     }
 
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({});
 
+    for (let i = 1; i <= 4; i++) {
+      const checkbox = getByTestId(`checkbox_${i}`);
+      expect(checkbox.checked).toBe(false);
+    }
+
     fireEvent.click(reset);
     expect(onReset).toHaveReturnedWith({
       dynamicRadioCheckbox: [[1, 2, 3, 4]]
     });
+
+    for (let i = 1; i <= 4; i++) {
+      const checkbox = getByTestId(`checkbox_${i}`);
+      expect(checkbox.checked).toBe(true);
+    }
 
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({

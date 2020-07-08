@@ -84,6 +84,8 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
       details.blur();
     });
 
+    expect(details.value).toBe("3331234567");
+
     const asyncSuccessDetails = await waitForElement(() =>
       getByTestId("asyncSuccessDetails")
     );
@@ -98,6 +100,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
       email.blur();
     });
 
+    expect(email.value).toBe("test@live.it");
     expect(submit.disabled).toBe(false);
 
     fireEvent.click(submit);

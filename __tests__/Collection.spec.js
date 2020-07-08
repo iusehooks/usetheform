@@ -354,6 +354,7 @@ describe("Component => Collection", () => {
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
+      expect(input.value).toBe(`${dataTestid}`);
       fireEvent.change(input, { target: { value: `${dataTestid}_1` } });
     });
 
@@ -395,6 +396,11 @@ describe("Component => Collection", () => {
       { lv1: expectedValueObjNested },
       true
     );
+
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
+      const input = getByTestId(`${dataTestid}`);
+      expect(input.value).toBe(`${dataTestid}_1`);
+    });
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);

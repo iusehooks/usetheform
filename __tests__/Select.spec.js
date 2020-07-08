@@ -34,7 +34,9 @@ describe("Component => Select", () => {
       </Select>
     ];
     const { getByTestId } = mountForm({ children, props });
-    expect(getByTestId(dataTestid).name).toBe(name);
+    const select = getByTestId(dataTestid);
+    expect(select.name).toBe(name);
+    expect(select.value).toBe(value);
     expect(onInit).toHaveReturnedWith({ [name]: value });
   });
 
@@ -54,8 +56,12 @@ describe("Component => Select", () => {
       </Select>
     ];
     const { getByTestId } = mountForm({ children, props });
-    expect(getByTestId(dataTestid).name).toBe(name);
+    const select = getByTestId(dataTestid);
+    expect(select.name).toBe(name);
     expect(onInit).toHaveReturnedWith({ [name]: ["1", "2"] });
+    expect(select.selectedOptions.length).toBe(2);
+    expect(select.selectedOptions[0].value).toBe("1");
+    expect(select.selectedOptions[1].value).toBe("2");
   });
 
   it("should render a Select and changing its value", () => {
@@ -70,6 +76,7 @@ describe("Component => Select", () => {
     const select = getByTestId(dataTestid);
     fireEvent.change(select, { target: { value } });
     expect(onChange).toHaveBeenCalledWith({ [name]: value });
+    expect(select.value).toBe(value);
   });
 
   it("should render a multiple Select and changing its value", () => {
@@ -87,6 +94,8 @@ describe("Component => Select", () => {
     const select = getByTestId(dataTestid);
     userEvent.selectOptions(select, ["1", "3"]);
     expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "3"] });
+    expect(select.selectedOptions[0].value).toBe("1");
+    expect(select.selectedOptions[1].value).toBe("3");
   });
 
   it("should render a multiple Select with a inital value", () => {

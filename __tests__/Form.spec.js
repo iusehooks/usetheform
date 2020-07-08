@@ -444,6 +444,14 @@ describe("Component => Form", () => {
     const { getByTestId } = render(<SimpleForm {...props} />);
     const form = getByTestId("form");
 
+    const inputName = getByTestId("name");
+    const inputLastName = getByTestId("lastname");
+    const inputEmail = getByTestId("email");
+
+    expect(inputName.value).toBe("foo");
+    expect(inputLastName.value).toBe("anything");
+    expect(inputEmail.value).toBe("anything@google.com");
+
     expect(form.action).toBe(props.action);
     expect(form.method).toMatch(/POST/i);
 
@@ -497,6 +505,9 @@ describe("Component => Form", () => {
     const { getByTestId } = render(<SimpleFormWithAsync {...props} />);
     const form = getByTestId("form");
     const submitbutton = getByTestId("submit");
+
+    const asyncinput = getByTestId("asyncinput");
+    expect(asyncinput.value).toBe("foo");
 
     fireEvent.submit(form);
 

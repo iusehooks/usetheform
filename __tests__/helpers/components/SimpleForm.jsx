@@ -8,8 +8,8 @@ import Reset from "./Reset";
 const SimpleForm = props => (
   <Form data-testid="form" {...props}>
     <Collection object name="user">
-      <TextField label="Name" name="name" />
-      <TextField label="LastName" name="lastname" />
+      <TextField label="Name" name="name" data-testid="name" />
+      <TextField label="LastName" name="lastname" data-testid="lastname" />
       <Email name="email" />
     </Collection>
     <Submit />

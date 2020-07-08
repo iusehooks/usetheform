@@ -128,6 +128,8 @@ describe("Component => Input", () => {
     asyncinput.focus();
     asyncinput.blur();
 
+    expect(asyncinput.value).toBe("1234");
+
     const asyncSuccess = await waitForElement(() =>
       getByTestId("asyncSuccess")
     );

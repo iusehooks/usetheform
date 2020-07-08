@@ -30,5 +30,6 @@ describe("Component => TextArea", () => {
     const textArea = getByTestId(dataTestid);
     fireEvent.change(textArea, { target: { value } });
     expect(onChange).toHaveBeenCalledWith({ [name]: value });
+    expect(textArea.value).toBe(value);
   });
 });
