@@ -170,17 +170,36 @@ describe("Component => Input", () => {
 
     onInit.mockClear();
     children = [
-      <Input key="1" type="radio" name={name} value="foo_radio" checked />
+      <Input
+        key="1"
+        type="radio"
+        data-testid="radio"
+        name={name}
+        value="foo_radio"
+        checked
+      />
     ];
-    mountForm({ props, children });
+    const { getByTestId } = mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: "foo_radio" });
+    const radio = getByTestId("radio");
+    expect(radio.checked).toBe(true);
 
     onInit.mockClear();
     children = [
-      <Input key="1" type="checkbox" name={name} value="foo_checkbox" checked />
+      <Input
+        key="1"
+        type="checkbox"
+        data-testid="checkbox"
+        name={name}
+        value="foo_checkbox"
+        checked
+      />
     ];
-    mountForm({ props, children });
+
+    const { getByTestId: getByTestIdForm2 } = mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: "foo_checkbox" });
+    const checkbox = getByTestIdForm2("checkbox");
+    expect(checkbox.checked).toBe(true);
 
     onInit.mockClear();
     children = [<Input key="1" type="custom" name={name} value={{ a: 1 }} />];
@@ -189,10 +208,20 @@ describe("Component => Input", () => {
 
     onInit.mockClear();
     children = [
-      <Input key="1" type="range" min="0" max="100" name={name} value={10} />
+      <Input
+        key="1"
+        type="range"
+        data-testid="range"
+        min="0"
+        max="100"
+        name={name}
+        value={10}
+      />
     ];
-    mountForm({ props, children });
+    const { getByTestId: getByTestIdForm3 } = mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: 10 });
+    const range = getByTestIdForm3("range");
+    expect(range.value).toBe("10");
   });
 
   it("should use a multiple reducers to reduce the Input value", () => {
@@ -202,10 +231,19 @@ describe("Component => Input", () => {
     const reducedValue = 4;
     const name = "test";
     const children = [
-      <Input key="1" type="number" name={name} value={1} reducers={reducers} />
+      <Input
+        key="1"
+        type="number"
+        data-testid="number"
+        name={name}
+        value={1}
+        reducers={reducers}
+      />
     ];
-    mountForm({ props, children });
+    const { getByTestId } = mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
+    const number = getByTestId("number");
+    expect(number.value).toBe(`${reducedValue}`);
   });
 
   it("should throw an error for missing 'type'", () => {
