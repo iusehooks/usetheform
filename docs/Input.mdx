@@ -34,6 +34,10 @@ Specifies the initial value of an *input* element.
 
 Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
 
+**`touched`**: boolean
+
+if *true* validation messages (sync and async) will be showing only when the event onBlur of the field is trigger by the user action.
+
 **`reducers`**: array | function
 
 ```javascript
@@ -97,6 +101,7 @@ Reducers functions specify how the Input's value change.
       <Form>
         <Input type="text" name="email" touched {...validation} />
         {status.error && <label>{status.error}</label>}
+        <Submit />
       </Form>
     )
   }

@@ -22,7 +22,7 @@ It is a custom React hook which allows to build a custom input primitives.
 
   A field's name in Usetheform state.
 
-  **`index`**: string - (only for children of Collection of type array)
+  - **`index`**: string - (only for children of Collection of type array)
 
   A field's index in array Collection.
 
@@ -33,6 +33,10 @@ It is a custom React hook which allows to build a custom input primitives.
   - **`checked`**: boolean
 
   Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
+
+  - **`touched`**: boolean
+
+  if *true* validation messages (sync and async) will be showing only when the event onBlur of the field is trigger by the user action.
 
   - **`reducers`**: array | function
 
