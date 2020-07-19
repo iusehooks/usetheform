@@ -112,24 +112,6 @@ export function useField(props) {
         return value === "" ? undefined : value;
       }
     }
-
-    /* let val = initialValueRef.current;
-    if (type === "number" || type === "range") {
-      val =
-        initialValueRef.current !== ""
-          ? Number(initialValueRef.current)
-          : initialValueRef.current;
-    } else if (type === "checkbox" || type === "radio") {
-      if (initialCheckedRef.current === false) {
-        val = "";
-      }
-      checkedField.current = initialCheckedRef.current;
-    }
-
-    let value = applyReducers(val, valueField.current, formState);
-    value = value === "" ? undefined : value;
-
-    return value; */
   });
 
   const onChange = event => {
