@@ -1,12 +1,10 @@
 import React from "react";
-
 import { useObject } from "./hooks/useObject";
 import { ContextObject as Context } from "./hooks/useOwnContext";
 
 export function Collection({
   children,
   name,
-  indexAuto,
   index,
   object,
   value,
@@ -33,20 +31,15 @@ export function Collection({
     resetAsyncErr
   });
 
-  const indexing =
-    type === "array" &&
-    React.Children.toArray(children)
-      .filter(child => hasPropsIndexAuto(child))
-      .map((child, index) => index);
-
+  let indexing = -1;
   return (
     <Context.Provider value={ctx}>
       {type === "array"
         ? React.Children.map(children, child => {
-            if (hasPropsIndexAuto(child)) {
-              const index = indexing.shift();
+            if (hasPropsindexAuto(child)) {
+              indexing = indexing + 1;
               return React.cloneElement(child, {
-                index
+                index: indexing
               });
             } else {
               return child;
@@ -57,15 +50,15 @@ export function Collection({
   );
 }
 
-function hasPropsIndexAuto(child) {
+function hasPropsindexAuto(child) {
   return (
     child !== undefined &&
     child !== null &&
     child.props &&
-    child.props.indexAuto === true
+    child.props.__indexAuto__ === true
   );
 }
 
 Collection.defaultProps = {
-  indexAuto: true
+  __indexAuto__: true
 };

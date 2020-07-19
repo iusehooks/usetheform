@@ -7,8 +7,8 @@ export function Input({
   onChange,
   children: omitChildren,
   name,
+  __indexAuto__: omitIndexAuto,
   index,
-  indexAuto,
   checked,
   validators,
   asyncValidator,
@@ -47,5 +47,5 @@ export function Input({
 }
 
 Input.defaultProps = {
-  indexAuto: true
+  __indexAuto__: true
 };

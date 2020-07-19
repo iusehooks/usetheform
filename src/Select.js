@@ -7,8 +7,8 @@ export function Select({
   onChange,
   children,
   name,
+  __indexAuto__: omitIndexAuto,
   index,
-  indexAuto,
   validators,
   asyncValidator,
   onValidation,
@@ -48,5 +48,5 @@ export function Select({
 }
 
 Select.defaultProps = {
-  indexAuto: true
+  __indexAuto__: true
 };

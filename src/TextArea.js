@@ -8,7 +8,7 @@ export function TextArea({
   children: omitChildren,
   name,
   index,
-  indexAuto,
+  __indexAuto__: omitIndexAuto,
   validators,
   asyncValidator,
   onValidation,
@@ -42,5 +42,5 @@ export function TextArea({
 }
 
 TextArea.defaultProps = {
-  indexAuto: true
+  __indexAuto__: true
 };

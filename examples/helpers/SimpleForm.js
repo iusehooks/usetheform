@@ -17,10 +17,10 @@ window.SimpleForm = ({ children }) => {
     >
       <Input type="file" name="file" />
 
-      <Collection array name="check" value={[true, 1]}>
+      <Collection array name="check" value={[true]}>
         <Input type="radio" value={true} />
 
-        <Input type="checkbox" checked={false} />
+        <Input type="checkbox" />
       </Collection>
 
       <Collection array name="arrayNested">

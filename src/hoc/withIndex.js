@@ -8,7 +8,7 @@ export function withIndex(Cmp) {
   }
 
   WithIndex.defaultProps = {
-    indexAuto: true
+    __indexAuto__: true
   };
 
   return WithIndex;
