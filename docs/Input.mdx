@@ -91,12 +91,12 @@ Reducers functions specify how the Input's value change.
 
 <Playground>
 {() => {
-    const email = value =>
+    const isValidEmail = value =>
     !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
       ? undefined
       : "Mail not Valid";
     const required = value => (value && value.trim() !== "" ? undefined : "Required");
-    const [status, validation] = useValidation([required, email]);
+    const [status, validation] = useValidation([required, isValidEmail]);
     return (
       <Form>
         <Input type="text" name="email" touched {...validation} />

@@ -151,17 +151,19 @@ export default withIndex(CustomInput);
 
 <Playground>
 {() => {
-    const sum = nextValue => {
-      const sumAB = nextValue["A"] + nextValue["B"];
-      const newValue = { ...nextValue, sumAB };
+    const fullNameFN = nextValue => {
+      const fullName = [nextValue["name"], nextValue["lastname"]]
+        .filter(Boolean)
+        .join(" ");
+      const newValue = { ...nextValue, fullName };
       return newValue;
     };
     return (
       <Form>
-        <Collection object name="sum" reducers={sum}>
-          <Input type="number" name="A" value="1" />
-          <Input type="number" name="B" value="2" />
-          <Input type="text" name="sumAB" readOnly />
+        <Collection object name="person" reducers={fullNameFN}>
+          <Input type="text" name="name" value="foo" />
+          <Input type="text" name="lastname" value="pluto" />
+          <Input type="text" name="fullName" readOnly />
         </Collection>
       </Form>
     )
