@@ -45,7 +45,7 @@ An array that holds:
 <Playground>
 {() => {
     const required = value => (value && value !== "" ? undefined : "Required");
-    const [status, validationAttr] = useValidation([required]); // 
+    const [status, validationAttr] = useValidation([required]);
     return (
       <Form>
         <Input type="text" name="anyname" touched {...validationAttr} />
