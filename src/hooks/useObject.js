@@ -1,5 +1,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import { useOwnContext } from "./useOwnContext";
+import { useNameProp } from "./commons/useNameProp";
+
 import { useValidators } from "./useValidators";
 import { isValidValue } from "./../utils/isValidValue";
 import { updateState } from "./../utils/updateState";
@@ -35,8 +37,12 @@ export function useObject(props) {
     asyncValidator,
     onAsyncValidation = noop
   } = props;
-  const nameProp = useRef(name || index);
-  nameProp.current = name || index;
+
+  const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
+    context,
+    name,
+    index
+  );
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
@@ -249,6 +255,10 @@ export function useObject(props) {
   useEffect(() => {
     isMounted.current = true;
 
+    if (context.type === "array") {
+      context.registerIndex(uniqueIDarrayContext, setNameProp);
+    }
+
     // Add the its own validators
     if (validatorsFuncs.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
@@ -336,8 +346,31 @@ export function useObject(props) {
         );
 
         context.unRegisterReset(nameProp.current);
+        if (context.type === "array") {
+          context.removeIndex(uniqueIDarrayContext);
+        }
       }
     };
+  }, []);
+
+  const childrenIndexes = useRef({});
+
+  const getIndex = useCallback((idCpm, fn) => {
+    if (childrenIndexes.current[idCpm] === undefined) {
+      childrenIndexes.current[idCpm] = null;
+    }
+    return Object.keys(childrenIndexes.current).length - 1;
+  }, []);
+
+  const removeIndex = useCallback(idCpm => {
+    delete childrenIndexes.current[idCpm];
+    Object.keys(childrenIndexes.current).forEach((idField, index) =>
+      childrenIndexes.current[idField](index)
+    );
+  }, []);
+
+  const registerIndex = useCallback((idCpm, fn) => {
+    childrenIndexes.current[idCpm] = fn;
   }, []);
 
   return {
@@ -350,6 +383,9 @@ export function useObject(props) {
     initProp,
     removeProp,
     stillMounted,
+    getIndex,
+    removeIndex,
+    registerIndex,
     type,
     addValidators,
     removeValidators,
@@ -366,7 +402,7 @@ function validateProps({ name, type, value, asyncValidator }, contextType) {
     typeof asyncValidator !== "undefined" &&
     typeof asyncValidator !== "function"
   ) {
-    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a funcgtion`;
+    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a function`;
   }
 
   if (

@@ -93,18 +93,22 @@ describe("Component => Collection", () => {
 
     expect(onInit).toHaveReturnedWith({ ageRange: { start: 18, end: 65 } });
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 50 } });
     fireEvent.change(end, { target: { value: 80 } });
     expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 50, end: 80 } });
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 81 } });
     fireEvent.change(end, { target: { value: 80 } });
     expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 80, end: 80 } });
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 18 } });
     fireEvent.change(end, { target: { value: 90 } });
     expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 18, end: 90 } });
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 18 } });
     fireEvent.change(end, { target: { value: 16 } });
     expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 18, end: 18 } });

@@ -54,12 +54,15 @@ describe("Collections Nested StrictMode => Collections", () => {
 
     expect(onInit).toHaveReturnedWith({});
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamic: [1] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamic: [1, 2] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamic: [1, 2, 3, 4] });
@@ -70,6 +73,7 @@ describe("Collections Nested StrictMode => Collections", () => {
       fireEvent.change(input, { target: { value: `input_${i}` } });
     }
 
+    onSubmit.mockClear();
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({
       dynamic: ["input_1", "input_2", "input_3", "input_4"]
@@ -89,6 +93,7 @@ describe("Collections Nested StrictMode => Collections", () => {
       fireEvent.click(removeInputs);
     }
 
+    onSubmit.mockClear();
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({});
   });
@@ -115,12 +120,15 @@ describe("Collections Nested StrictMode => Collections", () => {
 
     expect(onInit).toHaveReturnedWith({});
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamicNested: [[1]] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamicNested: [[1, 2]] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamicNested: [[1, 2, 3, 4]] });
@@ -130,6 +138,7 @@ describe("Collections Nested StrictMode => Collections", () => {
       fireEvent.change(input, { target: { value: `input_${i}` } });
     }
 
+    onSubmit.mockClear();
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({
       dynamicNested: [["input_1", "input_2", "input_3", "input_4"]]
@@ -140,6 +149,7 @@ describe("Collections Nested StrictMode => Collections", () => {
       dynamicNested: [[1, 2, 3, 4]]
     });
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({ dynamicNested: [[1, 2, 3, 4, [1]]] });
 
@@ -147,14 +157,17 @@ describe("Collections Nested StrictMode => Collections", () => {
       fireEvent.click(removeInputs);
     }
 
+    onSubmit.mockClear();
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({ dynamicNested: [[[1]]] });
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicNested: [[[1], [2]]]
     });
 
+    onChange.mockClear();
     fireEvent.click(removeCollection);
     fireEvent.click(removeCollection);
     expect(onChange).toHaveReturnedWith({});
@@ -182,12 +195,15 @@ describe("Collections Nested StrictMode => Collections", () => {
 
     expect(onInit).toHaveReturnedWith({});
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamicRadioCheckbox: [[1]] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamicRadioCheckbox: [[1, 2]] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({
@@ -200,6 +216,7 @@ describe("Collections Nested StrictMode => Collections", () => {
       fireEvent.click(checkbox);
     }
 
+    onSubmit.mockClear();
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({});
 
@@ -218,11 +235,13 @@ describe("Collections Nested StrictMode => Collections", () => {
       expect(checkbox.checked).toBe(true);
     }
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRadioCheckbox: [[1, 2, 3, 4, [1]]]
     });
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRadioCheckbox: [[1, 2, 3, 4, [1], [2]]]
@@ -232,25 +251,29 @@ describe("Collections Nested StrictMode => Collections", () => {
       fireEvent.click(removeInputs);
     }
 
+    onSubmit.mockClear();
     fireEvent.click(submit);
     expect(onSubmit).toHaveReturnedWith({ dynamicRadioCheckbox: [[[1], [2]]] });
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRadioCheckbox: [[[1], [2], [3]]]
     });
 
+    onChange.mockClear();
     for (let i = 1; i <= 3; i++) {
       fireEvent.click(removeCollection);
     }
     expect(onChange).toHaveReturnedWith({});
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
-
     expect(onChange).toHaveReturnedWith({
       dynamicRadioCheckbox: [[[4]]]
     });
 
+    onChange.mockClear();
     fireEvent.click(removeCollection);
     expect(onChange).toHaveReturnedWith({});
   });
@@ -275,15 +298,17 @@ describe("Collections Nested StrictMode => Collections", () => {
     const removeInputs = getByTestId("removeInput");
 
     expect(onInit).toHaveReturnedWith({});
-
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({ dynamicRandomPosition: [1] });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: myself.current.getInnerState()
     });
 
+    onChange.mockClear();
     fireEvent.click(addInputs);
     fireEvent.click(addInputs);
     expect(onChange).toHaveReturnedWith({
@@ -303,22 +328,26 @@ describe("Collections Nested StrictMode => Collections", () => {
       dynamicRandomPosition: myself.current.getInnerState()
     });
 
+    onChange.mockClear();
     fireEvent.click(reset);
     myself.current.setInnerState(currentState);
     expect(onReset).toHaveReturnedWith({
       dynamicRandomPosition: myself.current.getInnerState()
     });
 
+    onChange.mockClear();
     fireEvent.click(removeInputs);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: myself.current.getInnerState()
     });
 
+    onChange.mockClear();
     fireEvent.click(removeInputs);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: myself.current.getInnerState()
     });
 
+    onChange.mockClear();
     [...myself.current.getInnerState()].forEach(() => {
       fireEvent.click(removeInputs);
     });
@@ -347,16 +376,19 @@ describe("Collections Nested StrictMode => Collections", () => {
 
     expect(onInit).toHaveReturnedWith({});
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: [myself.current.getInnerState()]
     });
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: [myself.current.getInnerState()]
     });
 
+    onChange.mockClear();
     fireEvent.click(addCollection);
     fireEvent.click(addCollection);
     expect(onChange).toHaveReturnedWith({
@@ -366,7 +398,7 @@ describe("Collections Nested StrictMode => Collections", () => {
     const currentState = [...myself.current.getInnerState()];
     myself.current.getInnerState().forEach((val, index) => {
       const input = getByTestId(`input_${val}`);
-      myself.current.setValue(index, `input_${val}`);
+      myself.current.setValue(index, [`input_${val}`]);
 
       fireEvent.change(input, { target: { value: `input_${val}` } });
     });
@@ -382,16 +414,19 @@ describe("Collections Nested StrictMode => Collections", () => {
       dynamicRandomPosition: [myself.current.getInnerState()]
     });
 
+    onChange.mockClear();
     fireEvent.click(removeCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: [myself.current.getInnerState()]
     });
 
+    onChange.mockClear();
     fireEvent.click(removeCollection);
     expect(onChange).toHaveReturnedWith({
       dynamicRandomPosition: [myself.current.getInnerState()]
     });
 
+    onChange.mockClear();
     [...myself.current.getInnerState()].forEach(() => {
       fireEvent.click(removeCollection);
     });

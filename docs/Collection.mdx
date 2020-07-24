@@ -6,7 +6,7 @@ menu: Components
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
 import { Submit } from "./helpers/Submit";
-import CustomInput from "./helpers/CustomInput"
+import { CustomInput } from "./helpers/CustomInput"
 import { Collection, useValidation, Input, useAsyncValidation } from './../src';
 
 # Collection
@@ -119,19 +119,16 @@ Array Collection of Input fields with indexes handled maunally.
 </Playground>
 
 <br />
-Array Collection of Input fields with indexes handled automatically.
+Array Collection of Input fields with indexes handled automatically for custom Inputs.
 
 ```javascript
 import React from "react";
-import { Input, withIndex } from "usetheform";
+import { withIndex, useField } from "usetheform";
 
-const CustomInput = ({ index, label, value, type }) => (
-  <label>
-    {label}: <Input type={type} index={index} value={value} /> 
-  </label>
-);
-
-export default withIndex(CustomInput);
+const CustomInput = withIndex(({ type, name, value, index, ...restAttr }) => {
+  const props = useField({ type, name, value, index });
+  return <input {...restAttr} {...props}></input>;
+});
 ```
 
 <Playground>

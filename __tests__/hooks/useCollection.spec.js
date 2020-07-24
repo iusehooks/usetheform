@@ -60,14 +60,22 @@ describe("Hooks => useCollection", () => {
     const props = { onChange };
     const children = [
       <Collection array name="array" key="1">
-        <CollectionWithHooks />
+        <CollectionWithHooks propToChange="0" dataTestid="hook1" />
+        <CollectionWithHooks propToChange="1" dataTestid="hook2" />
       </Collection>
     ];
     const { getByTestId } = mountForm({ props, children });
 
-    const changeCollection = getByTestId("changeCollection");
-    fireEvent.click(changeCollection);
+    const changeCollectionHook1 = getByTestId("hook1");
+    fireEvent.click(changeCollectionHook1);
     expect(onChange).toHaveBeenCalledWith({ array: [{ 0: "foo" }] });
+
+    onChange.mockClear();
+    const changeCollectionHook2 = getByTestId("hook2");
+    fireEvent.click(changeCollectionHook2);
+    expect(onChange).toHaveBeenCalledWith({
+      array: [{ 0: "foo" }, { 1: "foo" }]
+    });
   });
 
   it("should throw an error for invalids initial values", () => {

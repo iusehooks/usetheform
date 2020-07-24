@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useOwnContext } from "./useOwnContext";
-
+import { useNameProp } from "./commons/useNameProp";
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { STATUS, fileList } from "./../utils/formUtils";
@@ -44,8 +44,12 @@ export function useField(props) {
   formState.current = context.formState;
 
   const isMounted = useRef(false);
-  const nameProp = useRef(name || index);
-  nameProp.current = name || index;
+
+  const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
+    context,
+    name,
+    index
+  );
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
@@ -161,6 +165,10 @@ export function useField(props) {
   useEffect(() => {
     isMounted.current = true;
 
+    if (context.type === "array") {
+      context.registerIndex(uniqueIDarrayContext, setNameProp);
+    }
+
     if (validators.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
     }
@@ -229,6 +237,9 @@ export function useField(props) {
           true
         );
         context.unRegisterReset(nameProp.current);
+        if (context.type === "array") {
+          context.removeIndex(uniqueIDarrayContext);
+        }
       }
     };
   }, []);
@@ -382,13 +393,13 @@ function validateProps(
     return `The prop "checked" -> "${checked}" passed to "useField": ${name} of type: ${type} is not allowed. You can use "value" prop instead to set an initial value.`;
   }
 
-  if (
+  /*if (
     contextType === "array" &&
     typeof index !== "number" &&
     typeof index !== "string"
   ) {
     return `The prop "index": ${index} of type "${typeof index}" passed to "${type}" must be either a string or number represent as integers.`;
-  }
+  }*/
 
   if (!isValidValue(name, contextType)) {
     const nameContext = contextType || "<Form />";

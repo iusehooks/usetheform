@@ -1,15 +1,22 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, createContext } from "react";
 
+export const IndexContext = createContext();
+let ids = -1;
 export function withIndex(Cmp) {
   class WithIndex extends PureComponent {
+    constructor(props) {
+      super(props);
+      ids = ids + 1;
+    }
+
     render() {
-      return <Cmp {...this.props} />;
+      return (
+        <IndexContext.Provider value={ids}>
+          <Cmp {...this.props} />
+        </IndexContext.Provider>
+      );
     }
   }
-
-  WithIndex.defaultProps = {
-    __indexAuto__: true
-  };
 
   return WithIndex;
 }

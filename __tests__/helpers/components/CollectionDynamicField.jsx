@@ -239,20 +239,18 @@ export const CollectionNestedRandomPosition = forwardRef((props, ref) => {
 
   const addInput = () => {
     index.current++;
-    const pos = Math.floor(Math.random() * inputs.length);
-    innerState.current.splice(pos, 0, index.current);
+    innerState.current.push(index.current);
+
     setAdd(prev => {
-      const newState = [...prev];
-      newState.splice(
-        pos,
-        0,
+      const newState = [
+        ...prev,
         <Input
           type="text"
           key={index.current}
           data-testid={`input_${index.current}`}
           value={index.current}
         />
-      );
+      ];
 
       return newState;
     });
@@ -300,19 +298,16 @@ export const CollectionNestedRandomPositionCollection = forwardRef(
         innerState.current = state;
       },
       setValue(index, value) {
-        innerState.current[index] = [value];
+        innerState.current[index] = value;
       }
     }));
 
     const addCollection = () => {
       index.current++;
-      const pos = Math.floor(Math.random() * inputs.length);
-      innerState.current.splice(pos, 0, [index.current]);
+      innerState.current.push([index.current]);
       setAdd(prev => {
-        const newState = [...prev];
-        newState.splice(
-          pos,
-          0,
+        const newState = [
+          ...prev,
           <Collection array key={index.current}>
             <div>some label</div>
             <Input
@@ -321,7 +316,7 @@ export const CollectionNestedRandomPositionCollection = forwardRef(
               value={index.current}
             />
           </Collection>
-        );
+        ];
 
         return newState;
       });

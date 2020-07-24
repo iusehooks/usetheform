@@ -27,7 +27,7 @@ window.CollectionArrayNested = function CollectionArrayNested({ reducers }) {
     <Collection
       array
       name="arrayNested1"
-      reducers={reducerArrayNested}
+      // reducers={reducerArrayNested}
       value={initialValue}
     >
       <Input type="text" data-testid="1" />
@@ -54,11 +54,6 @@ window.CollectionArrayNested = function CollectionArrayNested({ reducers }) {
 
 function reducerArrayNested(value, prevValue) {
   const newValue = [...value];
-  if (!prevValue[0] && newValue[0]) {
-    newValue[0] = `${newValue[0]}_1`;
-  }
-
-  /* const newValue = [...value];
 
   if (!prevValue[0] && newValue[0]) {
     newValue[0] = `${newValue[0]}_1`;
@@ -113,7 +108,7 @@ function reducerArrayNested(value, prevValue) {
     newValue[2][2][2][2][1]
   ) {
     newValue[2][2][2][2][1] = `${newValue[2][2][2][2][1]}_1`;
-  } */
+  }
 
   return newValue;
 }

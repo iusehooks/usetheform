@@ -1,10 +1,9 @@
 import React from "react";
-import { Input, withIndex } from "./../../src";
+import { withIndex, useField } from "./../../src";
 
-const CustomInput = ({ index, label, value, type }) => (
-  <label>
-    {label}: <Input type={type} index={index} value={value} />
-  </label>
+export const CustomInput = withIndex(
+  ({ type, name, value, index, ...restAttr }) => {
+    const props = useField({ type, name, value, index });
+    return <input {...restAttr} {...props}></input>;
+  }
 );
-
-export default withIndex(CustomInput);

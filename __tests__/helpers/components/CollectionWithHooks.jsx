@@ -4,27 +4,22 @@ import { useCollection, withIndex } from "./../../../src";
 export function CollectionWithHooks({
   value,
   type = "object",
-  index,
   name,
+  dataTestid = "changeCollection",
   propToChange
 }) {
   const { updateCollection } = useCollection({
-    index,
     name,
     type,
     value
   });
 
-  const propName = propToChange || name || index;
+  const propName = propToChange || name;
 
   const onUpdateCollection = () => updateCollection(propName, "foo");
 
   return (
-    <button
-      type="button"
-      data-testid="changeCollection"
-      onClick={onUpdateCollection}
-    >
+    <button type="button" data-testid={dataTestid} onClick={onUpdateCollection}>
       Update Collection
     </button>
   );

@@ -1,97 +1,70 @@
 /* eslint-disable react/react-in-jsx-scope */
-const { default: Form, Input, Collection } = UseTheForm;
+const { default: Form, Collection, Input } = UseTheForm;
 
 const { useState, useEffect, useRef } = React;
 const { CollectionArrayNested, Reset } = window;
-window.SimpleForm = ({ children }) => {
-  const index = useRef(0);
-  const indexColl = useRef(0);
 
+window.SimpleForm = ({ children }) => {
   const [inputs, setAdd] = useState([]);
-  const [collections, setCollection] = useState([]);
+  const [collections, addCollection] = useState([]);
+
+  const [ok, set] = useState(false);
 
   return (
-    <Form
-      onChange={state => console.log(state)}
-      onInit={state => console.log("onInit ", state)}
-    >
-      <Input type="file" name="file" />
-
-      <Collection array name="check" value={[true]}>
-        <Input type="radio" value={true} />
-
-        <Input type="checkbox" />
-      </Collection>
-
-      <Collection array name="arrayNested">
-        {" ------ "}
-        {collections}
-        <Collection array>
-          {" --- Start --- "}
-          <div> Start an array collection of inputs</div>
+    <div>
+      <Form
+        onChange={state => console.log(state)}
+        onInit={state => console.log("onInit ", state)}
+      >
+        <Collection array name="check">
+          <label>
+            Input 1: <Input type="text" value="5" />
+          </label>
+          {!ok && <Input type="text" value="6" />}
+          <Input type="text" value="4" />
           {inputs}
-          <div> End an array collection of inputs</div>
-          {" --- End --- "}
+          {collections}
         </Collection>
-      </Collection>
-      <button
-        type="button"
-        onClick={() =>
-          setAdd(prev => {
-            index.current++;
-            const copy = [...prev];
-            const pos = Math.floor(Math.random() * copy.length);
-            copy.splice(
-              pos,
-              0,
-              <Input type="text" key={index.current} value={index.current} />
-            );
 
-            return copy;
-          })
+        {/* <CollectionArrayNested /> */}
+        <Reset />
+      </Form>
+      <button
+        onClick={() =>
+          setAdd(prev => [
+            ...prev,
+            <Input type="text" key={prev.length} value={prev.length} />
+          ])
         }
       >
-        ADD INPUT
+        Add Input
       </button>
 
       <button
-        type="button"
         onClick={() =>
-          setCollection(prev => {
-            indexColl.current++;
-            const copy = [...prev];
-            const pos = Math.floor(Math.random() * copy.length);
-            copy.splice(
-              pos,
-              0,
-              <Collection array key={indexColl.current}>
-                <Input type="text" value={indexColl.current} />
-              </Collection>
-            );
-            return copy;
-          })
+          addCollection(prev => [
+            ...prev,
+            <Collection key={prev.length}>
+              <Input type="text" value={prev.length} />
+            </Collection>
+          ])
         }
       >
-        ADD Collection
+        Add Collection
       </button>
 
       <button
-        type="button"
         onClick={() =>
-          setAdd(prev => {
-            const items = [...prev];
-            delete items[Math.floor(Math.random() * items.length)];
-            return items.filter(elm => typeof elm !== "undefined");
+          addCollection(prev => {
+            const pos = Math.floor(Math.random() * prev.length);
+            return prev.filter((elm, index) => index !== pos);
           })
         }
       >
-        REMOVE RANDOM
+        Remove Collection
       </button>
 
-      <br />
-      <br />
-
-      <Reset />
-    </Form>
+      <button onClick={() => set(prev => !prev)}>remove Input</button>
+    </div>
   );
 };
