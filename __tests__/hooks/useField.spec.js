@@ -98,6 +98,87 @@ describe("Hooks => useField", () => {
     expect(input4.value).toBe("world");
   });
 
+  it("should nest Checkboxes into array Collection", () => {
+    const props = { onChange };
+    const children = [
+      <Collection array key="1" name="array">
+        <Collection array>
+          <InputCustom type="checkbox" value="blue" data-testid="input1" />
+          <InputCustom type="checkbox" value="green" data-testid="input2" />
+        </Collection>
+        <Collection array>
+          <Collection array>
+            <InputCustom type="checkbox" value="yellow" data-testid="input3" />
+            <InputCustom type="checkbox" data-testid="input4" />
+          </Collection>
+        </Collection>
+      </Collection>
+    ];
+    const { getByTestId } = mountForm({ props, children });
+
+    const input1 = getByTestId("input1");
+    const input2 = getByTestId("input2");
+
+    const input3 = getByTestId("input3");
+    const input4 = getByTestId("input4");
+
+    onChange.mockClear();
+    fireEvent.click(input1);
+    expect(input1.checked).toBe(true);
+    expect(onChange).toHaveBeenCalledWith({ array: [["blue"]] });
+
+    onChange.mockClear();
+    fireEvent.click(input2);
+    expect(input2.checked).toBe(true);
+    expect(onChange).toHaveBeenCalledWith({ array: [["blue", "green"]] });
+
+    onChange.mockClear();
+    fireEvent.click(input3);
+    expect(input3.checked).toBe(true);
+    expect(onChange).toHaveBeenCalledWith({
+      array: [["blue", "green"], [["yellow"]]]
+    });
+
+    onChange.mockClear();
+    fireEvent.click(input4);
+    expect(input4.checked).toBe(true);
+    expect(onChange).toHaveBeenCalledWith({
+      array: [["blue", "green"], [["yellow", true]]]
+    });
+  });
+
+  it("should nest Radios into array Collection", () => {
+    const props = { onChange };
+    const children = [
+      <Collection array key="1" name="array">
+        <Collection array>
+          <InputCustom type="radio" value="blue" data-testid="input1" />
+        </Collection>
+        <Collection array>
+          <Collection array>
+            <InputCustom type="radio" value="yellow" data-testid="input2" />
+          </Collection>
+        </Collection>
+      </Collection>
+    ];
+    const { getByTestId } = mountForm({ props, children });
+
+    const input1 = getByTestId("input1");
+    const input2 = getByTestId("input2");
+
+    onChange.mockClear();
+    fireEvent.click(input1);
+    expect(input1.checked).toBe(true);
+    expect(onChange).toHaveBeenCalledWith({ array: [["blue"]] });
+
+    onChange.mockClear();
+    fireEvent.click(input2);
+    expect(input2.checked).toBe(true);
+    expect(onChange).toHaveBeenCalledWith({
+      array: [["blue"], [["yellow"]]]
+    });
+  });
+
   it("should nest Fields into object Collection", () => {
     const props = { onChange, onInit };
     const initialValue = { array: [[["100", "200"]]] };

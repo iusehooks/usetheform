@@ -355,7 +355,7 @@ export function useObject(props) {
 
   const childrenIndexes = useRef({});
 
-  const getIndex = useCallback((idCpm, fn) => {
+  const getIndex = useCallback(idCpm => {
     if (childrenIndexes.current[idCpm] === undefined) {
       childrenIndexes.current[idCpm] = null;
     }
