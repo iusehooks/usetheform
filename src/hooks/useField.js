@@ -363,7 +363,7 @@ function filterProps(allProps) {
 }
 
 function validateProps(
-  { name, index, value, checked, type, asyncValidator },
+  { name, value, checked, type, asyncValidator },
   contextType
 ) {
   if (type === undefined) {
@@ -392,14 +392,6 @@ function validateProps(
   if (type !== "checkbox" && type !== "radio" && checked) {
     return `The prop "checked" -> "${checked}" passed to "useField": ${name} of type: ${type} is not allowed. You can use "value" prop instead to set an initial value.`;
   }
-
-  /*if (
-    contextType === "array" &&
-    typeof index !== "number" &&
-    typeof index !== "string"
-  ) {
-    return `The prop "index": ${index} of type "${typeof index}" passed to "${type}" must be either a string or number represent as integers.`;
-  }*/
 
   if (!isValidValue(name, contextType)) {
     const nameContext = contextType || "<Form />";
