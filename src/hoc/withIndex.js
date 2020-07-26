@@ -7,11 +7,16 @@ export function withIndex(Cmp) {
     constructor(props) {
       super(props);
       ids = ids + 1;
+      this.state = { id: ids, getID: this.getID };
+    }
+
+    getID() {
+      return ++ids;
     }
 
     render() {
       return (
-        <IndexContext.Provider value={ids}>
+        <IndexContext.Provider value={this.state}>
           <Cmp {...this.props} />
         </IndexContext.Provider>
       );

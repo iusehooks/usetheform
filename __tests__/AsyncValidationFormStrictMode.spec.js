@@ -137,5 +137,31 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
     fireEvent.click(removeInputs);
     fireEvent.click(reset);
     expect(onReset).toHaveReturnedWith(expectedInitialState);
+
+    const asyncNotStartedYetDetails = getByTestId("asyncNotStartedYetDetails");
+    expect(asyncNotStartedYetDetails).toBeDefined();
+
+    const asyncNotStartedYetCity = getByTestId("asyncNotStartedYetCity");
+    expect(asyncNotStartedYetCity).toBeDefined();
+
+    const asyncNotStartedYetUsername = getByTestId(
+      "asyncNotStartedYetUsername"
+    );
+    expect(asyncNotStartedYetUsername).toBeDefined();
+
+    act(() => {
+      details.focus();
+      details.blur();
+    });
+
+    const asyncStartDetailsAfterReset = await waitForElement(() =>
+      getByTestId("asyncStartDetails")
+    );
+    expect(asyncStartDetailsAfterReset).toBeDefined();
+
+    const asyncErrorDetailsAfterReset = await waitForElement(() =>
+      getByTestId("asyncErrorDetails")
+    );
+    expect(asyncErrorDetailsAfterReset).toBeDefined();
   });
 });

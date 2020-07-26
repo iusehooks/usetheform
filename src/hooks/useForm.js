@@ -306,7 +306,7 @@ export function useForm({
     const { status, state, isValid } = stateRef.current;
     if (status === STATUS.ON_RESET) {
       onReset(state);
-      dispatchFormState({ ...stateRef.current, status: STATUS.READY });
+      dispatchFormState({ ...stateRef.current, status: STATUS.RESETTED });
     } else if (status === STATUS.ON_CHANGE) {
       onChange(state);
     } else if (status === STATUS.ON_INIT) {

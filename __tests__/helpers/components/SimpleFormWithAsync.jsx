@@ -31,6 +31,7 @@ export const SimpleFormWithAsyncStrictMode = props => (
     <CollectionAsyncValidation />
     <Email />
     <InputAsync
+      dataTestidNotStart="asyncNotStartedYetUsername"
       dataTestidStart="asyncStartUsername"
       dataTestidError="asyncErrorUsername"
       dataTestidSuccess="asyncSuccessUsername"
@@ -39,6 +40,7 @@ export const SimpleFormWithAsyncStrictMode = props => (
     />
     <Collection object name="address">
       <InputAsync
+        dataTestidNotStart="asyncNotStartedYetCity"
         dataTestidStart="asyncStartCity"
         dataTestidError="asyncErrorCity"
         dataTestidSuccess="asyncSuccessCity"
@@ -48,6 +50,7 @@ export const SimpleFormWithAsyncStrictMode = props => (
       />
       <Collection array name="details">
         <InputAsync
+          dataTestidNotStart="asyncNotStartedYetDetails"
           dataTestidStart="asyncStartDetails"
           dataTestidError="asyncErrorDetails"
           dataTestidSuccess="asyncSuccessDetails"

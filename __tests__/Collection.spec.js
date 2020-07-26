@@ -428,4 +428,35 @@ describe("Component => Collection", () => {
       lv1: expectedValueObjNested
     });
   });
+
+  it("should throw an error if the the prop 'index' is not an integer", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [
+      <Collection key="1" array name="array">
+        <Input type="text" index="abc" />
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    children = [
+      <Collection key="1" array name="array">
+        <Collection object index="3.1">
+          <Input type="text" name="test" />
+        </Collection>
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    children = [
+      <Collection key="1" array name="array">
+        <Collection object index="-1">
+          <Input type="text" name="test" />
+        </Collection>
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    console.error = originalError;
+  });
 });

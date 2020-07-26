@@ -1,8 +1,13 @@
 /* eslint-disable react/react-in-jsx-scope */
-const { default: Form, Collection, Input } = UseTheForm;
+const { default: Form, Collection, Input, useField } = UseTheForm;
 
 const { useState, useEffect, useRef } = React;
 const { CollectionArrayNested, Reset } = window;
+
+const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
+  const props = useField({ type, name, value, index });
+  return <input {...restAttr} {...props}></input>;
+};
 
 window.SimpleForm = ({ children }) => {
   const [inputs, setAdd] = useState([]);
@@ -17,10 +22,13 @@ window.SimpleForm = ({ children }) => {
         onInit={state => console.log("onInit ", state)}
       >
         <Collection array name="check">
+          <Collection array>
+            <Input type="text" value="gg" />
+          </Collection>
           <label>
             Input 1: <Input type="text" value="5" />
           </label>
-          {!ok && <Input type="text" value="6" />}
+
           <Input type="text" value="4" />
           {inputs}
           {collections}

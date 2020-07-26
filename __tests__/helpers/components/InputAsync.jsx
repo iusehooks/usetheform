@@ -12,6 +12,7 @@ const asyncTest = value =>
 
 export function InputAsync({
   name,
+  dataTestidNotStart = "asyncNotStartedYet",
   dataTestid = "asyncinput",
   dataTestidStart = "asyncStart",
   dataTestidError = "asyncError",
@@ -34,7 +35,7 @@ export function InputAsync({
         data-testid={dataTestid}
       />
       {asyncStatus.status === undefined && (
-        <label data-testid="asyncNotStartedYet">asyncNotStartedYet</label>
+        <label data-testid={dataTestidNotStart}>asyncNotStartedYet</label>
       )}
       {asyncStatus.status === "asyncStart" && (
         <label data-testid={dataTestidStart}>Checking...</label>

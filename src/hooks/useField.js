@@ -6,18 +6,12 @@ import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync
 import { STATUS, fileList } from "./../utils/formUtils";
 import { chainReducers } from "./../utils/chainReducers";
 import { isValidValue } from "./../utils/isValidValue";
+import { isValidIndex } from "./../utils/isValidIndex";
 
 const noop = () => undefined;
 
 export function useField(props) {
   const context = useOwnContext();
-
-  if (process.env.NODE_ENV !== "production") {
-    const errMsg = validateProps(props, context.type);
-    if (errMsg) {
-      throw new Error(errMsg);
-    }
-  }
 
   let {
     name,
@@ -39,17 +33,27 @@ export function useField(props) {
     reducers = []
   } = props;
 
-  const { state } = context;
-  const formState = useRef(null);
-  formState.current = context.formState;
-
-  const isMounted = useRef(false);
-
   const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
     context,
     name,
     index
   );
+
+  if (process.env.NODE_ENV !== "production") {
+    const errMsg = validateProps(
+      { ...props, index: nameProp.current },
+      context.type
+    );
+    if (errMsg) {
+      throw new Error(errMsg);
+    }
+  }
+
+  const { state } = context;
+  const formState = useRef(null);
+  formState.current = context.formState;
+
+  const isMounted = useRef(false);
 
   const valueField = useRef(initialValue);
   const checkedField = useRef(initialChecked);
@@ -93,6 +97,7 @@ export function useField(props) {
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const { current: reset } = useRef(formState => {
+    valueFieldLastAsyncCheck.current = null;
     switch (type) {
       case "number":
       case "range": {
@@ -363,7 +368,7 @@ function filterProps(allProps) {
 }
 
 function validateProps(
-  { name, value, checked, type, asyncValidator },
+  { name, index, value, checked, type, asyncValidator },
   contextType
 ) {
   if (type === undefined) {
@@ -380,6 +385,10 @@ function validateProps(
       (typeof value === "string" && value.replace(/ /g, "") === ""))
   ) {
     return `Input of type => ${type}, must have a valid prop "value".`;
+  }
+
+  if (contextType === "array" && !isValidIndex(index)) {
+    return `The prop "index": ${index} of type "${typeof index}" passed to a field "${type}" must be either a string or number represent as integers.`;
   }
 
   if (

@@ -6,6 +6,7 @@ import { useValidators } from "./useValidators";
 import { isValidValue } from "./../utils/isValidValue";
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
+import { isValidIndex } from "./../utils/isValidIndex";
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { STATUS } from "./../utils/formUtils";
@@ -16,13 +17,6 @@ const initObject = {};
 
 export function useObject(props) {
   const context = useOwnContext();
-
-  if (process.env.NODE_ENV !== "production") {
-    const errMsg = validateProps(props, context.type);
-    if (errMsg) {
-      throw new Error(errMsg);
-    }
-  }
 
   const {
     name,
@@ -44,15 +38,26 @@ export function useObject(props) {
     index
   );
 
+  if (process.env.NODE_ENV !== "production") {
+    const errMsg = validateProps(
+      { ...props, index: nameProp.current },
+      context.type
+    );
+    if (errMsg) {
+      throw new Error(errMsg);
+    }
+  }
+
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const isMounted = useRef(false);
   const { current: stillMounted } = useRef(() => isMounted.current);
 
-  const init = initValue || (type && type === "array" ? initArray : initObject);
+  const isArray = type && type === "array";
+  const init = initValue || (isArray ? initArray : initObject);
   const state = useRef(init);
   const memoInitialState = useRef(init);
-  const prevState = useRef(type && type === "array" ? initArray : initObject);
+  const prevState = useRef(isArray ? initArray : initObject);
 
   // getValue from parent context
   if (!isMounted.current) {
@@ -62,17 +67,14 @@ export function useObject(props) {
         : init;
   } else {
     state.current =
-      context.state[nameProp.current] ||
-      (type === "array" ? initArray : initObject);
+      context.state[nameProp.current] || (isArray ? initArray : initObject);
   }
 
   const formState = useRef(null);
   formState.current = context.formState;
 
-  const resetObj = useRef(type === "array" ? [] : {});
+  const resetObj = useRef(isArray ? [] : {});
   const { current: registerReset } = useRef((namePropExt, fnReset) => {
-    const isArray = type === "array";
-
     resetObj.current = isArray
       ? [...resetObj.current]
       : { ...resetObj.current };
@@ -93,7 +95,7 @@ export function useObject(props) {
   });
 
   const { current: reset } = useRef(formState => {
-    const initAcc = type === "array" ? [] : {};
+    const initAcc = isArray ? [] : {};
     let obj = Object.keys(resetObj.current).reduce((acc, key) => {
       const value = resetObj.current[key](formState);
       if (value !== undefined) acc[key] = value;
@@ -175,7 +177,7 @@ export function useObject(props) {
         removeMe: removeInitial
       });
 
-      if (willUnmount && type === "array") {
+      if (willUnmount && isArray) {
         newStateCurrent = newStateCurrent.filter(
           (elm, index) => index !== namePropExt
         );
@@ -294,7 +296,6 @@ export function useObject(props) {
       );
     }
     // --- Add the its children validators --- //
-
     context.registerReset(nameProp.current, reset);
 
     const newState = applyReducers(
@@ -397,7 +398,10 @@ export function useObject(props) {
   };
 }
 
-function validateProps({ name, type, value, asyncValidator }, contextType) {
+function validateProps(
+  { name, type, index, value, asyncValidator },
+  contextType
+) {
   if (
     typeof asyncValidator !== "undefined" &&
     typeof asyncValidator !== "function"
@@ -411,6 +415,10 @@ function validateProps({ name, type, value, asyncValidator }, contextType) {
       (type === "object" && typeof value !== "object"))
   ) {
     return `The prop "value": ${value} of type "${type}" passed to "${name} Collection" it is not allowed as initial value.`;
+  }
+
+  if (contextType === "array" && !isValidIndex(index)) {
+    return `The prop "index": ${index} of type "${typeof index}" passed to a Collection "${type}" must be either a string or number represent as integers.`;
   }
 
   if (!isValidValue(name, contextType)) {
