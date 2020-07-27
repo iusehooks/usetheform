@@ -163,5 +163,26 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
       getByTestId("asyncErrorDetails")
     );
     expect(asyncErrorDetailsAfterReset).toBeDefined();
+
+    const username = getByTestId("username");
+    const city = getByTestId("city");
+    act(() => {
+      username.focus();
+      username.blur();
+      city.focus();
+      city.blur();
+    });
+
+    const [
+      asyncStartUsernameAfterReset,
+      asyncStartCityAfterReset
+    ] = await waitForElement(() =>
+      Promise.all([
+        getByTestId("asyncStartUsername"),
+        getByTestId("asyncStartCity")
+      ])
+    );
+    expect(asyncStartUsernameAfterReset).toBeDefined();
+    expect(asyncStartCityAfterReset).toBeDefined();
   });
 });

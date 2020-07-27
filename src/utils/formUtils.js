@@ -5,7 +5,8 @@ export const STATUS = {
   ON_CHANGE: "ON_CHANGE",
   ON_INIT: "ON_INIT",
   ON_SUBMIT: "ON_SUBMIT",
-  ON_INIT_ASYNC: "ON_INIT_ASYNC"
+  ON_INIT_ASYNC: "ON_INIT_ASYNC",
+  ON_RUN_ASYNC: "ON_RUN_ASYNC"
 };
 
 export const createForm = (state = {}) => ({

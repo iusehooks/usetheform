@@ -266,10 +266,13 @@ export function useForm({
   const runInitialAsyncValidators = useCallback(() => {
     const keyAsyncValitions = Object.keys(asyncInitValidation.current);
     if (keyAsyncValitions.length > 0) {
-      const promises = flatAsyncValidationMap(asyncInitValidation.current);
       const status = STATUS.ON_INIT_ASYNC;
+      dispatchFormState({ ...stateRef.current, status });
+
+      const promises = flatAsyncValidationMap(asyncInitValidation.current);
       Promise.all(promises)
         .then(() => {
+          const status = STATUS.READY;
           const isValid = isFormValid(
             validators.current,
             stateRef.current.state
@@ -281,6 +284,7 @@ export function useForm({
           });
         })
         .catch(() => {
+          const status = STATUS.READY;
           dispatchFormState({
             ...stateRef.current,
             status,
@@ -292,12 +296,14 @@ export function useForm({
 
   const runAsyncValidation = useCallback(({ start, end }) => {
     if (start) {
-      dispatchFormState({ ...stateRef.current, isValid: false });
+      const status = STATUS.ON_RUN_ASYNC;
+      dispatchFormState({ ...stateRef.current, isValid: false, status });
     } else if (end) {
+      const status = STATUS.READY;
       const isValid =
         isFormValid(validators.current, stateRef.current.state) &&
         isFormValidAsync(validatorsMapsAsync.current);
-      dispatchFormState({ ...stateRef.current, isValid });
+      dispatchFormState({ ...stateRef.current, isValid, status });
     }
   }, []);
 
