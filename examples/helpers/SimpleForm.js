@@ -9,11 +9,9 @@ const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
   return <input {...restAttr} {...props}></input>;
 };
 
-window.SimpleForm = ({ children }) => {
+window.SimpleForm = () => {
   const [inputs, setAdd] = useState([]);
   const [collections, addCollection] = useState([]);
-
-  const [ok, set] = useState(false);
 
   return (
     <div>
