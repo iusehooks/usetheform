@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { Collection, Input } from "../../../src";
 
-export function CollectionDynamicField({ name = "dynamic" }) {
+export function CollectionDynamicField({ name = "dynamic", reducers }) {
   const index = useRef(0);
   const [inputs, setAdd] = useState([]);
 
@@ -31,7 +31,7 @@ export function CollectionDynamicField({ name = "dynamic" }) {
 
   return (
     <div>
-      <Collection array name={name}>
+      <Collection array name={name} reducers={reducers}>
         {" --- Start --- "}
         <div> Start an array collection of inputs</div>
         {inputs}
@@ -356,3 +356,51 @@ export const CollectionNestedRandomPositionCollection = forwardRef(
     );
   }
 );
+
+export function CollectionDynamicCart({ reducers }) {
+  const index = useRef(0);
+  const [inputs, setAdd] = useState([]);
+
+  const addInput = () => {
+    index.current++;
+    setAdd(prev => [
+      ...prev,
+      <Input
+        type="text"
+        key={index.current}
+        data-testid={`input_${index.current}`}
+        value={index.current}
+      />
+    ]);
+  };
+
+  const removeInput = () =>
+    setAdd(prev => {
+      const pos = Math.floor(Math.random() * prev.length);
+      return prev.filter((elm, index) => index !== pos);
+    });
+
+  return (
+    <div>
+      <Collection object name="cart" reducers={reducers}>
+        <Collection object name="list">
+          <Collection array name="items">
+            {" --- Start --- "}
+            <div> Start an array collection of inputs</div>
+            {inputs}
+            <div> End an array collection of inputs</div>
+            {" --- End --- "}
+          </Collection>
+          <Input name="result" type="number" value="0" />
+        </Collection>
+      </Collection>
+      <br />
+      <button type="button" data-testid="addInput" onClick={addInput}>
+        Add Input
+      </button>
+      <button type="button" data-testid="removeInput" onClick={removeInput}>
+        Remove random Input
+      </button>
+    </div>
+  );
+}

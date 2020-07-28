@@ -8,6 +8,7 @@ import {
 
 import Form, { Input, Collection } from "./../src";
 
+import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
 import CollectionValidation from "./helpers/components/CollectionValidation";
 import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
 import CollectionArrayNested, {
@@ -25,7 +26,7 @@ import CollectionObjectNested, {
 } from "./helpers/components/CollectionObjectNested";
 
 import Reset from "./helpers/components/Reset";
-
+import Submit from "./helpers/components/Submit";
 import AgeRange from "./helpers/components/AgeRange";
 
 const mountForm = ({ props = {}, children } = {}) =>
@@ -117,9 +118,7 @@ describe("Component => Collection", () => {
   it("should show an error label if Collection is not valid due to sync validator", () => {
     const children = [
       <CollectionValidation key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>
+      <Submit forceEnable key="2" />
     ];
     const { getByTestId } = mountForm({ children });
     const submit = getByTestId("submit");
@@ -240,9 +239,7 @@ describe("Component => Collection", () => {
   it("should show an error label if Collection is not valid due to async validator", async () => {
     const children = [
       <CollectionAsyncValidation key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>
+      <Submit key="2" />
     ];
     const { getByTestId } = mountForm({ children });
     const submit = getByTestId("submit");
@@ -259,9 +256,7 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNested key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
@@ -295,9 +290,7 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNestedValue key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
@@ -331,9 +324,7 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNestedValue key="1" reducers={reducerArrayNested} />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     mountForm({ children, props });
@@ -347,9 +338,7 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNested key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
@@ -380,9 +369,7 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNestedValue key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
@@ -417,9 +404,7 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNestedValue key="1" reducers={reducerObjectNested} />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     mountForm({ children, props });
@@ -427,6 +412,46 @@ describe("Component => Collection", () => {
     expect(onInit).toHaveReturnedWith({
       lv1: expectedValueObjNested
     });
+  });
+
+  it("should run reducer functions on Collection fields removal", () => {
+    const props = { onInit, onSubmit, onChange, onReset };
+    const reducer = jest.fn(value => {
+      const { items = [] } = value.list;
+      const result = items.reduce((acc, val) => {
+        acc += val;
+        return acc;
+      }, 0);
+      const list = { ...value.list, result };
+      return { ...value, list };
+    });
+    const children = [
+      <CollectionDynamicCart key="1" reducers={reducer} />,
+      <Submit key="2" />,
+      <Reset key="3" />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { result: 0 } });
+
+    const addInput = getByTestId("addInput");
+    const removeInput = getByTestId("removeInput");
+
+    fireEvent.click(addInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { items: [1], result: 1 } });
+
+    fireEvent.click(addInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { items: [1, 2], result: 3 } });
+
+    fireEvent.click(removeInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { items: [1], result: 1 } });
+
+    fireEvent.click(removeInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { result: 0 } });
   });
 
   it("should throw an error if the the prop 'index' is not an integer", () => {

@@ -8,6 +8,7 @@ import {
 
 import Form, { Input } from "./../src";
 
+import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
 import SimpleForm from "./helpers/components/SimpleForm";
 import SimpleFormWithAsync from "./helpers/components/SimpleFormWithAsync";
 import {
@@ -378,6 +379,66 @@ describe("Component => Form", () => {
       { name: "mickey" },
       { name: "foo" }
     );
+  });
+
+  it("should run reducer functions applied to Form on fields removal", () => {
+    const reducers = jest.fn(value => {
+      const { cart = {} } = value;
+      const { list = {} } = cart;
+      const { items = [] } = list;
+      const result = items.reduce((acc, val) => {
+        acc += val;
+        return acc;
+      }, 0);
+      const newList = { ...list, result };
+      const newCart = { ...cart, list: newList };
+
+      return { ...value, cart: newCart, cartResult: result };
+    });
+    const props = { onInit, onSubmit, onChange, onReset, reducers };
+
+    const children = [
+      <CollectionDynamicCart key="1" />,
+      <Input name="cartResult" type="number" key="2" value="0" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    expect(reducers).toHaveBeenCalled();
+    expect(reducers).toHaveReturnedWith({
+      cart: { list: { result: 0 } },
+      cartResult: 0
+    });
+
+    const addInput = getByTestId("addInput");
+    const removeInput = getByTestId("removeInput");
+
+    fireEvent.click(addInput);
+    expect(reducers).toHaveBeenCalled();
+    expect(reducers).toHaveReturnedWith({
+      cart: { list: { items: [1], result: 1 } },
+      cartResult: 1
+    });
+
+    fireEvent.click(addInput);
+    expect(reducers).toHaveBeenCalled();
+    expect(reducers).toHaveReturnedWith({
+      cart: { list: { items: [1, 2], result: 3 } },
+      cartResult: 3
+    });
+
+    fireEvent.click(removeInput);
+    expect(reducers).toHaveBeenCalled();
+    expect(reducers).toHaveReturnedWith({
+      cart: { list: { items: [1], result: 1 } },
+      cartResult: 1
+    });
+
+    fireEvent.click(removeInput);
+    expect(reducers).toHaveBeenCalled();
+    expect(reducers).toHaveReturnedWith({
+      cart: { list: { result: 0 } },
+      cartResult: 0
+    });
   });
 
   it("should submit the Form", () => {

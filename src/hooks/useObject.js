@@ -186,7 +186,13 @@ export function useObject(props) {
         );
       }
 
-      state.current = newStateCurrent;
+      const reducedState = applyReducers(
+        newStateCurrent,
+        state.current,
+        formState.current
+      );
+
+      state.current = reducedState;
       memoInitialState.current = newStateInitial;
 
       const removeCurrentProp = Object.keys(state.current).length === 0;
