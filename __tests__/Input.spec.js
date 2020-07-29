@@ -79,6 +79,49 @@ describe("Component => Input", () => {
     expect(onChange).toHaveBeenCalledWith({ email: value });
   });
 
+  it("should reset a Radio inputs group to it's initial value after being changed", () => {
+    const type = "radio";
+    const props = { onChange, onInit, onReset };
+    const children = [
+      <Input key="1" data-testid="a" type={type} name="sex" value="F" />,
+      <Input
+        key="2"
+        data-testid="b"
+        type={type}
+        name="sex"
+        checked
+        value="M"
+      />,
+      <Input key="3" data-testid="c" type={type} name="sex" value="Other" />,
+      <Reset key="4" />
+    ];
+    const { getByTestId } = mountForm({ props, children });
+    const radio1 = getByTestId("a");
+    const radio2 = getByTestId("b");
+    const radio3 = getByTestId("c");
+    const reset = getByTestId("reset");
+
+    expect(onInit).toHaveReturnedWith({ sex: "M" });
+
+    fireEvent.click(radio1);
+    expect(onChange).toHaveBeenCalledWith({ sex: "F" });
+    expect(radio1.checked).toBe(true);
+    expect(radio2.checked).toBe(false);
+    expect(radio3.checked).toBe(false);
+
+    fireEvent.click(radio3);
+    expect(onChange).toHaveBeenCalledWith({ sex: "Other" });
+    expect(radio1.checked).toBe(false);
+    expect(radio2.checked).toBe(false);
+    expect(radio3.checked).toBe(true);
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({ sex: "M" });
+    expect(radio1.checked).toBe(false);
+    expect(radio2.checked).toBe(true);
+    expect(radio3.checked).toBe(false);
+  });
+
   it("should use a reducer function to reduce the Input value", () => {
     const reducedValue = 3;
     const reducer = value => value + 2;

@@ -203,7 +203,13 @@ export function useField(props) {
       }
     }
 
-    context.registerReset(nameProp.current, reset);
+    if (type === "radio" && initialCheckedRef.current === true) {
+      context.registerReset(nameProp.current, reset);
+    }
+
+    if (type !== "radio") {
+      context.registerReset(nameProp.current, reset);
+    }
 
     /* if a initialValue or initialChecked is passed as prop */
     if (
@@ -428,7 +434,11 @@ function getInitialValue(
     if (type !== "radio" && initValueRef === "") {
       initValueRef = state[nameProp.current];
     }
-    if (initialChecked === false && (type === "checkbox" || type === "radio")) {
+    if (
+      initialChecked === false &&
+      (type === "checkbox" ||
+        (type === "radio" && state[nameProp.current] === initialValue))
+    ) {
       initCheckRef = true;
     }
   }
