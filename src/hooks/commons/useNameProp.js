@@ -4,7 +4,7 @@ import { IndexContext } from "./../../hoc/withIndex";
 export const useNameProp = (context, name, index) => {
   const nameProp = useRef(name);
   const uniqueIDFromContext = useContext(IndexContext);
-  let uniqueIDarrayContext = uniqueIDFromContext.id;
+  let uniqueIDarrayContext = uniqueIDFromContext ? uniqueIDFromContext.id : 1;
   const setNameProp = useCallback(index => {
     nameProp.current = index;
   }, []);

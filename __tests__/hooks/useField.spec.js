@@ -28,6 +28,40 @@ describe("Hooks => useField", () => {
   it("should change a Field value due to an action", () => {
     const props = { onChange };
     const children = [
+      <InputCustomNoAutoIndex
+        type="text"
+        key="1"
+        data-testid="input1"
+        name="number"
+        value="2"
+      />,
+      <InputCustom
+        type="text"
+        key="2"
+        data-testid="input2"
+        name="number2"
+        value="4"
+      />
+    ];
+    const { getByTestId } = mountForm({ props, children });
+
+    const input1 = getByTestId("input1");
+    const input2 = getByTestId("input2");
+
+    onChange.mockClear();
+    fireEvent.change(input1, { target: { value: "50" } });
+    expect(input1.value).toBe("50");
+    expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "4" });
+
+    onChange.mockClear();
+    fireEvent.change(input2, { target: { value: "5" } });
+    expect(input2.value).toBe("5");
+    expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "5" });
+  });
+
+  it("should change a Field value due to an action", () => {
+    const props = { onChange };
+    const children = [
       <Collection array key="1" name="array">
         <InputCustom type="text" data-testid="input1" />
         <InputCustom type="text" data-testid="input2" />
