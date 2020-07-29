@@ -10,6 +10,8 @@ import {
   CollectionNestedRandomPositionCollection
 } from "./helpers/components/CollectionDynamicField";
 
+import { CollectionObjectNestedRadios } from "./helpers/components/CollectionObjectNested";
+
 import Reset from "./helpers/components/Reset";
 
 const mountForm = ({ props = {}, children } = {}) =>
@@ -432,5 +434,217 @@ describe("Collections Nested StrictMode => Collections", () => {
     });
 
     expect(onChange).toHaveReturnedWith({});
+  });
+
+  it("should reset a nested collection of radio buttons to its initial state - 1", () => {
+    const initialState = {
+      lv1: {
+        1: "2",
+        lv2: { 2: "3", lv3: { 3: "6", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    };
+    const props = { onInit, onChange, onReset, initialState };
+    const children = [
+      <CollectionObjectNestedRadios key="1" />,
+      <Reset key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    const reset = getByTestId("reset");
+
+    const radio1lv1 = getByTestId("1");
+    const radio2lv1 = getByTestId("2");
+
+    const radio1lv2 = getByTestId("3");
+    const radio2lv2 = getByTestId("4");
+
+    const radio1lv3 = getByTestId("5");
+    const radio2lv3 = getByTestId("6");
+
+    const radio1lv4 = getByTestId("7");
+    const radio2lv4 = getByTestId("8");
+
+    const radio1lv5 = getByTestId("9");
+    const radio2lv5 = getByTestId("10");
+
+    expect(onInit).toHaveReturnedWith(initialState);
+    expect(radio2lv1.checked).toBe(true);
+    expect(radio1lv2.checked).toBe(true);
+    expect(radio2lv3.checked).toBe(true);
+    expect(radio1lv4.checked).toBe(true);
+    expect(radio1lv5.checked).toBe(true);
+
+    fireEvent.click(radio1lv1);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "3", lv3: { 3: "6", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv1.checked).toBe(true);
+    expect(radio2lv1.checked).toBe(false);
+
+    fireEvent.click(radio2lv2);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "6", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv2.checked).toBe(false);
+    expect(radio2lv2.checked).toBe(true);
+
+    fireEvent.click(radio1lv3);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "5", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv3.checked).toBe(true);
+    expect(radio2lv3.checked).toBe(false);
+
+    fireEvent.click(radio2lv4);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "5", lv4: { 4: "8", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv4.checked).toBe(false);
+    expect(radio2lv4.checked).toBe(true);
+
+    fireEvent.click(radio2lv5);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "5", lv4: { 4: "8", lv5: { 5: "10" } } } }
+      }
+    });
+    expect(radio1lv5.checked).toBe(false);
+    expect(radio2lv5.checked).toBe(true);
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveReturnedWith(initialState);
+    expect(radio1lv1.checked).toBe(false);
+    expect(radio2lv1.checked).toBe(true);
+
+    expect(radio1lv2.checked).toBe(true);
+    expect(radio2lv2.checked).toBe(false);
+
+    expect(radio1lv3.checked).toBe(false);
+    expect(radio2lv3.checked).toBe(true);
+
+    expect(radio1lv4.checked).toBe(true);
+    expect(radio2lv4.checked).toBe(false);
+
+    expect(radio1lv5.checked).toBe(true);
+    expect(radio2lv5.checked).toBe(false);
+  });
+
+  it("should reset a nested collection of radio buttons to its initial state - 2", () => {
+    const initialState = {
+      lv1: {
+        1: "2",
+        lv2: { 2: "3", lv3: { 3: "6", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    };
+    const props = { onInit, onChange, onReset };
+    const children = [
+      <CollectionObjectNestedRadios key="1" checked />,
+      <Reset key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    const reset = getByTestId("reset");
+
+    const radio1lv1 = getByTestId("1");
+    const radio2lv1 = getByTestId("2");
+
+    const radio1lv2 = getByTestId("3");
+    const radio2lv2 = getByTestId("4");
+
+    const radio1lv3 = getByTestId("5");
+    const radio2lv3 = getByTestId("6");
+
+    const radio1lv4 = getByTestId("7");
+    const radio2lv4 = getByTestId("8");
+
+    const radio1lv5 = getByTestId("9");
+    const radio2lv5 = getByTestId("10");
+
+    expect(onInit).toHaveReturnedWith(initialState);
+    expect(radio2lv1.checked).toBe(true);
+    expect(radio1lv2.checked).toBe(true);
+    expect(radio2lv3.checked).toBe(true);
+    expect(radio1lv4.checked).toBe(true);
+    expect(radio1lv5.checked).toBe(true);
+
+    fireEvent.click(radio1lv1);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "3", lv3: { 3: "6", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv1.checked).toBe(true);
+    expect(radio2lv1.checked).toBe(false);
+
+    fireEvent.click(radio2lv2);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "6", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv2.checked).toBe(false);
+    expect(radio2lv2.checked).toBe(true);
+
+    fireEvent.click(radio1lv3);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "5", lv4: { 4: "7", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv3.checked).toBe(true);
+    expect(radio2lv3.checked).toBe(false);
+
+    fireEvent.click(radio2lv4);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "5", lv4: { 4: "8", lv5: { 5: "9" } } } }
+      }
+    });
+    expect(radio1lv4.checked).toBe(false);
+    expect(radio2lv4.checked).toBe(true);
+
+    fireEvent.click(radio2lv5);
+    expect(onChange).toHaveReturnedWith({
+      lv1: {
+        1: "1",
+        lv2: { 2: "4", lv3: { 3: "5", lv4: { 4: "8", lv5: { 5: "10" } } } }
+      }
+    });
+    expect(radio1lv5.checked).toBe(false);
+    expect(radio2lv5.checked).toBe(true);
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveReturnedWith(initialState);
+    expect(radio1lv1.checked).toBe(false);
+    expect(radio2lv1.checked).toBe(true);
+
+    expect(radio1lv2.checked).toBe(true);
+    expect(radio2lv2.checked).toBe(false);
+
+    expect(radio1lv3.checked).toBe(false);
+    expect(radio2lv3.checked).toBe(true);
+
+    expect(radio1lv4.checked).toBe(true);
+    expect(radio2lv4.checked).toBe(false);
+
+    expect(radio1lv5.checked).toBe(true);
+    expect(radio2lv5.checked).toBe(false);
   });
 });

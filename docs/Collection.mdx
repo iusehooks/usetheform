@@ -97,6 +97,45 @@ Reducers functions specify how the Collection's value change.
 
 ## Array Collection
 
+Array Collection of Input fields with indexes handled automatically.
+
+```javascript
+import React from "react";
+import Form { Input, Collection } from "usetheform";
+```
+
+<Playground>
+      <Form>
+        <Collection array name="numberList">
+          <Input label="One" type="number" value="1" />
+          <Input label="Two" type="number" value="2" />
+        </Collection>
+      </Form>
+</Playground>
+
+<br />
+Array Collection of Input fields with indexes handled automatically for custom Inputs.
+
+```javascript
+import React from "react";
+import { withIndex, useField, Collection } from "usetheform";
+
+const CustomInput = withIndex(({ type, name, value, index, ...restAttr }) => {
+  const props = useField({ type, name, value, index });
+  return <input {...restAttr} {...props}></input>;
+});
+```
+
+<Playground>
+      <Form>
+        <Collection array name="numberList">
+          <CustomInput label="One" type="number" value="1" />
+          <CustomInput label="Two" type="number" value="2" />
+        </Collection>
+      </Form>
+</Playground>
+
+<br />
 Array Collection of Input fields with indexes handled maunally.
 
 ```javascript
@@ -114,28 +153,6 @@ Array Collection of Input fields with indexes handled maunally.
              Two:
             <Input type="number" index="1" value="2" />
           </label>
-        </Collection>
-      </Form>
-</Playground>
-
-<br />
-Array Collection of Input fields with indexes handled automatically for custom Inputs.
-
-```javascript
-import React from "react";
-import { withIndex, useField } from "usetheform";
-
-const CustomInput = withIndex(({ type, name, value, index, ...restAttr }) => {
-  const props = useField({ type, name, value, index });
-  return <input {...restAttr} {...props}></input>;
-});
-```
-
-<Playground>
-      <Form>
-        <Collection array name="numberList">
-          <CustomInput label="One" type="number" value="1" />
-          <CustomInput label="Two" type="number" value="2" />
         </Collection>
       </Form>
 </Playground>
