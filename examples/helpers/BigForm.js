@@ -14,27 +14,16 @@ for (var i = 0; i < foo.length; i++) {
   foo[i] = i;
 }
 
-window.SimpleForm = () => {
-  const [inputs1, setAdd1] = useState(() =>
-    foo.map((item, index) => (
-      <Collection key={index} array name={`c${index}`}>
-        <Input type="text" value={index} />
-      </Collection>
-    ))
-  );
-
-  const [inputs2, setAdd2] = useState(() =>
+window.BigForm = () => {
+  const [inputs, editInputs] = useState(() =>
     foo.map((item, index) => (
       <Input type="text" key={index} name={`c${index}`} />
     ))
   );
 
-  const [inputs, setAdd] = useState(() => []);
-  const [collections, addCollection] = useState([]);
-
   return (
     <div>
-      <Form>{inputs2}</Form>
+      <Form>{inputs}</Form>
     </div>
   );
 };
