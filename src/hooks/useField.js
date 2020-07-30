@@ -97,7 +97,7 @@ export function useField(props) {
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
-  const { current: reset } = useRef(formState => {
+  const reset = useCallback(formState => {
     valueFieldLastAsyncCheck.current = null;
     switch (type) {
       case "number":
@@ -122,7 +122,7 @@ export function useField(props) {
         return value === "" ? undefined : value;
       }
     }
-  });
+  }, []);
 
   const onChange = useCallback(event => {
     if (typeof event.persist === "function") {
@@ -329,19 +329,19 @@ export function useField(props) {
     context.formStatus
   ]);
 
-  const { current: onBlur } = useRef(e => {
+  const onBlur = useCallback(e => {
     e.persist();
     setAyncOnBlur(true);
     setSyncOnBlur(true);
     customBlur(e);
-  });
+  }, []);
 
-  const { current: onFocus } = useRef(e => {
+  const onFocus = useCallback(e => {
     e.persist();
     setAyncOnBlur(false);
     setSyncOnFocus(true);
     customFocus(e);
-  });
+  }, []);
 
   const attributes = filterProps({
     onChange,

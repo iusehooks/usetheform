@@ -27,8 +27,8 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
   <body>
     <div id="main" /> 
     <script type="text/babel">
-        const { BigForm } = window
-        ReactDOM.render(  <div> <BigForm /> <br />   </div>  , document.getElementById('main')
+        const { SimpleForm, SimpleFormWithAsync, BigForm } = window
+        ReactDOM.render(  <React.StrictMode> <SimpleForm /><br /> <SimpleFormWithAsync /> <BigForm /> </React.StrictMode>, document.getElementById('main')
       );
      </script>
   </body>
