@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useOwnContext } from "./useOwnContext";
 import { useNameProp } from "./commons/useNameProp";
 import { useValidationFunction } from "./commons/useValidationFunction";
@@ -50,6 +50,7 @@ export function useField(props) {
   }
 
   const { state } = context;
+
   const formState = useRef(null);
   formState.current = context.formState;
 
@@ -123,7 +124,7 @@ export function useField(props) {
     }
   });
 
-  const onChange = event => {
+  const onChange = useCallback(event => {
     if (typeof event.persist === "function") {
       event.persist();
     }
@@ -142,7 +143,7 @@ export function useField(props) {
       fileField.current = target.value;
     } else if (type === "checkbox") {
       nextValue =
-        state[nameProp.current] !== undefined
+        checkedField.current === true
           ? ""
           : initialValueRef.current || target.value || true;
     } else if (type === "radio") {
@@ -162,7 +163,7 @@ export function useField(props) {
 
     customChange(newValue, event);
     context.changeProp(nameProp.current, newValue, false);
-  };
+  }, []);
 
   /* it runs once and set the inital `value` if passed
     and registers the validators functions if there is any

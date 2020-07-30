@@ -1,38 +1,37 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { withIndex } from "./hoc/withIndex";
 import { useObject } from "./hooks/useObject";
 import { ContextObject as Context } from "./hooks/useOwnContext";
 
-export const Collection = withIndex(
-  ({
-    children,
+export const Collection = withIndex(function Collection({
+  children,
+  name,
+  index,
+  object,
+  value,
+  reducers,
+  onValidation,
+  resetSyncErr,
+  validators,
+  asyncValidator,
+  onAsyncValidation,
+  resetAsyncErr
+}) {
+  const type = object ? "object" : "array";
+  const props = useObject({
     name,
     index,
-    object,
+    type,
     value,
     reducers,
     onValidation,
-    resetSyncErr,
     validators,
+    resetSyncErr,
     asyncValidator,
     onAsyncValidation,
     resetAsyncErr
-  }) => {
-    const type = object ? "object" : "array";
-    const ctx = useObject({
-      name,
-      index,
-      type,
-      value,
-      reducers,
-      onValidation,
-      validators,
-      resetSyncErr,
-      asyncValidator,
-      onAsyncValidation,
-      resetAsyncErr
-    });
+  });
 
-    return <Context.Provider value={ctx}> {children}</Context.Provider>;
-  }
-);
+  const ctx = useMemo(() => props, [props.state, props.formStatus]);
+  return <Context.Provider value={ctx}> {children}</Context.Provider>;
+});

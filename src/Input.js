@@ -2,48 +2,46 @@ import React from "react";
 import { withIndex } from "./hoc/withIndex";
 import { useField } from "./hooks/useField";
 
-export const Input = withIndex(
-  ({
+export const Input = withIndex(function Input({
+  onFocus,
+  onBlur,
+  onChange,
+  children: omitChildren,
+  name,
+  index,
+  checked,
+  validators,
+  asyncValidator,
+  onValidation,
+  onAsyncValidation,
+  resetSyncErr,
+  resetAsyncErr,
+  type,
+  value,
+  touched,
+  multiple,
+  reducers,
+  ...extraProps
+}) {
+  const props = useField({
     onFocus,
     onBlur,
     onChange,
-    children: omitChildren,
+    type,
     name,
     index,
     checked,
+    value,
     validators,
     asyncValidator,
     onValidation,
     onAsyncValidation,
+    reducers,
     resetSyncErr,
     resetAsyncErr,
-    type,
-    value,
     touched,
-    multiple,
-    reducers,
-    ...extraProps
-  }) => {
-    const props = useField({
-      onFocus,
-      onBlur,
-      onChange,
-      type,
-      name,
-      index,
-      checked,
-      value,
-      validators,
-      asyncValidator,
-      onValidation,
-      onAsyncValidation,
-      reducers,
-      resetSyncErr,
-      resetAsyncErr,
-      touched,
-      multiple
-    });
+    multiple
+  });
 
-    return <input {...extraProps} {...props} />;
-  }
-);
+  return <input {...extraProps} {...props} />;
+});

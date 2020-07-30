@@ -11,6 +11,7 @@ import Form, { Input } from "./../src";
 import InputAsync from "./helpers/components/InputAsync";
 import Submit from "./helpers/components/Submit";
 import Reset from "./helpers/components/Reset";
+import { SimpleFormDynamicField } from "./helpers/components/SimpleForm";
 
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
@@ -287,6 +288,68 @@ describe("Component => Input", () => {
     expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
     const number = getByTestId("number");
     expect(number.value).toBe(`${reducedValue}`);
+  });
+
+  it("should reset the form state to initial fields value dynamically added", () => {
+    const props = { onInit, onChange, onReset };
+
+    const { getByTestId } = render(<SimpleFormDynamicField {...props} />);
+    const buttonAdd = getByTestId("add");
+    expect(onInit).toHaveReturnedWith({});
+
+    fireEvent.click(buttonAdd);
+    expect(onChange).toHaveBeenCalledWith({
+      radio: "2",
+      checkbox2: "2",
+      text2: "2"
+    });
+
+    const radio = getByTestId("radio");
+    fireEvent.click(radio);
+    expect(onChange).toHaveBeenCalledWith({
+      radio: "4",
+      checkbox2: "2",
+      text2: "2"
+    });
+    expect(radio.checked).toBe(true);
+
+    const checkbox1 = getByTestId("checkbox1");
+    const checkbox2 = getByTestId("checkbox2");
+
+    fireEvent.click(checkbox1);
+    expect(onChange).toHaveBeenCalledWith({
+      radio: "4",
+      checkbox1: "1",
+      checkbox2: "2",
+      text2: "2"
+    });
+    expect(checkbox1.checked).toBe(true);
+    expect(checkbox2.checked).toBe(true);
+
+    const text1 = getByTestId("text1");
+    fireEvent.change(text1, { target: { value: "micky" } });
+    expect(onChange).toHaveBeenCalledWith({
+      radio: "4",
+      checkbox1: "1",
+      checkbox2: "2",
+      text2: "2",
+      text1: "micky"
+    });
+    expect(text1.value).toBe("micky");
+
+    const reset = getByTestId("reset");
+    const text2 = getByTestId("text2");
+    const radio2 = getByTestId("radio2");
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({
+      radio: "2",
+      checkbox2: "2",
+      text2: "2"
+    });
+    expect(radio2.checked).toBe(true);
+    expect(checkbox2.checked).toBe(true);
+    expect(text2.value).toBe("2");
   });
 
   it("should throw an error for missing 'type'", () => {
