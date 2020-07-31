@@ -35,6 +35,8 @@ function Form({
     props.isValid,
     props.status,
     props.pristine,
+    props.isSubmitting,
+    props.submitAttempts,
     props.submitted
   ]);
 

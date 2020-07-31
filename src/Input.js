@@ -6,7 +6,6 @@ export const Input = withIndex(function Input({
   onFocus,
   onBlur,
   onChange,
-  children: omitChildren,
   name,
   index,
   checked,

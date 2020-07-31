@@ -51,7 +51,7 @@ export function useObject(props) {
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const isMounted = useRef(false);
-  const { current: stillMounted } = useRef(() => isMounted.current);
+  const stillMounted = useCallback(() => isMounted.current, []);
 
   const isArray = type && type === "array";
   const init = initValue || (isArray ? initArray : initObject);
@@ -74,7 +74,7 @@ export function useObject(props) {
   formState.current = context.formState;
 
   const resetObj = useRef(isArray ? [] : {});
-  const { current: registerReset } = useRef((namePropExt, fnReset) => {
+  const registerReset = useCallback((namePropExt, fnReset) => {
     resetObj.current = isArray
       ? [...resetObj.current]
       : { ...resetObj.current };
@@ -84,17 +84,17 @@ export function useObject(props) {
     } else {
       resetObj.current[namePropExt] = fnReset;
     }
-  });
+  }, []);
 
-  const { current: unRegisterReset } = useRef(namePropExt => {
+  const unRegisterReset = useCallback(namePropExt => {
     if (resetObj.current.constructor === Array) {
       resetObj.current.splice(namePropExt, 1);
     } else {
       delete resetObj.current[namePropExt];
     }
-  });
+  }, []);
 
-  const { current: reset } = useRef(formState => {
+  const reset = useCallback(formState => {
     const initAcc = isArray ? [] : {};
     let obj = Object.keys(resetObj.current).reduce((acc, key) => {
       const value = resetObj.current[key](formState);
@@ -108,9 +108,9 @@ export function useObject(props) {
         : undefined;
 
     return newValue;
-  });
+  }, []);
 
-  const { current: changeProp } = useRef((namePropExt, value, removeMe) => {
+  const changeProp = useCallback((namePropExt, value, removeMe) => {
     const nexState = updateState(state.current, {
       value,
       nameProp: namePropExt,
@@ -122,9 +122,9 @@ export function useObject(props) {
     const removeProp = Object.keys(newState).length === 0;
 
     context.changeProp(nameProp.current, newState, removeProp);
-  });
+  }, []);
 
-  const { current: initProp } = useRef(
+  const initProp = useCallback(
     (namePropExt, value, intialValue, add = true) => {
       const newState = updateState(state.current, {
         value,
@@ -156,7 +156,8 @@ export function useObject(props) {
       } else {
         state.current = reducedState;
       }
-    }
+    },
+    []
   );
 
   const { current: removeProp } = useRef(

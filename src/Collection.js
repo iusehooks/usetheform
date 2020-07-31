@@ -33,5 +33,6 @@ export const Collection = withIndex(function Collection({
   });
 
   const ctx = useMemo(() => props, [props.state, props.formStatus]);
-  return <Context.Provider value={ctx}> {children}</Context.Provider>;
+
+  return <Context.Provider value={ctx}>{children}</Context.Provider>;
 });

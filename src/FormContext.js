@@ -33,6 +33,8 @@ export const FormContext = memo(function FormContext({
     props.isValid,
     props.status,
     props.pristine,
+    props.isSubmitting,
+    props.submitAttempts,
     props.submitted
   ]);
 

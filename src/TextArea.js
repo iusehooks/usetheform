@@ -6,7 +6,6 @@ export const TextArea = withIndex(function TextArea({
   onFocus,
   onBlur,
   onChange,
-  children: omitChildren,
   name,
   index,
   validators,

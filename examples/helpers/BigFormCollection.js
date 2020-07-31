@@ -9,10 +9,12 @@ for (var i = 0; i < foo.length; i++) {
   foo[i] = i;
 }
 
-window.BigForm = () => {
+window.BigFormCollection = () => {
   const [inputs] = useState(() =>
     foo.map((item, index) => (
-      <Input type="text" key={index} name={`c${index}`} />
+      <Collection array key={index} name={`c${index}`}>
+        <Input type="text" />
+      </Collection>
     ))
   );
 

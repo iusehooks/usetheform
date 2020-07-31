@@ -35,24 +35,22 @@ export function useForm({
     isUsingMultipleForm(_getInitilaStateForm_, _onMultipleForm_, name)
   );
 
-  const { current: dispatchFormState } = useRef(
-    ({ state, status, ...rest }) => {
-      const prevState =
-        status === STATUS.ON_RESET
-          ? memoInitialState.current.state
-          : status === STATUS.ON_INIT
-          ? emptyStateValue
-          : stateRef.current.state;
+  const dispatchFormState = useCallback(({ state, status, ...rest }) => {
+    const prevState =
+      status === STATUS.ON_RESET
+        ? memoInitialState.current.state
+        : status === STATUS.ON_INIT
+        ? emptyStateValue
+        : stateRef.current.state;
 
-      const newState =
-        status === STATUS.READY || status === STATUS.ON_SUBMIT
-          ? state
-          : applyReducers(state, prevState, prevState);
+    const newState =
+      status === STATUS.READY || status === STATUS.ON_SUBMIT
+        ? state
+        : applyReducers(state, prevState, prevState);
 
-      stateRef.current = { ...rest, status, state: newState };
-      dispatch(stateRef.current);
-    }
-  );
+    stateRef.current = { ...rest, status, state: newState };
+    dispatch(stateRef.current);
+  }, []);
 
   const memoInitialState = useRef({ ...formState });
   const isMounted = useRef(false);
@@ -76,18 +74,16 @@ export function useForm({
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
-  const { current: changeProp } = useRef(
-    (nameProp, value, removeMe = false) => {
-      const newState = updateState(stateRef.current.state, {
-        value,
-        nameProp,
-        removeMe
-      });
-      propagateState(newState, false);
-    }
-  );
+  const changeProp = useCallback((nameProp, value, removeMe = false) => {
+    const newState = updateState(stateRef.current.state, {
+      value,
+      nameProp,
+      removeMe
+    });
+    propagateState(newState, false);
+  }, []);
 
-  const { current: initProp } = useRef((nameProp, value, initialValue) => {
+  const initProp = useCallback((nameProp, value, initialValue) => {
     if (isMounted.current) {
       // we must update the memoInitialState with the new prop if form is mounted
       memoInitialState.current.state = updateState(
@@ -117,9 +113,9 @@ export function useForm({
       memoInitialState.current.state = newStateInitial;
       stateRef.current.state = newState;
     }
-  });
+  }, []);
 
-  const { current: removeProp } = useRef(
+  const removeProp = useCallback(
     (
       namePropExt,
       { currentState, removeCurrent, initialState, removeInitial }
@@ -141,10 +137,11 @@ export function useForm({
       );
 
       propagateState(newState);
-    }
+    },
+    []
   );
 
-  const { current: propagateState } = useRef(
+  const propagateState = useCallback(
     (state, changePristine, status = STATUS.ON_CHANGE) => {
       const pristine =
         changePristine !== undefined
@@ -162,19 +159,20 @@ export function useForm({
         pristine,
         status
       });
-    }
+    },
+    []
   );
 
   const resetObj = useRef({});
-  const { current: registerReset } = useRef((nameProp, fnReset) => {
+  const registerReset = useCallback((nameProp, fnReset) => {
     resetObj.current = { ...resetObj.current, [nameProp]: fnReset };
-  });
+  }, []);
 
-  const { current: unRegisterReset } = useRef(nameProp => {
+  const unRegisterReset = useCallback(nameProp => {
     delete resetObj.current[nameProp];
-  });
+  }, []);
 
-  const { current: reset } = useRef(() => {
+  const reset = useCallback(() => {
     const state = Object.keys(resetObj.current).reduce((acc, key) => {
       const value = resetObj.current[key](memoInitialState.current.state);
       if (value !== undefined) acc[key] = value;
@@ -189,18 +187,10 @@ export function useForm({
 
     const status = STATUS.ON_RESET;
 
-    dispatchFormState({
-      ...memoInitialState.current,
-      state,
-      status,
-      isValid,
-      submitted: 0,
-      submitAttempts: 0,
-      isSubmitting: false
-    });
-  });
+    dispatchFormState({ ...memoInitialState.current, state, status, isValid });
+  }, []);
 
-  const { current: onSubmitForm } = useRef(e => {
+  const onSubmitForm = useCallback(e => {
     e.persist();
     const { isValid, submitAttempts: prevAttempts } = stateRef.current;
     const status = STATUS.ON_SUBMIT;
@@ -256,17 +246,17 @@ export function useForm({
         submitAttempts
       });
     }
-  });
+  }, []);
 
   // used only to replace the entire Form State
-  const { current: dispatchNewState } = useRef(nextState => {
+  const dispatchNewState = useCallback(nextState => {
     let newState = nextState;
     if (typeof nextState === "function") {
       const { state: currentState } = stateRef.current;
       newState = nextState(currentState);
     }
     propagateState(newState, false);
-  });
+  }, []);
 
   // used to register async validation Actions
   const asyncInitValidation = useRef({});
