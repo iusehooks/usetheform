@@ -189,18 +189,27 @@ export function useForm({
 
     const status = STATUS.ON_RESET;
 
-    dispatchFormState({ ...memoInitialState.current, state, status, isValid });
+    dispatchFormState({
+      ...memoInitialState.current,
+      state,
+      status,
+      isValid,
+      submitted: 0,
+      submitAttempts: 0,
+      isSubmitting: false
+    });
   });
 
   const { current: onSubmitForm } = useRef(e => {
     e.persist();
-    const { isValid, submitted } = stateRef.current;
+    const { isValid, submitAttempts: prevAttempts } = stateRef.current;
     const status = STATUS.ON_SUBMIT;
 
     if (typeof action !== "string" || !isValid) {
       e.preventDefault();
     }
 
+    const submitAttempts = prevAttempts + 1;
     if (
       isValid &&
       Object.keys(validatorsAsync.current).length > 0 &&
@@ -217,16 +226,16 @@ export function useForm({
       e.preventDefault();
 
       // Set isValid to false until it ends the async checks
-      dispatchFormState({ ...stateRef.current, isValid: false });
+      dispatchFormState({
+        ...stateRef.current,
+        isValid: false,
+        isSubmitting: true,
+        submitAttempts
+      });
 
       Promise.all(asyncArrayProm)
         .then(() => {
-          dispatchFormState({
-            ...stateRef.current,
-            status,
-            isValid: true,
-            submitted: submitted + 1
-          });
+          dispatchFormState({ ...stateRef.current, status, isValid: true });
           if (
             typeof action === "string" &&
             typeof target.submit === "function"
@@ -236,13 +245,15 @@ export function useForm({
         })
         .catch(() => {
           const isValid = shouldRunAsyncValidator(validatorsMapsAsync.current);
-          dispatchFormState({ ...stateRef.current, isValid });
+          const isSubmitting = false;
+          dispatchFormState({ ...stateRef.current, isValid, isSubmitting });
         });
     } else {
       dispatchFormState({
         ...stateRef.current,
         status,
-        submitted: submitted + 1
+        isSubmitting: true,
+        submitAttempts
       });
     }
   });
@@ -310,6 +321,7 @@ export function useForm({
   // change status form to READY after being reset
   useEffect(() => {
     const { status, state, isValid } = stateRef.current;
+
     if (status === STATUS.ON_RESET) {
       onReset(state);
       dispatchFormState({ ...stateRef.current, status: STATUS.RESETTED });
@@ -320,8 +332,24 @@ export function useForm({
       onInit(state, updateState);
       runInitialAsyncValidators();
     } else if (status === STATUS.ON_SUBMIT) {
-      isValid && onSubmit(state, isValid);
-      dispatchFormState({ ...stateRef.current, status: STATUS.READY });
+      const common = { isSubmitting: false, status: STATUS.READY };
+      if (isValid) {
+        const result = onSubmit(state, isValid);
+        if (result && typeof result.then === "function") {
+          result
+            .then(() => {
+              const submitted = stateRef.current.submitted + 1;
+              dispatchFormState({ ...stateRef.current, ...common, submitted });
+            })
+            .catch(() => dispatchFormState({ ...stateRef.current, ...common }));
+        } else {
+          const { submitted: prevSub } = stateRef.current;
+          const submitted = result === false ? prevSub : prevSub + 1;
+          dispatchFormState({ ...stateRef.current, ...common, submitted });
+        }
+      } else {
+        dispatchFormState({ ...stateRef.current, ...common });
+      }
     }
     if (
       isMultipleForm &&
@@ -365,7 +393,7 @@ export function useForm({
   }, []);
 
   return {
-    ...formState, // { isValid, state, status, pristine }
+    ...formState, // { isValid, state, status, pristine, isSubmitting }
     formState: formState.state, // pass the global form state down
     formStatus: formState.status, // pass the global form status down
     registerAsyncInitValidation,

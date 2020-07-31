@@ -8,6 +8,7 @@ import {
 
 import Form, { Input } from "./../src";
 
+import { SimpleFormTestSumbission } from "./helpers/components/SimpleFormTestSumbission";
 import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
 import SimpleForm from "./helpers/components/SimpleForm";
 import SimpleFormWithAsync from "./helpers/components/SimpleFormWithAsync";
@@ -581,5 +582,138 @@ describe("Component => Form", () => {
     expect(onSubmit).not.toHaveBeenCalled();
     expect(submitbutton.disabled).toBe(true);
     console.error = originalError;
+  });
+
+  it("should count the total attempts and the total successfully submissions for sync onSubmit", () => {
+    let pressSubmit = 0;
+    const onSubmit = () => {
+      const myIndex = ++pressSubmit;
+      return myIndex % 2 === 0;
+    };
+    const props = { onSubmit };
+    const { getByTestId } = render(<SimpleFormTestSumbission {...props} />);
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+
+    for (let i = 1; i <= 10; i++) {
+      fireEvent.click(submit);
+    }
+    let submitAttempts = getByTestId("submitAttempts");
+    let submittedCounter = getByTestId("submittedCounter");
+
+    expect(submitAttempts.innerHTML).toBe("10");
+    expect(submittedCounter.innerHTML).toBe("5");
+
+    fireEvent.click(reset);
+    expect(() => getByTestId("submitAttempts")).toThrow();
+    expect(() => getByTestId("submittedCounter")).toThrow();
+  });
+
+  it("should count the total attempts and the total successfully submissions for async onSubmit", async () => {
+    let pressSubmit = 0;
+    const onSubmit = () => {
+      const myIndex = ++pressSubmit;
+      return new Promise((res, rej) => {
+        myIndex % 2 === 0 ? res() : rej();
+      });
+    };
+    const props = { onSubmit };
+    const { getByTestId } = render(<SimpleFormTestSumbission {...props} />);
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+
+    for (let i = 1; i <= 10; i++) {
+      fireEvent.click(submit);
+    }
+
+    const submitAttempts = await waitForElement(() =>
+      getByTestId("submitAttempts")
+    );
+    const submittedCounter = await waitForElement(() =>
+      getByTestId("submittedCounter")
+    );
+
+    expect(submitAttempts.innerHTML).toBe("10");
+    expect(submittedCounter.innerHTML).toBe("5");
+
+    fireEvent.click(reset);
+    expect(() => getByTestId("submitAttempts")).toThrow();
+    expect(() => getByTestId("submittedCounter")).toThrow();
+  });
+
+  it("should count the total attempts and the total successfully submissions for sync validation fields", () => {
+    const onSubmit = () => {};
+    const props = { onSubmit, showEmail: true };
+    const { getByTestId } = render(<SimpleFormTestSumbission {...props} />);
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+    const email = getByTestId("email");
+
+    let CounterSubmitAttempts = getByTestId("CounterSubmitAttempts");
+    let CounteSubmitted = getByTestId("CounteSubmitted");
+
+    for (let i = 1; i <= 5; i++) {
+      fireEvent.click(submit);
+    }
+
+    expect(CounterSubmitAttempts.innerHTML).toBe("5");
+    expect(CounteSubmitted.innerHTML).toBe("0");
+
+    fireEvent.click(reset);
+    expect(CounterSubmitAttempts.innerHTML).toBe("0");
+    expect(CounteSubmitted.innerHTML).toBe("0");
+
+    fireEvent.change(email, { target: { value: "abc@sustancu.it" } });
+    for (let i = 1; i <= 5; i++) {
+      fireEvent.click(submit);
+    }
+    expect(CounterSubmitAttempts.innerHTML).toBe("5");
+    expect(CounteSubmitted.innerHTML).toBe("5");
+  });
+
+  it("should count the total attempts and the total successfully submissions for async validation fields", async () => {
+    const onSubmit = () => true;
+    const targetSumbission = 1;
+    const targetAttempts = 1;
+    const props = {
+      onSubmit,
+      showCollection: true,
+      targetSumbission,
+      targetAttempts
+    };
+    const { getByTestId } = render(<SimpleFormTestSumbission {...props} />);
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+    const addInput = getByTestId("addInput");
+
+    let CounterSubmitAttempts = getByTestId("CounterSubmitAttempts");
+    let CounteSubmitted = getByTestId("CounteSubmitted");
+
+    for (let i = 1; i <= 5; i++) {
+      fireEvent.click(submit);
+    }
+
+    expect(CounterSubmitAttempts.innerHTML).toBe("5");
+    expect(CounteSubmitted.innerHTML).toBe("0");
+
+    fireEvent.click(reset);
+    expect(CounterSubmitAttempts.innerHTML).toBe("0");
+    expect(CounteSubmitted.innerHTML).toBe("0");
+
+    fireEvent.click(addInput);
+    fireEvent.click(addInput);
+    for (let i = 1; i <= 1; i++) {
+      fireEvent.click(submit);
+    }
+
+    const submitAttempts = await waitForElement(() =>
+      getByTestId("submitAttempts")
+    );
+    expect(submitAttempts.innerHTML).toBe("1");
+
+    const submittedCounter = await waitForElement(() =>
+      getByTestId("submittedCounter")
+    );
+    expect(submittedCounter.innerHTML).toBe("1");
   });
 });

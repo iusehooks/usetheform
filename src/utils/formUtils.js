@@ -14,6 +14,8 @@ export const createForm = (state = {}) => ({
   isValid: true,
   status: STATUS.READY,
   pristine: true,
+  isSubmitting: false,
+  submitAttempts: 0,
   submitted: 0
 });
 

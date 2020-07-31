@@ -243,6 +243,7 @@ describe("Component => Collection", () => {
     ];
     const { getByTestId } = mountForm({ children });
     const submit = getByTestId("submit");
+    const addInput = getByTestId("addInput");
 
     fireEvent.click(submit);
     const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
@@ -250,6 +251,14 @@ describe("Component => Collection", () => {
 
     const asyncError = await waitForElement(() => getByTestId("asyncError"));
     expect(asyncError).toBeDefined();
+
+    fireEvent.click(addInput);
+    fireEvent.click(addInput);
+    fireEvent.click(submit);
+    const asyncSuccess = await waitForElement(() =>
+      getByTestId("asyncSuccess")
+    );
+    expect(asyncSuccess).toBeDefined();
   });
 
   it("should render a nested array Collection with initial value passed as prop", () => {

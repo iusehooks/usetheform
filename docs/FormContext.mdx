@@ -27,8 +27,26 @@ A function invoked when the form has been reset to its initial State.
 
 **`onSubmit`**: function
 
-A function invoked when the form has been submitted.
+A function invoked when the submit button has been pressed. 
+The function may return either a Promise or a boolean value true/false.
+
+```js
+const onSubmit = () => { // do some operation };
+const onSubmit = () => new Promise((resolve, reject) => { // do some asyn operation  });
+```
+
+Cases:
+ - If the function returns a Promise which is resolved it will increment the value named **submitted**.
+ - If the function returns a boolean value `true` or no return at all it will increment the value named **submitted**.
+ - If the function returns a Promise which is rejected the value named **submitted** will not be incremented.
+ - If the function returns a boolean value `false` the value named **submitted** will not be incremented.
+
+```js
+  const { submitted, submitAttempts } = useForm();
+```
+
 It will be only invoked if your form passes all the validations added at any level (Collections or Fields).
+For each invokation the value **submitAttempts** will be incremented.
 
 **`initialState`**: object
 

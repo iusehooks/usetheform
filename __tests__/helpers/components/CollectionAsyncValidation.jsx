@@ -12,7 +12,7 @@ const asyncTest = value =>
       if (value.length <= 1) {
         reject("Add at least two Inputs");
       } else resolve();
-    }, 200);
+    }, 100);
   });
 
 let index = 0;

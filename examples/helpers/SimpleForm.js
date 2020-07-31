@@ -2,7 +2,7 @@
 const { default: Form, Collection, Input, useField } = UseTheForm;
 
 const { useState, useEffect, useRef } = React;
-const { CollectionArrayNested, Reset } = window;
+const { CollectionArrayNested, Reset, Submit } = window;
 
 const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
   const props = useField({ type, name, value, index });
@@ -16,6 +16,7 @@ window.SimpleForm = () => {
   return (
     <div>
       <Form
+        onSubmit={state => console.log(state)}
         onChange={state => console.log(state)}
         onInit={state => console.log("onInit ", state)}
       >
@@ -34,6 +35,7 @@ window.SimpleForm = () => {
 
         {/* <CollectionArrayNested /> */}
         <Reset />
+        <Submit />
       </Form>
       <button
         onClick={() =>
