@@ -148,11 +148,10 @@ export function useField(props) {
           : initialValueRef.current || target.value || true;
     } else if (type === "radio") {
       nextValue = initialValueRef.current || target.value || true;
+    } else if (type === "number" || type === "range") {
+      nextValue = target.value !== "" ? Number(target.value) : target.value;
     } else {
-      nextValue =
-        type === "number" || type === "range"
-          ? Number(target.value)
-          : target.value;
+      nextValue = target.value;
     }
 
     const newValue = applyReducers(

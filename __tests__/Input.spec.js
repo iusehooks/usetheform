@@ -68,15 +68,28 @@ describe("Component => Input", () => {
   });
 
   it("should render a Input and changing its value", () => {
-    const type = "text";
     const value = "test";
+    const valueNumber = 1;
+
     const props = { onChange };
     const children = [
-      <Input key="1" data-testid="email" type={type} name="email" />
+      <Input key="1" data-testid="email" type="text" name="email" />,
+      <Input key="2" data-testid="number" type="number" name="number" />
     ];
     const { getByTestId } = mountForm({ props, children });
+
+    const number = getByTestId(/number/i);
+    fireEvent.change(number, { target: { value: valueNumber } });
+    expect(onChange).toHaveBeenCalledWith({ number: valueNumber });
+
     const input = getByTestId(/email/i);
     fireEvent.change(input, { target: { value } });
+    expect(onChange).toHaveBeenCalledWith({
+      email: value,
+      number: valueNumber
+    });
+
+    fireEvent.change(number, { target: { value: "" } });
     expect(onChange).toHaveBeenCalledWith({ email: value });
   });
 
