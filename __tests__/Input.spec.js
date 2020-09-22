@@ -16,7 +16,7 @@ import { SimpleFormDynamicField } from "./helpers/components/SimpleForm";
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
 
-const onInit = jest.fn(state => state);
+const onInit = jest.fn();
 const onChange = jest.fn();
 const onSubmit = jest.fn();
 const onReset = jest.fn();
@@ -80,17 +80,20 @@ describe("Component => Input", () => {
 
     const number = getByTestId(/number/i);
     fireEvent.change(number, { target: { value: valueNumber } });
-    expect(onChange).toHaveBeenCalledWith({ number: valueNumber });
+    expect(onChange).toHaveBeenCalledWith({ number: valueNumber }, true);
 
     const input = getByTestId(/email/i);
     fireEvent.change(input, { target: { value } });
-    expect(onChange).toHaveBeenCalledWith({
-      email: value,
-      number: valueNumber
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        email: value,
+        number: valueNumber
+      },
+      true
+    );
 
     fireEvent.change(number, { target: { value: "" } });
-    expect(onChange).toHaveBeenCalledWith({ email: value });
+    expect(onChange).toHaveBeenCalledWith({ email: value }, true);
   });
 
   it("should reset a Radio inputs group to it's initial value after being changed", () => {
@@ -115,22 +118,22 @@ describe("Component => Input", () => {
     const radio3 = getByTestId("c");
     const reset = getByTestId("reset");
 
-    expect(onInit).toHaveReturnedWith({ sex: "M" });
+    expect(onInit).toHaveBeenCalledWith({ sex: "M" }, true);
 
     fireEvent.click(radio1);
-    expect(onChange).toHaveBeenCalledWith({ sex: "F" });
+    expect(onChange).toHaveBeenCalledWith({ sex: "F" }, true);
     expect(radio1.checked).toBe(true);
     expect(radio2.checked).toBe(false);
     expect(radio3.checked).toBe(false);
 
     fireEvent.click(radio3);
-    expect(onChange).toHaveBeenCalledWith({ sex: "Other" });
+    expect(onChange).toHaveBeenCalledWith({ sex: "Other" }, true);
     expect(radio1.checked).toBe(false);
     expect(radio2.checked).toBe(false);
     expect(radio3.checked).toBe(true);
 
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({ sex: "M" });
+    expect(onReset).toHaveBeenCalledWith({ sex: "M" }, true);
     expect(radio1.checked).toBe(false);
     expect(radio2.checked).toBe(true);
     expect(radio3.checked).toBe(false);
@@ -152,7 +155,38 @@ describe("Component => Input", () => {
       />
     ];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
+    expect(onInit).toHaveBeenCalledWith({ [name]: reducedValue }, true);
+  });
+
+  it("should use sync validator functions to validate the Input", () => {
+    const value = "33";
+    const name = "test";
+    const props = { onReset, onInit, onChange };
+    const children = [
+      <Input
+        key="1"
+        name={name}
+        type="text"
+        value={value}
+        data-testid="input"
+        validators={[val => (val && val.length >= 3 ? undefined : "error")]}
+      />,
+      <Reset key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    expect(onInit).toHaveBeenCalledWith({ [name]: value }, false);
+
+    const input = getByTestId("input");
+    fireEvent.change(input, { target: { value: "1234" } });
+    expect(onChange).toHaveBeenCalledWith({ [name]: "1234" }, true);
+
+    fireEvent.change(input, { target: { value: "12" } });
+    expect(onChange).toHaveBeenCalledWith({ [name]: "12" }, false);
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({ [name]: value }, false);
   });
 
   it("should use an async validator function to validate the Input", async () => {
@@ -207,7 +241,7 @@ describe("Component => Input", () => {
       getByTestId("asyncNotStartedYet")
     );
     expect(asyncNotStartedYet.textContent).toBe("asyncNotStartedYet");
-    expect(onReset).toHaveBeenCalledWith({ [name]: value });
+    expect(onReset).toHaveBeenCalledWith({ [name]: value }, false);
   });
 
   it("should override the inital form state given a initial 'value' prop to the input", () => {
@@ -218,12 +252,12 @@ describe("Component => Input", () => {
 
     let children = [<Input key="1" type="number" name={name} value={1} />];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: 1 });
+    expect(onInit).toHaveBeenCalledWith({ [name]: 1 }, true);
 
     onInit.mockClear();
     children = [<Input key="1" type="text" name={name} value="foo" />];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: "foo" });
+    expect(onInit).toHaveBeenCalledWith({ [name]: "foo" }, true);
 
     onInit.mockClear();
     children = [
@@ -237,7 +271,7 @@ describe("Component => Input", () => {
       />
     ];
     const { getByTestId } = mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: "foo_radio" });
+    expect(onInit).toHaveBeenCalledWith({ [name]: "foo_radio" }, true);
     const radio = getByTestId("radio");
     expect(radio.checked).toBe(true);
 
@@ -254,14 +288,14 @@ describe("Component => Input", () => {
     ];
 
     const { getByTestId: getByTestIdForm2 } = mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: "foo_checkbox" });
+    expect(onInit).toHaveBeenCalledWith({ [name]: "foo_checkbox" }, true);
     const checkbox = getByTestIdForm2("checkbox");
     expect(checkbox.checked).toBe(true);
 
     onInit.mockClear();
     children = [<Input key="1" type="custom" name={name} value={{ a: 1 }} />];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: { a: 1 } });
+    expect(onInit).toHaveBeenCalledWith({ [name]: { a: 1 } }, true);
 
     onInit.mockClear();
     children = [
@@ -276,7 +310,7 @@ describe("Component => Input", () => {
       />
     ];
     const { getByTestId: getByTestIdForm3 } = mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: 10 });
+    expect(onInit).toHaveBeenCalledWith({ [name]: 10 }, true);
     const range = getByTestIdForm3("range");
     expect(range.value).toBe("10");
   });
@@ -298,7 +332,7 @@ describe("Component => Input", () => {
       />
     ];
     const { getByTestId } = mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ [name]: reducedValue });
+    expect(onInit).toHaveBeenCalledWith({ [name]: reducedValue }, true);
     const number = getByTestId("number");
     expect(number.value).toBe(`${reducedValue}`);
   });
@@ -308,46 +342,58 @@ describe("Component => Input", () => {
 
     const { getByTestId } = render(<SimpleFormDynamicField {...props} />);
     const buttonAdd = getByTestId("add");
-    expect(onInit).toHaveReturnedWith({});
+    expect(onInit).toHaveBeenCalledWith({}, true);
 
     fireEvent.click(buttonAdd);
-    expect(onChange).toHaveBeenCalledWith({
-      radio: "2",
-      checkbox2: "2",
-      text2: "2"
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        radio: "2",
+        checkbox2: "2",
+        text2: "2"
+      },
+      true
+    );
 
     const radio = getByTestId("radio");
     fireEvent.click(radio);
-    expect(onChange).toHaveBeenCalledWith({
-      radio: "4",
-      checkbox2: "2",
-      text2: "2"
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        radio: "4",
+        checkbox2: "2",
+        text2: "2"
+      },
+      true
+    );
     expect(radio.checked).toBe(true);
 
     const checkbox1 = getByTestId("checkbox1");
     const checkbox2 = getByTestId("checkbox2");
 
     fireEvent.click(checkbox1);
-    expect(onChange).toHaveBeenCalledWith({
-      radio: "4",
-      checkbox1: "1",
-      checkbox2: "2",
-      text2: "2"
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        radio: "4",
+        checkbox1: "1",
+        checkbox2: "2",
+        text2: "2"
+      },
+      true
+    );
     expect(checkbox1.checked).toBe(true);
     expect(checkbox2.checked).toBe(true);
 
     const text1 = getByTestId("text1");
     fireEvent.change(text1, { target: { value: "micky" } });
-    expect(onChange).toHaveBeenCalledWith({
-      radio: "4",
-      checkbox1: "1",
-      checkbox2: "2",
-      text2: "2",
-      text1: "micky"
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        radio: "4",
+        checkbox1: "1",
+        checkbox2: "2",
+        text2: "2",
+        text1: "micky"
+      },
+      true
+    );
     expect(text1.value).toBe("micky");
 
     const reset = getByTestId("reset");
@@ -355,11 +401,14 @@ describe("Component => Input", () => {
     const radio2 = getByTestId("radio2");
 
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      radio: "2",
-      checkbox2: "2",
-      text2: "2"
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        radio: "2",
+        checkbox2: "2",
+        text2: "2"
+      },
+      true
+    );
     expect(radio2.checked).toBe(true);
     expect(checkbox2.checked).toBe(true);
     expect(text2.value).toBe("2");

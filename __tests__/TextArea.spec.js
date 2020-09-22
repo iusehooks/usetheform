@@ -29,7 +29,7 @@ describe("Component => TextArea", () => {
     const { getByTestId } = mountForm({ props, children });
     const textArea = getByTestId(dataTestid);
     fireEvent.change(textArea, { target: { value } });
-    expect(onChange).toHaveBeenCalledWith({ [name]: value });
+    expect(onChange).toHaveBeenCalledWith({ [name]: value }, true);
     expect(textArea.value).toBe(value);
   });
 });

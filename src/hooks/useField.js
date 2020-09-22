@@ -310,11 +310,12 @@ export function useField(props) {
             .current(valueField.current)
             .then(() => {
               context.updateValidatorsMap(nameProp.current, true, 1);
-              context.runAsyncValidation({ end: true, value: true });
+              context.runAsyncValidation({ end: true });
             })
             .catch(err => {
               if (err !== "cancelled") {
                 context.updateValidatorsMap(nameProp.current, false, 1);
+                context.runAsyncValidation({ end: true });
               }
             });
         }

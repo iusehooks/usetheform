@@ -278,19 +278,12 @@ export function useForm({
             validators.current,
             stateRef.current.state
           );
-          dispatchFormState({
-            ...stateRef.current,
-            status,
-            isValid
-          });
+          dispatchFormState({ ...stateRef.current, status, isValid });
         })
         .catch(() => {
           const status = STATUS.READY;
-          dispatchFormState({
-            ...stateRef.current,
-            status,
-            isValid: false
-          });
+          const isValid = false;
+          dispatchFormState({ ...stateRef.current, status, isValid });
         });
     }
   }, []);
@@ -300,7 +293,7 @@ export function useForm({
       const status = STATUS.ON_RUN_ASYNC;
       dispatchFormState({ ...stateRef.current, isValid: false, status });
     } else if (end) {
-      const status = STATUS.READY;
+      const status = STATUS.ON_ASYNC_END;
       const isValid =
         isFormValid(validators.current, stateRef.current.state) &&
         isFormValidAsync(validatorsMapsAsync.current);
@@ -313,14 +306,13 @@ export function useForm({
     const { status, state, isValid } = stateRef.current;
 
     if (status === STATUS.ON_RESET) {
-      onReset(state);
+      onReset(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.RESETTED });
     } else if (status === STATUS.ON_CHANGE) {
-      onChange(state);
+      onChange(state, isValid);
     } else if (status === STATUS.ON_INIT) {
-      const updateState = newState => propagateState(newState, false);
-      onInit(state, updateState);
       runInitialAsyncValidators();
+      onInit(state, isValid);
     } else if (status === STATUS.ON_SUBMIT) {
       const common = { isSubmitting: false, status: STATUS.READY };
       if (isValid) {

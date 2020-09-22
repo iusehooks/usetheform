@@ -15,7 +15,7 @@ const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
 
-const onInit = jest.fn(state => state);
+const onInit = jest.fn();
 const onChange = jest.fn();
 afterEach(cleanup);
 
@@ -51,12 +51,12 @@ describe("Hooks => useField", () => {
     onChange.mockClear();
     fireEvent.change(input1, { target: { value: "50" } });
     expect(input1.value).toBe("50");
-    expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "4" });
+    expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "4" }, true);
 
     onChange.mockClear();
     fireEvent.change(input2, { target: { value: "5" } });
     expect(input2.value).toBe("5");
-    expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "5" });
+    expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "5" }, true);
   });
 
   it("should change a Field value due to an action", () => {
@@ -75,12 +75,12 @@ describe("Hooks => useField", () => {
     onChange.mockClear();
     fireEvent.change(input1, { target: { value: "50" } });
     expect(input1.value).toBe("50");
-    expect(onChange).toHaveBeenCalledWith({ array: ["50"] });
+    expect(onChange).toHaveBeenCalledWith({ array: ["50"] }, true);
 
     onChange.mockClear();
     fireEvent.change(input2, { target: { value: "60" } });
     expect(input2.value).toBe("60");
-    expect(onChange).toHaveBeenCalledWith({ array: ["50", "60"] });
+    expect(onChange).toHaveBeenCalledWith({ array: ["50", "60"] }, true);
   });
 
   it("should nest Fields into array Collection", () => {
@@ -110,25 +110,31 @@ describe("Hooks => useField", () => {
     onChange.mockClear();
     fireEvent.change(input1, { target: { value: "50" } });
     expect(input1.value).toBe("50");
-    expect(onChange).toHaveBeenCalledWith({ array: [["50"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["50"]] }, true);
 
     onChange.mockClear();
     fireEvent.change(input2, { target: { value: "60" } });
-    expect(onChange).toHaveBeenCalledWith({ array: [["50", "60"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["50", "60"]] }, true);
     expect(input2.value).toBe("60");
 
     onChange.mockClear();
     fireEvent.change(input3, { target: { value: "hello" } });
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["50", "60"], [["hello"]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["50", "60"], [["hello"]]]
+      },
+      true
+    );
     expect(input3.value).toBe("hello");
 
     onChange.mockClear();
     fireEvent.change(input4, { target: { value: "world" } });
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["50", "60"], [["hello", "world"]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["50", "60"], [["hello", "world"]]]
+      },
+      true
+    );
     expect(input4.value).toBe("world");
   });
 
@@ -159,26 +165,32 @@ describe("Hooks => useField", () => {
     onChange.mockClear();
     fireEvent.click(input1);
     expect(input1.checked).toBe(true);
-    expect(onChange).toHaveBeenCalledWith({ array: [["blue"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["blue"]] }, true);
 
     onChange.mockClear();
     fireEvent.click(input2);
     expect(input2.checked).toBe(true);
-    expect(onChange).toHaveBeenCalledWith({ array: [["blue", "green"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["blue", "green"]] }, true);
 
     onChange.mockClear();
     fireEvent.click(input3);
     expect(input3.checked).toBe(true);
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["blue", "green"], [["yellow"]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["blue", "green"], [["yellow"]]]
+      },
+      true
+    );
 
     onChange.mockClear();
     fireEvent.click(input4);
     expect(input4.checked).toBe(true);
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["blue", "green"], [["yellow", true]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["blue", "green"], [["yellow", true]]]
+      },
+      true
+    );
   });
 
   it("should nest Radios into array Collection", () => {
@@ -203,14 +215,17 @@ describe("Hooks => useField", () => {
     onChange.mockClear();
     fireEvent.click(input1);
     expect(input1.checked).toBe(true);
-    expect(onChange).toHaveBeenCalledWith({ array: [["blue"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["blue"]] }, true);
 
     onChange.mockClear();
     fireEvent.click(input2);
     expect(input2.checked).toBe(true);
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["blue"], [["yellow"]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["blue"], [["yellow"]]]
+      },
+      true
+    );
   });
 
   it("should nest Fields into object Collection", () => {
@@ -233,21 +248,27 @@ describe("Hooks => useField", () => {
     const input1 = getByTestId("input1");
     const input2 = getByTestId("input2");
 
-    expect(onInit).toHaveReturnedWith({ object: initialValue });
+    expect(onInit).toHaveBeenCalledWith({ object: initialValue }, true);
 
     onChange.mockClear();
     fireEvent.change(input1, { target: { value: "50" } });
     expect(input1.value).toBe("50");
-    expect(onChange).toHaveBeenCalledWith({
-      object: { array: [[["50", "200"]]] }
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        object: { array: [[["50", "200"]]] }
+      },
+      true
+    );
 
     onChange.mockClear();
     fireEvent.change(input2, { target: { value: "60" } });
     expect(input2.value).toBe("60");
-    expect(onChange).toHaveBeenCalledWith({
-      object: { array: [[["50", "60"]]] }
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        object: { array: [[["50", "60"]]] }
+      },
+      true
+    );
   });
 
   it("should nest Fields into array Collection with a given index", () => {
@@ -285,25 +306,31 @@ describe("Hooks => useField", () => {
     onChange.mockClear();
     fireEvent.change(input1, { target: { value: "50" } });
     expect(input1.value).toBe("50");
-    expect(onChange).toHaveBeenCalledWith({ array: [["50"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["50"]] }, true);
 
     onChange.mockClear();
     fireEvent.change(input2, { target: { value: "60" } });
-    expect(onChange).toHaveBeenCalledWith({ array: [["50", "60"]] });
+    expect(onChange).toHaveBeenCalledWith({ array: [["50", "60"]] }, true);
     expect(input2.value).toBe("60");
 
     onChange.mockClear();
     fireEvent.change(input3, { target: { value: "hello" } });
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["50", "60"], [["hello"]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["50", "60"], [["hello"]]]
+      },
+      true
+    );
     expect(input3.value).toBe("hello");
 
     onChange.mockClear();
     fireEvent.change(input4, { target: { value: "world" } });
-    expect(onChange).toHaveBeenCalledWith({
-      array: [["50", "60"], [["hello", "world"]]]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [["50", "60"], [["hello", "world"]]]
+      },
+      true
+    );
     expect(input4.value).toBe("world");
   });
 });

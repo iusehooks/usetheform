@@ -75,7 +75,7 @@ describe("Component => Select", () => {
     const { getByTestId } = mountForm({ props, children });
     const select = getByTestId(dataTestid);
     fireEvent.change(select, { target: { value } });
-    expect(onChange).toHaveBeenCalledWith({ [name]: value });
+    expect(onChange).toHaveBeenCalledWith({ [name]: value }, true);
     expect(select.value).toBe(value);
   });
 
@@ -93,7 +93,7 @@ describe("Component => Select", () => {
 
     const select = getByTestId(dataTestid);
     userEvent.selectOptions(select, ["1", "3"]);
-    expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "3"] });
+    expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "3"] }, true);
     expect(select.selectedOptions[0].value).toBe("1");
     expect(select.selectedOptions[1].value).toBe("3");
   });
@@ -116,11 +116,14 @@ describe("Component => Select", () => {
 
     const select = getByTestId(dataTestid);
     userEvent.selectOptions(select, ["1", "2", "3", "4"]);
-    expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "2", "3", "4"] });
+    expect(onChange).toHaveBeenCalledWith(
+      { [name]: ["1", "2", "3", "4"] },
+      true
+    );
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({ [name]: ["1", "2"] });
+    expect(onReset).toHaveBeenCalledWith({ [name]: ["1", "2"] }, true);
   });
 
   it("should use a reducer to reduce the Select value", () => {

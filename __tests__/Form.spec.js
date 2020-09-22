@@ -17,7 +17,6 @@ import {
   ComplexFormInitValueAsProps,
   initialState as initialStateComplexForm
 } from "./helpers/components/ComplexForm";
-import { exec } from "child_process";
 
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
@@ -88,7 +87,7 @@ describe("Component => Form", () => {
     const { getByTestId } = mountForm({ props, children });
     const input = getByTestId(dataTestid);
     fireEvent.change(input, { target: { value: valueInput } });
-    expect(onChange).toHaveBeenCalledWith({ [nameInput]: valueInput });
+    expect(onChange).toHaveBeenCalledWith({ [nameInput]: valueInput }, true);
   });
 
   it("should initialized the Form state", () => {
@@ -111,16 +110,19 @@ describe("Component => Form", () => {
     const textField = getByTestId("name");
 
     fireEvent.change(textField, { target: { value: "Antonio" } });
-    expect(onChange).toHaveBeenCalledWith({
-      user: {
-        name: "Antonio",
-        lastname: "anything",
-        email: "anything@google.com"
-      }
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        user: {
+          name: "Antonio",
+          lastname: "anything",
+          email: "anything@google.com"
+        }
+      },
+      true
+    );
 
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith(initialState);
+    expect(onReset).toHaveBeenCalledWith(initialState, true);
   });
 
   it("should render a Form with dynamic inputs and initial state passed to Form prop", () => {
@@ -132,107 +134,143 @@ describe("Component => Form", () => {
     const addmore = getByTestId("addinput");
     fireEvent.click(addmore);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1
+      },
+      true
+    );
 
     fireEvent.click(addmore);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1,
-      2: 2
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const select = getByTestId("select");
     fireEvent.change(select, { target: { value: "3" } });
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      select: "3",
-      1: 1,
-      2: 2
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        select: "3",
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
 
-    expect(onReset).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1,
-      2: 2
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const sexM = getByTestId("sexm");
     fireEvent.click(sexM);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "M",
-      1: 1,
-      2: 2
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "M",
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const removeinput = getByTestId("removeinput");
     fireEvent.click(removeinput);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "M",
-      1: 1
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "M",
+        1: 1
+      },
+      true
+    );
 
     fireEvent.click(addmore);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "M",
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "M",
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1,
-      3: 3
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     const other1 = getByTestId("other1");
     fireEvent.click(other1);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      other: [undefined, "3"],
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        other: [undefined, "3"],
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     fireEvent.click(other1);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      other: ["1", "3"],
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        other: ["1", "3"],
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     const sexF = getByTestId("sexf");
     fireEvent.click(sexF);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "F",
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "F",
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     const other2 = getByTestId("other2");
     onChange.mockClear();
     fireEvent.click(other2);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      other: ["1", undefined],
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        other: ["1", undefined],
+        1: 1,
+        3: 3
+      },
+      true
+    );
   });
 
   it("should render a Form with dynamic inputs and initial state passed to each input as 'value' prop", () => {
@@ -244,107 +282,143 @@ describe("Component => Form", () => {
     const addmore = getByTestId("addinput");
     fireEvent.click(addmore);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1
+      },
+      true
+    );
 
     fireEvent.click(addmore);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1,
-      2: 2
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const select = getByTestId("select");
     fireEvent.change(select, { target: { value: "3" } });
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      select: "3",
-      1: 1,
-      2: 2
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        select: "3",
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
 
-    expect(onReset).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1,
-      2: 2
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const sexM = getByTestId("sexm");
     fireEvent.click(sexM);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "M",
-      1: 1,
-      2: 2
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "M",
+        1: 1,
+        2: 2
+      },
+      true
+    );
 
     const removeinput = getByTestId("removeinput");
     fireEvent.click(removeinput);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "M",
-      1: 1
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "M",
+        1: 1
+      },
+      true
+    );
 
     fireEvent.click(addmore);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "M",
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "M",
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      1: 1,
-      3: 3
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     const other1 = getByTestId("other1");
     fireEvent.click(other1);
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      other: [undefined, "3"],
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        other: [undefined, "3"],
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     fireEvent.click(other1);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      other: ["1", "3"],
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        other: ["1", "3"],
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     const sexF = getByTestId("sexf");
     fireEvent.click(sexF);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      sex: "F",
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        sex: "F",
+        1: 1,
+        3: 3
+      },
+      true
+    );
 
     const other2 = getByTestId("other2");
     onChange.mockClear();
     fireEvent.click(other2);
-    expect(onChange).toHaveBeenCalledWith({
-      ...initialStateComplexForm,
-      other: ["1", undefined],
-      1: 1,
-      3: 3
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        ...initialStateComplexForm,
+        other: ["1", undefined],
+        1: 1,
+        3: 3
+      },
+      true
+    );
   });
 
   it("should reduce the Form state with the given reducer function", () => {

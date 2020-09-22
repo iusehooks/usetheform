@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Input,
   Collection,
@@ -15,13 +15,16 @@ const asyncTest = value =>
     }, 100);
   });
 
-let index = 0;
 export default function CollectionAsyncValidation() {
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
   const [inputs, setInputs] = useChildren([]);
+  const index = useRef(0);
   const addInput = () => {
-    ++index;
-    setInputs(prev => [...prev, { index, value: index }]);
+    index.current = index.current + 1;
+    setInputs(prev => [
+      ...prev,
+      { index: index.current, value: index.current }
+    ]);
   };
 
   const removeInput = () => {

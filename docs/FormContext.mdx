@@ -17,13 +17,25 @@ It is a react component that provides a context of the "form" at wider level.
 
 A function invoked when the Form is initialized.
 
+```javascript
+const onInit = (formState, isFormValid) => { // some operation }
+```
+
 **`onChange`**: function
 
 A function invoked when any Form Field changes its value.
 
+```javascript
+const onChange = (formState, isFormValid) => { // some operation }
+```
+
 **`onReset`**: function
 
 A function invoked when the form has been reset to its initial State.
+
+```javascript
+const onReset = (formState, isFormValid) => { // some operation }
+```
 
 **`onSubmit`**: function
 
@@ -31,8 +43,8 @@ A function invoked when the submit button has been pressed.
 The function may return either a Promise or a boolean value true/false.
 
 ```js
-const onSubmit = () => { // do some operation };
-const onSubmit = () => new Promise((resolve, reject) => { // do some asyn operation  });
+const onSubmit = (formState) => { // some operation };
+const onSubmit = (formState) => new Promise((resolve, reject) => { // some async operation  });
 ```
 
 Cases:
@@ -94,9 +106,9 @@ export const Form = ({ children }) => {
     return (
       <FormContext
         initialState={{ name: "foo" }}
-        onInit={state => console.log("INIT", state)}
-        onChange={state => console.log("CHANGE", state)}
-        onSubmit={state => console.log("SUBMIT", state)}
+        onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
+        onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
+        onSubmit={(state, isFormValid) => console.log("SUBMIT", state, isFormValid)}
       >
         <ResetName />
         <Form>

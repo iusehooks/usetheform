@@ -7,7 +7,7 @@ import CollectionWithHooks from "./../helpers/components/CollectionWithHooks";
 const mountForm = ({ props = {}, children } = {}) =>
   render(<Form {...props}>{children}</Form>);
 
-const onInit = jest.fn(state => state);
+const onInit = jest.fn();
 const onChange = jest.fn();
 afterEach(cleanup);
 
@@ -25,7 +25,7 @@ describe("Hooks => useCollection", () => {
 
     const changeCollection = getByTestId("changeCollection");
     fireEvent.click(changeCollection);
-    expect(onChange).toHaveBeenCalledWith({ test: { lastname: "foo" } });
+    expect(onChange).toHaveBeenCalledWith({ test: { lastname: "foo" } }, true);
   });
 
   it("should create a Collection with an initial value", () => {
@@ -34,7 +34,7 @@ describe("Hooks => useCollection", () => {
       <CollectionWithHooks key="1" name="test" value={{ name: "foo" }} />
     ];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({ test: { name: "foo" } });
+    expect(onInit).toHaveBeenCalledWith({ test: { name: "foo" } }, true);
   });
 
   it("should create a nested Collection with an initial value", () => {
@@ -51,9 +51,12 @@ describe("Hooks => useCollection", () => {
       </Collection>
     ];
     mountForm({ props, children });
-    expect(onInit).toHaveReturnedWith({
-      array: [{ name: "foo" }, { lastname: "foo" }]
-    });
+    expect(onInit).toHaveBeenCalledWith(
+      {
+        array: [{ name: "foo" }, { lastname: "foo" }]
+      },
+      true
+    );
   });
 
   it("should change a nested Collection value due to an action", () => {
@@ -68,14 +71,17 @@ describe("Hooks => useCollection", () => {
 
     const changeCollectionHook1 = getByTestId("hook1");
     fireEvent.click(changeCollectionHook1);
-    expect(onChange).toHaveBeenCalledWith({ array: [{ 0: "foo" }] });
+    expect(onChange).toHaveBeenCalledWith({ array: [{ 0: "foo" }] }, true);
 
     onChange.mockClear();
     const changeCollectionHook2 = getByTestId("hook2");
     fireEvent.click(changeCollectionHook2);
-    expect(onChange).toHaveBeenCalledWith({
-      array: [{ 0: "foo" }, { 1: "foo" }]
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        array: [{ 0: "foo" }, { 1: "foo" }]
+      },
+      true
+    );
   });
 
   it("should throw an error for invalids initial values", () => {
