@@ -75,7 +75,8 @@ export function useField(props) {
     valueField.current = initialValueRef.current;
     checkedField.current =
       type === "checkbox"
-        ? state[nameProp.current] !== undefined
+        ? state[nameProp.current] !== undefined ||
+          (!isMounted.current && initialChecked === true)
         : state[nameProp.current] === initialValueRef.current;
   } else if (type === "select") {
     valueField.current =

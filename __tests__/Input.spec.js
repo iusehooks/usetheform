@@ -39,13 +39,94 @@ describe("Component => Input", () => {
     expect(getByTestId(/email/i).type).toBe(type);
   });
 
+  it("should render a Input of type checkbox", () => {
+    const type = "checkbox";
+    const props = { onInit };
+
+    const children = [
+      <Input key="1" data-testid={type} type={type} name={type} checked />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    const checkbox = getByTestId(type);
+    expect(onInit).toHaveBeenCalledWith({ [type]: true }, true);
+    expect(checkbox.type).toBe(type);
+    expect(checkbox.checked).toBe(true);
+  });
+
+  it("should render a Input of type radio", () => {
+    const type = "radio";
+    const props = { onInit };
+
+    const children = [
+      <Input
+        key="1"
+        data-testid={type}
+        type={type}
+        name={type}
+        checked
+        value="3"
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    const radio = getByTestId(type);
+    expect(onInit).toHaveBeenCalledWith({ [type]: "3" }, true);
+    expect(radio.type).toBe(type);
+    expect(radio.checked).toBe(true);
+    expect(radio.value).toBe("3");
+  });
+
   it("should render Input of type range", () => {
     const type = "range";
+    const props = { onChange };
     const children = [
-      <Input key="1" data-testid="range" type={type} name="range" />
+      <Input
+        key="1"
+        data-testid={type}
+        type={type}
+        name="range"
+        min="0"
+        max="11"
+      />
     ];
-    const { getByTestId } = mountForm({ children });
-    expect(getByTestId(type).type).toBe(type);
+    const { getByTestId } = mountForm({ children, props });
+    const range = getByTestId(type);
+    expect(range.type).toBe(type);
+    expect(range.min).toBe("0");
+    expect(range.max).toBe("11");
+
+    fireEvent.change(range, { target: { value: "3" } });
+    expect(onChange).toHaveBeenCalledWith({ range: 3 }, true);
+    expect(range.value).toBe("3");
+  });
+
+  it("should render Input of type number", () => {
+    const type = "number";
+    const props = { onChange };
+    const children = [
+      <Input key="1" data-testid={type} type={type} name={type} />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    const number = getByTestId(type);
+    expect(number.type).toBe(type);
+
+    fireEvent.change(number, { target: { value: "3" } });
+    expect(onChange).toHaveBeenCalledWith({ [type]: 3 }, true);
+    expect(number.value).toBe("3");
+  });
+
+  it("should render Input of type submit", () => {
+    const type = "submit";
+    const props = { onSubmit };
+    const children = [
+      <Input key="1" type="text" name="text" value="text" />,
+      <Input key="2" data-testid={type} type={type} name={type} />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    const submit = getByTestId(type);
+    expect(submit.type).toBe(type);
+
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith({ text: "text" }, true);
   });
 
   it("should trigger onChange event when the Input value changes", () => {
@@ -65,6 +146,7 @@ describe("Component => Input", () => {
 
     fireEvent.change(input, { target: { value: "micky" } });
     expect(onChangeInput).toHaveReturnedWith("micky");
+    expect(input.value).toBe("micky");
   });
 
   it("should render a Input and changing its value", () => {
