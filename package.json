@@ -82,7 +82,7 @@
   "jest": {
     "testRegex": "(/__tests__/.*\\.spec\\.js)$",
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "src/**/{!(index),}.js"
     ]
   }
 }
