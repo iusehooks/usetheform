@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, useAsyncValidation } from "./../../../src";
+import { Input, useAsyncValidation, withIndex } from "./../../../src";
 
 const asyncTest = value =>
   new Promise((resolve, reject) => {
@@ -10,7 +10,16 @@ const asyncTest = value =>
     }, 50);
   });
 
-export default function InputAsync({ name, dataTestid = "asyncinput", value }) {
+export function InputAsync({
+  name,
+  dataTestidNotStart = "asyncNotStartedYet",
+  dataTestid = "asyncinput",
+  dataTestidStart = "asyncStart",
+  dataTestidError = "asyncError",
+  dataTestidSuccess = "asyncSuccess",
+  value,
+  index
+}) {
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
 
   return (
@@ -18,6 +27,7 @@ export default function InputAsync({ name, dataTestid = "asyncinput", value }) {
       <label>InputAsync: </label>
       <Input
         touched
+        index={index}
         name={name}
         {...asyncValidation}
         type="text"
@@ -25,17 +35,19 @@ export default function InputAsync({ name, dataTestid = "asyncinput", value }) {
         data-testid={dataTestid}
       />
       {asyncStatus.status === undefined && (
-        <label data-testid="asyncNotStartedYet">asyncNotStartedYet</label>
+        <label data-testid={dataTestidNotStart}>asyncNotStartedYet</label>
       )}
       {asyncStatus.status === "asyncStart" && (
-        <label data-testid="asyncStart">Checking...</label>
+        <label data-testid={dataTestidStart}>Checking...</label>
       )}
       {asyncStatus.status === "asyncError" && (
-        <label data-testid="asyncError">{asyncStatus.value}</label>
+        <label data-testid={dataTestidError}>{asyncStatus.value}</label>
       )}
       {asyncStatus.status === "asyncSuccess" && (
-        <label data-testid="asyncSuccess">{asyncStatus.value}</label>
+        <label data-testid={dataTestidSuccess}>{asyncStatus.value}</label>
       )}
     </div>
   );
 }
+
+export default withIndex(InputAsync);

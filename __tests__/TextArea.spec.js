@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 
 import Form, { TextArea } from "./../src";
 
@@ -9,6 +9,7 @@ const mountForm = ({ props = {}, children } = {}) =>
 const dataTestid = "TextArea";
 const name = "TextArea";
 const value = "test";
+afterEach(cleanup);
 
 describe("Component => TextArea", () => {
   it("should render a TextArea", () => {
@@ -28,6 +29,7 @@ describe("Component => TextArea", () => {
     const { getByTestId } = mountForm({ props, children });
     const textArea = getByTestId(dataTestid);
     fireEvent.change(textArea, { target: { value } });
-    expect(onChange).toHaveBeenCalledWith({ [name]: value });
+    expect(onChange).toHaveBeenCalledWith({ [name]: value }, true);
+    expect(textArea.value).toBe(value);
   });
 });

@@ -6,8 +6,8 @@ export default function User({ name }) {
     <div data-testid="member">
       <label>User : </label>
       <Collection object name={name}>
-        <Input name="name" type="text" />
-        <Input name="lastname" type="text" />
+        <Input name="name" data-testid="member_name" type="text" />
+        <Input name="lastname" data-testid="member_lastname" type="text" />
       </Collection>
     </div>
   );

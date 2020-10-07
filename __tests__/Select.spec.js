@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import Reset from "./helpers/components/Reset";
@@ -15,6 +15,8 @@ const value = "test";
 const onInit = jest.fn(state => state);
 const onChange = jest.fn();
 const onReset = jest.fn();
+
+afterEach(cleanup);
 
 describe("Component => Select", () => {
   beforeEach(() => {
@@ -32,7 +34,9 @@ describe("Component => Select", () => {
       </Select>
     ];
     const { getByTestId } = mountForm({ children, props });
-    expect(getByTestId(dataTestid).name).toBe(name);
+    const select = getByTestId(dataTestid);
+    expect(select.name).toBe(name);
+    expect(select.value).toBe(value);
     expect(onInit).toHaveReturnedWith({ [name]: value });
   });
 
@@ -52,8 +56,12 @@ describe("Component => Select", () => {
       </Select>
     ];
     const { getByTestId } = mountForm({ children, props });
-    expect(getByTestId(dataTestid).name).toBe(name);
+    const select = getByTestId(dataTestid);
+    expect(select.name).toBe(name);
     expect(onInit).toHaveReturnedWith({ [name]: ["1", "2"] });
+    expect(select.selectedOptions.length).toBe(2);
+    expect(select.selectedOptions[0].value).toBe("1");
+    expect(select.selectedOptions[1].value).toBe("2");
   });
 
   it("should render a Select and changing its value", () => {
@@ -67,7 +75,8 @@ describe("Component => Select", () => {
     const { getByTestId } = mountForm({ props, children });
     const select = getByTestId(dataTestid);
     fireEvent.change(select, { target: { value } });
-    expect(onChange).toHaveBeenCalledWith({ [name]: value });
+    expect(onChange).toHaveBeenCalledWith({ [name]: value }, true);
+    expect(select.value).toBe(value);
   });
 
   it("should render a multiple Select and changing its value", () => {
@@ -84,7 +93,9 @@ describe("Component => Select", () => {
 
     const select = getByTestId(dataTestid);
     userEvent.selectOptions(select, ["1", "3"]);
-    expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "3"] });
+    expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "3"] }, true);
+    expect(select.selectedOptions[0].value).toBe("1");
+    expect(select.selectedOptions[1].value).toBe("3");
   });
 
   it("should render a multiple Select with a inital value", () => {
@@ -105,11 +116,14 @@ describe("Component => Select", () => {
 
     const select = getByTestId(dataTestid);
     userEvent.selectOptions(select, ["1", "2", "3", "4"]);
-    expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "2", "3", "4"] });
+    expect(onChange).toHaveBeenCalledWith(
+      { [name]: ["1", "2", "3", "4"] },
+      true
+    );
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({ [name]: ["1", "2"] });
+    expect(onReset).toHaveBeenCalledWith({ [name]: ["1", "2"] }, true);
   });
 
   it("should use a reducer to reduce the Select value", () => {

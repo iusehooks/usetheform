@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Input,
   Collection,
@@ -12,16 +12,19 @@ const asyncTest = value =>
       if (value.length <= 1) {
         reject("Add at least two Inputs");
       } else resolve();
-    }, 200);
+    }, 100);
   });
 
-let index = 0;
 export default function CollectionAsyncValidation() {
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
   const [inputs, setInputs] = useChildren([]);
+  const index = useRef(0);
   const addInput = () => {
-    ++index;
-    setInputs(prev => [...prev, { index, value: index }]);
+    index.current = index.current + 1;
+    setInputs(prev => [
+      ...prev,
+      { index: index.current, value: index.current }
+    ]);
   };
 
   const removeInput = () => {
@@ -32,10 +35,10 @@ export default function CollectionAsyncValidation() {
     <div>
       <label>Inputs: (Async Validation) </label>
       <br />
-      <button type="button" onClick={addInput}>
+      <button type="button" data-testid="addInput" onClick={addInput}>
         Add an Input
       </button>
-      <button type="button" onClick={removeInput}>
+      <button type="button" data-testid="removeInput" onClick={removeInput}>
         Remove an Input
       </button>
       <br />
@@ -46,6 +49,9 @@ export default function CollectionAsyncValidation() {
       </Collection>
       {asyncStatus.status === "asyncStart" && (
         <label data-testid="asyncStart">Checking...</label>
+      )}
+      {asyncStatus.status === "asyncSuccess" && (
+        <label data-testid="asyncSuccess">{asyncStatus.value}</label>
       )}
       {asyncStatus.status === "asyncError" && (
         <label data-testid="asyncError">{asyncStatus.value}</label>

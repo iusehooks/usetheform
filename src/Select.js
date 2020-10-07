@@ -1,12 +1,14 @@
 import React from "react";
+import { withIndex } from "./hoc/withIndex";
 import { useField } from "./hooks/useField";
 
-export function Select({
+export const Select = withIndex(function Select({
   onFocus,
   onBlur,
   onChange,
   children,
   name,
+  index,
   validators,
   asyncValidator,
   onValidation,
@@ -25,6 +27,7 @@ export function Select({
     onChange,
     type: "select",
     name,
+    index,
     value,
     validators,
     asyncValidator,
@@ -42,4 +45,4 @@ export function Select({
       {children}
     </select>
   );
-}
+});

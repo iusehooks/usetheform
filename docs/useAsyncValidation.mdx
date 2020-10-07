@@ -10,57 +10,62 @@ import { Input, useAsyncValidation } from './../src';
 # useAsyncValidation
 It is a custom hook function which provides the async validation logic to any Field.
 
-```js
-  const [asyncStatus, validationAttr] = useAsyncValidation(func);
+```javascript
+  const [asyncStatus, validationAsyncAttr] = useAsyncValidation(fn);
 ```
 
 ## Arguments
 
-**`validator`**: `function`
+**`fn`**: function
 
-  - validator is function that returns a Promise which is resolved if it passes the validation, rejected otherwise.
+  - A function which receive the value of the field and return a promise.
 
 ## Returns
 
-(**`asyncValidationProps`**): `array`
+(**`validationAsyncProps`**): array
 
 An array that holds:
 
-  - **`asyncStatus`**: `object`
+  - **`asyncStatus`**: object
 
-  A plain object which contains a prop named `status` that is a string which can be one of the following value:
+  A plain object that holds a prop named `status` and a prop named `value`.
+  
+    - **`status`** might be one of the following:
+      - "undefined" : async validation did not start yet
+      - "asyncStart" : async validation has started
+      - "asyncSuccess" : the promise has been resolved with success
+      - "asyncError" : the promise has been rejected
 
-      - "asyncStart": when the async fucntion start.
-      - "asyncSuccess": when the async fucntion complete with success.
-      - "asyncError: when the async fucntion complete with error.
-
-  - **`validationAttr`**: `object`
+    - **`value`** the value returned by the promise 
+ 
+  - **`validationAsyncAttr`**: object
 
   A plain object which contains all the props that must be spreaded to the Field.
 
 ## Basic usage
 
-```js
+```javascript
   import Form, { Input, useAsyncValidation } from 'usetheform'
 ```
 
 <Playground>
 {() => {
     const asyncTest = value =>
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (value !== "ciao") {
-          reject("Error username taken");
-        } else {
-          resolve();
-        }
-      }, 2000);
-    });
-    const [asyncStatus, validationAttr] = useAsyncValidation(asyncTest);
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (value.length <= 3) {
+            reject("Error");
+          } else resolve("Success");
+        }, 1500);
+      });
+    const [asyncStatus, validationAsyncAttr] = useAsyncValidation(asyncTest)
     return (
       <Form>
-        <Input type="text" name="anyname" touched {...validationAttr} />
+        <Input type="text" name="name" touched {...validationAsyncAttr} />
+        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
       </Form>
     )
   }

@@ -18,6 +18,10 @@ if (process.env.NODE_ENV === "test") {
   plugins.push("@babel/transform-modules-commonjs");
 }
 
+if (process.env.NODE_ENV === "development") {
+  presets = ["@babel/preset-react"];
+}
+
 module.exports = {
   presets,
   plugins

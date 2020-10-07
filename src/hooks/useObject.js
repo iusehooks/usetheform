@@ -1,10 +1,12 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useOwnContext } from "./useOwnContext";
+import { useNameProp } from "./commons/useNameProp";
+
 import { useValidators } from "./useValidators";
-import { useGetRefName } from "./useGetRefName";
 import { isValidValue } from "./../utils/isValidValue";
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
+import { isValidIndex } from "./../utils/isValidIndex";
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { STATUS } from "./../utils/formUtils";
@@ -16,15 +18,9 @@ const initObject = {};
 export function useObject(props) {
   const context = useOwnContext();
 
-  if (process.env.NODE_ENV !== "production") {
-    const errMsg = validateProps(props, context.type);
-    if (errMsg) {
-      throw new Error(errMsg);
-    }
-  }
-
   const {
     name,
+    index,
     type,
     value: initValue,
     reducers = [],
@@ -35,38 +31,33 @@ export function useObject(props) {
     asyncValidator,
     onAsyncValidation = noop
   } = props;
-  // const nameProp = useRef(name);
 
-  const nameProp = useGetRefName(context, name);
+  const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
+    context,
+    name,
+    index
+  );
+
+  if (process.env.NODE_ENV !== "production") {
+    const errMsg = validateProps(
+      { ...props, index: nameProp.current },
+      context.type
+    );
+    if (errMsg) {
+      throw new Error(errMsg);
+    }
+  }
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
   const isMounted = useRef(false);
-  const { current: stillMounted } = useRef(() => isMounted.current);
+  const stillMounted = useCallback(() => isMounted.current, []);
 
-  // const { current: setNameProp } = useRef(index => {
-  //   nameProp.current = index;
-  // });
-
-  // if it is an array collection it keeps the children and update their indexes
-  const children = useRef([]);
-  const { current: getIndex } = useRef(childFn => {
-    if (children.current.indexOf(childFn) === -1) {
-      children.current.push(childFn);
-    }
-    return children.current.length - 1;
-  });
-
-  const { current: removeIndex } = useRef(targeIndex => {
-    children.current.splice(targeIndex, 1);
-    // update children index
-    children.current.forEach((fnChild, index) => fnChild(index));
-  });
-
-  const init = initValue || (type && type === "array" ? initArray : initObject);
+  const isArray = type && type === "array";
+  const init = initValue || (isArray ? initArray : initObject);
   const state = useRef(init);
   const memoInitialState = useRef(init);
-  const prevState = useRef(type && type === "array" ? initArray : initObject);
+  const prevState = useRef(isArray ? initArray : initObject);
 
   // getValue from parent context
   if (!isMounted.current) {
@@ -76,32 +67,35 @@ export function useObject(props) {
         : init;
   } else {
     state.current =
-      context.state[nameProp.current] ||
-      (type === "array" ? initArray : initObject);
+      context.state[nameProp.current] || (isArray ? initArray : initObject);
   }
 
   const formState = useRef(null);
   formState.current = context.formState;
 
-  const resetObj = useRef(init);
-  const { current: registerReset } = useRef((namePropExt, fnReset) => {
-    resetObj.current =
-      resetObj.current.constructor === Array
-        ? [...resetObj.current]
-        : { ...resetObj.current };
-    resetObj.current[namePropExt] = fnReset;
-  });
+  const resetObj = useRef(isArray ? [] : {});
+  const registerReset = useCallback((namePropExt, fnReset) => {
+    resetObj.current = isArray
+      ? [...resetObj.current]
+      : { ...resetObj.current };
 
-  const { current: unRegisterReset } = useRef(namePropExt => {
+    if (isArray && typeof resetObj.current[namePropExt] !== "undefined") {
+      resetObj.current.splice(Number(namePropExt), 0, fnReset);
+    } else {
+      resetObj.current[namePropExt] = fnReset;
+    }
+  }, []);
+
+  const unRegisterReset = useCallback(namePropExt => {
     if (resetObj.current.constructor === Array) {
       resetObj.current.splice(namePropExt, 1);
     } else {
       delete resetObj.current[namePropExt];
     }
-  });
+  }, []);
 
-  const { current: reset } = useRef(formState => {
-    const initAcc = type === "array" ? [] : {};
+  const reset = useCallback(formState => {
+    const initAcc = isArray ? [] : {};
     let obj = Object.keys(resetObj.current).reduce((acc, key) => {
       const value = resetObj.current[key](formState);
       if (value !== undefined) acc[key] = value;
@@ -112,10 +106,11 @@ export function useObject(props) {
       newValue !== undefined && Object.keys(newValue).length > 0
         ? newValue
         : undefined;
-    return newValue;
-  });
 
-  const { current: changeProp } = useRef((namePropExt, value, removeMe) => {
+    return newValue;
+  }, []);
+
+  const changeProp = useCallback((namePropExt, value, removeMe) => {
     const nexState = updateState(state.current, {
       value,
       nameProp: namePropExt,
@@ -127,42 +122,43 @@ export function useObject(props) {
     const removeProp = Object.keys(newState).length === 0;
 
     context.changeProp(nameProp.current, newState, removeProp);
-  });
+  }, []);
 
-  const { current: initProp } = useRef((namePropExt, value, intialValue) => {
-    const newState = updateState(state.current, {
-      value,
-      nameProp: namePropExt
-    });
-    memoInitialState.current = updateState(memoInitialState.current, {
-      value: intialValue,
-      nameProp: namePropExt
-    });
+  const initProp = useCallback(
+    (namePropExt, value, intialValue, add = true) => {
+      const newState = updateState(state.current, {
+        value,
+        nameProp: namePropExt,
+        add: isMounted.current && add
+      });
 
-    const reducedState = applyReducers(
-      newState,
-      state.current,
-      formState.current
-    );
+      memoInitialState.current = updateState(memoInitialState.current, {
+        value: intialValue,
+        nameProp: namePropExt,
+        add: isMounted.current && add
+      });
 
-    prevState.current = newState;
-
-    if (isMounted.current) {
-      context.initProp(
-        nameProp.current,
-        reducedState,
-        memoInitialState.current
+      const reducedState = applyReducers(
+        newState,
+        state.current,
+        formState.current
       );
-    } else {
-      // const newInitialState = updateState(memoInitialState.current, {
-      //   value: intialValue,
-      //   nameProp: namePropExt
-      // });
 
-      // memoInitialState.current = newInitialState;
-      state.current = reducedState;
-    }
-  });
+      prevState.current = newState;
+
+      if (isMounted.current) {
+        context.initProp(
+          nameProp.current,
+          reducedState,
+          memoInitialState.current,
+          false
+        );
+      } else {
+        state.current = reducedState;
+      }
+    },
+    []
+  );
 
   const { current: removeProp } = useRef(
     (
@@ -182,7 +178,7 @@ export function useObject(props) {
         removeMe: removeInitial
       });
 
-      if (willUnmount && type === "array") {
+      if (willUnmount && isArray) {
         newStateCurrent = newStateCurrent.filter(
           (elm, index) => index !== namePropExt
         );
@@ -191,7 +187,13 @@ export function useObject(props) {
         );
       }
 
-      state.current = newStateCurrent;
+      const reducedState = applyReducers(
+        newStateCurrent,
+        state.current,
+        formState.current
+      );
+
+      state.current = reducedState;
       memoInitialState.current = newStateInitial;
 
       const removeCurrentProp = Object.keys(state.current).length === 0;
@@ -218,7 +220,8 @@ export function useObject(props) {
     validatorsAsync,
     addValidatorsAsync,
     removeValidatorsAsync,
-    validatorsMapsAsync
+    validatorsMapsAsync,
+    updateValidatorsMap
   ] = useValidators(context, nameProp, isMounted, true);
 
   const { validationMsg, validationObj, validationFN } = useValidationFunction(
@@ -234,7 +237,10 @@ export function useObject(props) {
     if (context.formStatus === STATUS.ON_RESET) {
       resetSyncErr();
       resetAsyncErr();
-    } else {
+    } else if (
+      context.formStatus !== STATUS.READY &&
+      context.formStatus !== STATUS.ON_INIT_ASYNC
+    ) {
       if (
         validationObj.current !== null &&
         context.formStatus === STATUS.ON_SUBMIT
@@ -243,32 +249,24 @@ export function useObject(props) {
         onValidation(checks, isValid);
       }
 
-      if (
-        ((validationObj.current !== null && validationObj.current.isValid) ||
-          validatorsFuncs.length === 0) &&
-        context.formStatus === STATUS.ON_SUBMIT &&
-        typeof asyncValidator === "function"
-      ) {
-        validationFNAsync
-          .current(state.current)
-          .then(val => val)
-          .catch(err => err);
-      } else if (
-        validationObj.current !== null &&
-        !validationObj.current.isValid
-      ) {
+      if (validationObj.current !== null && !validationObj.current.isValid) {
         resetAsyncErr();
       }
     }
   }, [validationMsg.current, context.formStatus]);
 
+  // used to register async validation Actions
+  const asyncInitValidation = useRef({});
+  const registerAsyncInitValidation = useCallback((nameProp, asyncFunc) => {
+    asyncInitValidation.current[nameProp] = asyncFunc;
+  }, []);
+
   useEffect(() => {
     isMounted.current = true;
 
-    // if I am children of a context of type "array" I must get my index
-    // if (context.type === "array" && nameProp.current === undefined) {
-    //   nameProp.current = context.getIndex(setNameProp);
-    // }
+    if (context.type === "array") {
+      context.registerIndex(uniqueIDarrayContext, setNameProp);
+    }
 
     // Add the its own validators
     if (validatorsFuncs.length > 0) {
@@ -279,12 +277,20 @@ export function useObject(props) {
       context.addValidatorsAsync(
         nameProp.current,
         validationFNAsync.current,
-        false
+        null
       );
     }
-    // --- Add the its own validators --- //
 
-    // Add the its children validators
+    // register to parent any initial async Validators to be run ON_INIT
+    if (Object.keys(asyncInitValidation.current).length > 0) {
+      context.registerAsyncInitValidation(
+        nameProp.current,
+        asyncInitValidation.current
+      );
+    }
+    // --- Add its own validators --- //
+
+    // Add its children validators
     if (Object.keys(validators.current).length > 0) {
       context.addValidators(nameProp.current, validators.current);
     }
@@ -297,10 +303,8 @@ export function useObject(props) {
       );
     }
     // --- Add the its children validators --- //
-
     context.registerReset(nameProp.current, reset);
 
-    // const prevInitialState = type === "array" ? initArray : initObject;
     const newState = applyReducers(
       state.current,
       prevState.current,
@@ -351,38 +355,65 @@ export function useObject(props) {
 
         context.unRegisterReset(nameProp.current);
         if (context.type === "array") {
-          context.removeIndex(nameProp.current);
+          context.removeIndex(uniqueIDarrayContext);
         }
       }
     };
+  }, []);
+
+  const childrenIndexes = useRef({});
+
+  const getIndex = useCallback(idCpm => {
+    if (childrenIndexes.current[idCpm] === undefined) {
+      childrenIndexes.current[idCpm] = null;
+    }
+    return Object.keys(childrenIndexes.current).length - 1;
+  }, []);
+
+  const removeIndex = useCallback(idCpm => {
+    delete childrenIndexes.current[idCpm];
+    Object.keys(childrenIndexes.current).forEach((idField, index) =>
+      childrenIndexes.current[idField](index)
+    );
+  }, []);
+
+  const registerIndex = useCallback((idCpm, fn) => {
+    childrenIndexes.current[idCpm] = fn;
   }, []);
 
   return {
     state: state.current, // pass the state of the current context down
     formState: context.formState, // pass the global form state down
     formStatus: context.formStatus, // pass the global form status down
+    runAsyncValidation: context.runAsyncValidation,
+    registerAsyncInitValidation,
     changeProp,
     initProp,
     removeProp,
     stillMounted,
-    type,
     getIndex,
     removeIndex,
+    registerIndex,
+    type,
     addValidators,
     removeValidators,
     addValidatorsAsync,
     removeValidatorsAsync,
+    updateValidatorsMap,
     registerReset,
     unRegisterReset
   };
 }
 
-function validateProps({ name, type, value, asyncValidator }, contextType) {
+function validateProps(
+  { name, type, index, value, asyncValidator },
+  contextType
+) {
   if (
     typeof asyncValidator !== "undefined" &&
     typeof asyncValidator !== "function"
   ) {
-    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a funcgtion`;
+    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a function`;
   }
 
   if (
@@ -391,6 +422,10 @@ function validateProps({ name, type, value, asyncValidator }, contextType) {
       (type === "object" && typeof value !== "object"))
   ) {
     return `The prop "value": ${value} of type "${type}" passed to "${name} Collection" it is not allowed as initial value.`;
+  }
+
+  if (contextType === "array" && !isValidIndex(index)) {
+    return `The prop "index": ${index} of type "${typeof index}" passed to a Collection "${type}" must be either a string or number represent as integers.`;
   }
 
   if (!isValidValue(name, contextType)) {

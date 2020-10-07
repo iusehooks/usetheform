@@ -7,7 +7,7 @@ const email = value =>
     : "Mail not Valid";
 const required = value => (value && value !== "" ? undefined : "Required");
 
-export default function Email({ name, value }) {
+export default function Email({ name = "email", value }) {
   const [status, validation] = useValidation([required, email]);
   return (
     <div>

@@ -9,6 +9,9 @@ export const usePublicContextForm = () => {
     reset,
     isValid,
     pristine,
+    submitted,
+    submitAttempts,
+    isSubmitting,
     formStatus,
     dispatchNewState: dispatch,
     onSubmitForm
@@ -19,6 +22,9 @@ export const usePublicContextForm = () => {
     reset,
     isValid,
     pristine,
+    submitted,
+    submitAttempts,
+    isSubmitting,
     formStatus,
     dispatch,
     onSubmitForm

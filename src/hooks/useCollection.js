@@ -3,6 +3,7 @@ import { useObject } from "./useObject";
 
 export function useCollection({
   name,
+  index,
   type,
   value: initialValue,
   reducers,
@@ -15,6 +16,7 @@ export function useCollection({
 }) {
   const { changeProp, state: value, formState: state } = useObject({
     name,
+    index,
     type,
     value: initialValue,
     reducers,

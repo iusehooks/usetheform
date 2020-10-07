@@ -1,16 +1,23 @@
 export const STATUS = {
   ON_RESET: "ON_RESET",
   READY: "READY",
+  RESETTED: "RESETTED",
   ON_CHANGE: "ON_CHANGE",
   ON_INIT: "ON_INIT",
-  ON_SUBMIT: "ON_SUBMIT"
+  ON_SUBMIT: "ON_SUBMIT",
+  ON_INIT_ASYNC: "ON_INIT_ASYNC",
+  ON_RUN_ASYNC: "ON_RUN_ASYNC",
+  ON_ASYNC_END: "ON_ASYNC_END"
 };
 
 export const createForm = (state = {}) => ({
   state,
   isValid: true,
   status: STATUS.READY,
-  pristine: true
+  pristine: true,
+  isSubmitting: false,
+  submitAttempts: 0,
+  submitted: 0
 });
 
 export const getValueByPath = (path, obj, separator = "/") => {
@@ -24,11 +31,60 @@ export const isFormValid = (validators, state) =>
     return validators[key](value, state) && acc;
   }, true);
 
-export const isFormValidAsync = (validators, state) =>
-  Object.keys(validators).map(key => {
-    const value = getValueByPath(key, state);
-    return validators[key](value, state);
-  });
+export const isFormValidAsync = validatorsAsync =>
+  Object.keys(validatorsAsync)
+    .filter(key => validatorsAsync[key].type === "field")
+    .every(key => {
+      const { counter, isValid } = validatorsAsync[key];
+      return counter === 1 && isValid;
+    });
+
+export const generateAsynFuncs = (
+  validators,
+  validatorsMaps,
+  state,
+  updateValidatorsMap
+) =>
+  Object.keys(validators)
+    .filter(key => {
+      const { type, isValid, counter } = validatorsMaps[key];
+      return (
+        (counter === 0 && !isValid && type === "field") || type === "collection"
+      );
+    })
+    .map(key => {
+      const value = getValueByPath(key, state);
+      return validators[key](value, state)
+        .then(value => {
+          updateValidatorsMap(key, true, 1);
+          return value;
+        })
+        .catch(err => {
+          updateValidatorsMap(key, false, 1);
+          throw err;
+        });
+    });
+
+export const shouldRunAsyncValidator = validatorsMaps =>
+  Object.keys(validatorsMaps)
+    .filter(key => validatorsMaps[key].type === "field")
+    .every(key => {
+      const { isValid, counter } = validatorsMaps[key];
+      return (counter === 0 && !isValid) || (counter === 1 && isValid);
+    });
+
+export const flatAsyncValidationMap = asyncInitMap =>
+  Object.keys(asyncInitMap).reduce((acc, key) => {
+    const target = asyncInitMap[key];
+    if (typeof target === "function") {
+      acc.push(target());
+    } else {
+      const funcs = flatAsyncValidationMap(target);
+
+      acc.push(...funcs);
+    }
+    return acc;
+  }, []);
 
 export const fileList = files =>
   Object.keys(files).reduce((acc, key) => [...acc, files[key]], []);

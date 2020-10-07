@@ -1,8 +1,14 @@
 import React from "react";
-import { render, fireEvent, waitForElement } from "@testing-library/react";
+import {
+  render,
+  fireEvent,
+  waitForElement,
+  cleanup
+} from "@testing-library/react";
 
 import Form, { Input, Collection } from "./../src";
 
+import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
 import CollectionValidation from "./helpers/components/CollectionValidation";
 import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
 import CollectionArrayNested, {
@@ -20,7 +26,7 @@ import CollectionObjectNested, {
 } from "./helpers/components/CollectionObjectNested";
 
 import Reset from "./helpers/components/Reset";
-
+import Submit from "./helpers/components/Submit";
 import AgeRange from "./helpers/components/AgeRange";
 
 const mountForm = ({ props = {}, children } = {}) =>
@@ -31,10 +37,12 @@ const name = "user";
 const userName = "username";
 const typeInput = "text";
 
-const onInit = jest.fn(state => state);
+const onInit = jest.fn();
 const onChange = jest.fn();
 const onReset = jest.fn();
 const onSubmit = jest.fn();
+
+afterEach(cleanup);
 
 describe("Component => Collection", () => {
   beforeEach(() => {
@@ -59,7 +67,10 @@ describe("Component => Collection", () => {
     ];
     mountForm({ props, children });
 
-    expect(onInit).toHaveReturnedWith({ [name]: { [userName]: value } });
+    expect(onInit).toHaveBeenCalledWith(
+      { [name]: { [userName]: value } },
+      true
+    );
   });
 
   it("should render a Collection of type array with an inial value", () => {
@@ -73,7 +84,7 @@ describe("Component => Collection", () => {
     ];
     mountForm({ props, children });
 
-    expect(onInit).toHaveReturnedWith({ [name]: [value] });
+    expect(onInit).toHaveBeenCalledWith({ [name]: [value] }, true);
   });
 
   it("should apply reducer functions to reduce the Collection value", () => {
@@ -84,31 +95,48 @@ describe("Component => Collection", () => {
     const start = getByTestId("start");
     const end = getByTestId("end");
 
-    expect(onInit).toHaveReturnedWith({ ageRange: { start: 18, end: 65 } });
+    expect(onInit).toHaveBeenCalledWith(
+      { ageRange: { start: 18, end: 65 } },
+      true
+    );
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 50 } });
     fireEvent.change(end, { target: { value: 80 } });
-    expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 50, end: 80 } });
+    expect(onChange).toHaveBeenCalledWith(
+      { ageRange: { start: 50, end: 80 } },
+      true
+    );
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 81 } });
     fireEvent.change(end, { target: { value: 80 } });
-    expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 80, end: 80 } });
+    expect(onChange).toHaveBeenCalledWith(
+      { ageRange: { start: 80, end: 80 } },
+      true
+    );
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 18 } });
     fireEvent.change(end, { target: { value: 90 } });
-    expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 18, end: 90 } });
+    expect(onChange).toHaveBeenCalledWith(
+      { ageRange: { start: 18, end: 90 } },
+      true
+    );
 
+    onChange.mockClear();
     fireEvent.change(start, { target: { value: 18 } });
     fireEvent.change(end, { target: { value: 16 } });
-    expect(onChange).toHaveBeenCalledWith({ ageRange: { start: 18, end: 18 } });
+    expect(onChange).toHaveBeenCalledWith(
+      { ageRange: { start: 18, end: 18 } },
+      true
+    );
   });
 
   it("should show an error label if Collection is not valid due to sync validator", () => {
     const children = [
       <CollectionValidation key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>
+      <Submit forceEnable key="2" />
     ];
     const { getByTestId } = mountForm({ children });
     const submit = getByTestId("submit");
@@ -116,6 +144,34 @@ describe("Component => Collection", () => {
     fireEvent.click(submit);
     const errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
+  });
+
+  it("should trigger onChange, onInit, onReset with flag 'isValid' false if Collection is not valid due to sync validator", () => {
+    const props = { onChange, onInit: jest.fn(), onReset };
+    const validator = val => (val && val === "Antonio" ? undefined : "error");
+    const children = [
+      <Collection name="user" object key="1">
+        <Input
+          type="text"
+          validators={[validator]}
+          name="name"
+          data-testid="name"
+        />
+      </Collection>,
+      <Reset key="2" />,
+      <Submit forceEnable key="3" />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    const name = getByTestId("name");
+    const reset = getByTestId("reset");
+
+    expect(props.onInit).toHaveBeenCalledWith({}, false);
+
+    fireEvent.change(name, { target: { value: "Toto" } });
+    expect(onChange).toHaveBeenCalledWith({ user: { name: "Toto" } }, false);
+
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({}, false);
   });
 
   it("should reset the Collection state", () => {
@@ -147,11 +203,11 @@ describe("Component => Collection", () => {
     const { getByTestId } = mountForm({ props, children });
     const user = getByTestId("user");
     fireEvent.change(user, { target: { value: "foo" } });
-    expect(onChange).toHaveBeenCalledWith({ user: { name: "foo" } });
+    expect(onChange).toHaveBeenCalledWith({ user: { name: "foo" } }, true);
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({ user: { name: "test" } });
+    expect(onReset).toHaveBeenCalledWith({ user: { name: "test" } }, true);
   });
 
   it("should reduce a Collection of type object value with the given reducer function", () => {
@@ -184,7 +240,7 @@ describe("Component => Collection", () => {
     const { getByTestId } = mountForm({ props, children });
     expect(jestReducer).toHaveBeenCalledWith({ name: "foo" }, {});
 
-    expect(onInit).toHaveReturnedWith({ user: { name: "foo" } });
+    expect(onInit).toHaveBeenCalledWith({ user: { name: "foo" } }, true);
 
     jestReducer.mockReset();
     const user = getByTestId("user");
@@ -229,12 +285,11 @@ describe("Component => Collection", () => {
   it("should show an error label if Collection is not valid due to async validator", async () => {
     const children = [
       <CollectionAsyncValidation key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>
+      <Submit key="2" />
     ];
     const { getByTestId } = mountForm({ children });
     const submit = getByTestId("submit");
+    const addInput = getByTestId("addInput");
 
     fireEvent.click(submit);
     const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
@@ -242,35 +297,50 @@ describe("Component => Collection", () => {
 
     const asyncError = await waitForElement(() => getByTestId("asyncError"));
     expect(asyncError).toBeDefined();
+
+    fireEvent.click(addInput);
+    fireEvent.click(addInput);
+    fireEvent.click(submit);
+    const asyncSuccess = await waitForElement(() =>
+      getByTestId("asyncSuccess")
+    );
+    expect(asyncSuccess).toBeDefined();
   });
 
   it("should render a nested array Collection with initial value passed as prop", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNested key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
 
-    expect(onInit).toHaveReturnedWith({ arrayNested: initialValueNested });
+    expect(onInit).toHaveBeenCalledWith(
+      { arrayNested: initialValueNested },
+      true
+    );
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
       fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
     });
 
-    expect(onChange).toHaveBeenCalledWith({
-      arrayNested: expectedValueArrayNested
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        arrayNested: expectedValueArrayNested
+      },
+      true
+    );
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      arrayNested: initialValueNested
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        arrayNested: initialValueNested
+      },
+      true
+    );
 
     const submit = getByTestId("submit");
     fireEvent.click(submit);
@@ -284,29 +354,36 @@ describe("Component => Collection", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionArrayNestedValue key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
 
-    expect(onInit).toHaveReturnedWith({ arrayNested: initialValueNested });
+    expect(onInit).toHaveBeenCalledWith(
+      { arrayNested: initialValueNested },
+      true
+    );
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
       fireEvent.change(input, { target: { value: `input_${dataTestid}` } });
     });
 
-    expect(onChange).toHaveBeenCalledWith({
-      arrayNested: expectedValueArrayNested
-    });
+    expect(onChange).toHaveBeenCalledWith(
+      {
+        arrayNested: expectedValueArrayNested
+      },
+      true
+    );
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      arrayNested: initialValueNested
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        arrayNested: initialValueNested
+      },
+      true
+    );
 
     const submit = getByTestId("submit");
     fireEvent.click(submit);
@@ -317,36 +394,36 @@ describe("Component => Collection", () => {
   });
 
   it("should render a reduced nested array Collection with initial value passed by the inputs field", () => {
-    const props = { onInit, onSubmit, onChange, onReset };
+    const props = { onInit };
     const children = [
       <CollectionArrayNestedValue key="1" reducers={reducerArrayNested} />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     mountForm({ children, props });
 
-    expect(onInit).toHaveReturnedWith({
-      arrayNested: expectedValueArrayNestedReduced
-    });
+    expect(onInit).toHaveBeenCalledWith(
+      {
+        arrayNested: expectedValueArrayNestedReduced
+      },
+      true
+    );
   });
 
   it("should render a nested object Collection with initial valued passed as prop of the Collection", () => {
-    const props = { onInit, onSubmit, onChange, onReset };
+    const props = { onInit, onSubmit, onReset };
     const children = [
       <CollectionObjectNested key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
 
-    expect(onInit).toHaveReturnedWith({ lv1: initialValueObjNested });
+    expect(onInit).toHaveBeenCalledWith({ lv1: initialValueObjNested }, true);
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
+      expect(input.value).toBe(`${dataTestid}`);
       fireEvent.change(input, { target: { value: `${dataTestid}_1` } });
     });
 
@@ -359,23 +436,24 @@ describe("Component => Collection", () => {
 
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      lv1: initialValueObjNested
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        lv1: initialValueObjNested
+      },
+      true
+    );
   });
 
   it("should render a nested object Collection with initial value passed by the input fields", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNestedValue key="1" />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     const { getByTestId } = mountForm({ children, props });
 
-    expect(onInit).toHaveReturnedWith({ lv1: initialValueObjNested });
+    expect(onInit).toHaveBeenCalledWith({ lv1: initialValueObjNested }, true);
 
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
       const input = getByTestId(`${dataTestid}`);
@@ -389,26 +467,106 @@ describe("Component => Collection", () => {
       true
     );
 
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(dataTestid => {
+      const input = getByTestId(`${dataTestid}`);
+      expect(input.value).toBe(`${dataTestid}_1`);
+    });
+
     const reset = getByTestId("reset");
     fireEvent.click(reset);
-    expect(onReset).toHaveBeenCalledWith({
-      lv1: initialValueObjNested
-    });
+    expect(onReset).toHaveBeenCalledWith(
+      {
+        lv1: initialValueObjNested
+      },
+      true
+    );
   });
 
   it("should render a reduced nested object Collection with initial value passed by the inputs field", () => {
     const props = { onInit, onSubmit, onChange, onReset };
     const children = [
       <CollectionObjectNestedValue key="1" reducers={reducerObjectNested} />,
-      <button key="2" type="submit" data-testid="submit">
-        Submit
-      </button>,
+      <Submit key="2" />,
       <Reset key="3" />
     ];
     mountForm({ children, props });
 
-    expect(onInit).toHaveReturnedWith({
-      lv1: expectedValueObjNested
+    expect(onInit).toHaveBeenCalledWith(
+      {
+        lv1: expectedValueObjNested
+      },
+      true
+    );
+  });
+
+  it("should run reducer functions on Collection fields removal", () => {
+    const props = { onSubmit, onChange, onReset };
+    const reducer = jest.fn(value => {
+      const { items = [] } = value.list;
+      const result = items.reduce((acc, val) => {
+        acc += val;
+        return acc;
+      }, 0);
+      const list = { ...value.list, result };
+      return { ...value, list };
     });
+    const children = [
+      <CollectionDynamicCart key="1" reducers={reducer} />,
+      <Submit key="2" />,
+      <Reset key="3" />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { result: 0 } });
+
+    const addInput = getByTestId("addInput");
+    const removeInput = getByTestId("removeInput");
+
+    fireEvent.click(addInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { items: [1], result: 1 } });
+
+    fireEvent.click(addInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { items: [1, 2], result: 3 } });
+
+    fireEvent.click(removeInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { items: [1], result: 1 } });
+
+    fireEvent.click(removeInput);
+    expect(reducer).toHaveBeenCalled();
+    expect(reducer).toHaveReturnedWith({ list: { result: 0 } });
+  });
+
+  it("should throw an error if the the prop 'index' is not an integer", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [
+      <Collection key="1" array name="array">
+        <Input type="text" index="abc" />
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    children = [
+      <Collection key="1" array name="array">
+        <Collection object index="3.1">
+          <Input type="text" name="test" />
+        </Collection>
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    children = [
+      <Collection key="1" array name="array">
+        <Collection object index="-1">
+          <Input type="text" name="test" />
+        </Collection>
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    console.error = originalError;
   });
 });

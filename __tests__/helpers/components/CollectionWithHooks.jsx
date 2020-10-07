@@ -1,22 +1,28 @@
 import React from "react";
-import { useCollection } from "./../../../src";
+import { useCollection, withIndex } from "./../../../src";
 
-export default function CollectionWithHooks({ value, type = "object" }) {
+export function CollectionWithHooks({
+  value,
+  type = "object",
+  name,
+  dataTestid = "changeCollection",
+  propToChange
+}) {
   const { updateCollection } = useCollection({
-    name: "hook",
+    name,
     type,
     value
   });
 
-  const onUpdateCollection = () => updateCollection("name", "foo");
+  const propName = propToChange || name;
+
+  const onUpdateCollection = () => updateCollection(propName, "foo");
 
   return (
-    <button
-      type="button"
-      data-testid="changeCollection"
-      onClick={onUpdateCollection}
-    >
+    <button type="button" data-testid={dataTestid} onClick={onUpdateCollection}>
       Update Collection
     </button>
   );
 }
+
+export default withIndex(CollectionWithHooks);

@@ -1,9 +1,8 @@
-import React from "react";
-
+import React, { useMemo, memo } from "react";
 import { useForm } from "./hooks/useForm";
 import { ContextForm as Context } from "./hooks/useOwnContext";
 
-export function FormContext({
+export const FormContext = memo(function FormContext({
   children,
   initialState,
   onChange,
@@ -13,9 +12,10 @@ export function FormContext({
   reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
-  name
+  name,
+  action
 }) {
-  const ctx = useForm({
+  const props = useForm({
     initialState,
     onChange,
     onInit,
@@ -24,8 +24,19 @@ export function FormContext({
     reducers,
     _getInitilaStateForm_,
     _onMultipleForm_,
-    name
+    name,
+    action
   });
 
+  const ctx = useMemo(() => props, [
+    props.state,
+    props.isValid,
+    props.status,
+    props.pristine,
+    props.isSubmitting,
+    props.submitAttempts,
+    props.submitted
+  ]);
+
   return <Context.Provider value={ctx}>{children}</Context.Provider>;
-}
+});

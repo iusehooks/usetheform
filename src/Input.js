@@ -1,12 +1,13 @@
 import React from "react";
+import { withIndex } from "./hoc/withIndex";
 import { useField } from "./hooks/useField";
 
-export function Input({
+export const Input = withIndex(function Input({
   onFocus,
   onBlur,
   onChange,
-  children: omitChildren,
   name,
+  index,
   checked,
   validators,
   asyncValidator,
@@ -27,6 +28,7 @@ export function Input({
     onChange,
     type,
     name,
+    index,
     checked,
     value,
     validators,
@@ -41,4 +43,4 @@ export function Input({
   });
 
   return <input {...extraProps} {...props} />;
-}
+});

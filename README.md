@@ -1,6 +1,6 @@
 # <img src='https://iusehooks.github.io/usetheform/docs/gatsby-theme-docz/assets/logo.png' width="233" height='51' alt='Usetheform Logo' />
 
-Usetheform is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any libray like redux or others.
+Usetheform is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any library like redux or others.
 
 - [Documentation](https://iusehooks.github.io/usetheform/)
 - [Installation](#Installation)
@@ -21,6 +21,7 @@ npm install --save usetheform
 
 # CodeSandbox Examples
 
+- Shopping Cart: [Sandbox](https://codesandbox.io/s/shopping-cart-97y5k)
 - Examples: Slider, Select, Collections etc..: [Sandbox](https://codesandbox.io/s/formexample2-mmcjs)
 - Various Implementation: [Sandbox](https://codesandbox.io/s/035l4l75ln)
 - Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)

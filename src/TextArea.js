@@ -1,12 +1,13 @@
 import React from "react";
+import { withIndex } from "./hoc/withIndex";
 import { useField } from "./hooks/useField";
 
-export function TextArea({
+export const TextArea = withIndex(function TextArea({
   onFocus,
   onBlur,
   onChange,
-  children: omitChildren,
   name,
+  index,
   validators,
   asyncValidator,
   onValidation,
@@ -24,6 +25,7 @@ export function TextArea({
     onChange,
     type: "text",
     name,
+    index,
     value,
     validators,
     asyncValidator,
@@ -36,4 +38,4 @@ export function TextArea({
   });
 
   return <textarea {...extraProps} {...props} />;
-}
+});

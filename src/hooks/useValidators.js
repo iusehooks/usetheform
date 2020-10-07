@@ -1,21 +1,51 @@
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { mergeValidators } from "../utils/utilValidators";
 
 export function useValidators(context, nameProp, isMounted, isAsync = false) {
   const validators = useRef({});
   const validatorsMaps = useRef({});
 
+  const updateValidatorsMap = useCallback((path, isValid, counter) => {
+    // It propagates up to the form context
+    if (context !== undefined) {
+      context.updateValidatorsMap(
+        `${nameProp.current}/${path}`,
+        isValid,
+        counter
+      );
+    } else {
+      validatorsMaps.current[path] = {
+        ...validatorsMaps.current[path],
+        isValid,
+        counter
+      };
+    }
+  }, []);
+
+  // resetValidatorsMap only used in useForm
+  const resetValidatorsMap = useCallback(() => {
+    Object.keys(validatorsMaps.current).forEach(key => {
+      const { type } = validatorsMaps.current[key];
+      validatorsMaps.current[key].counter = 0;
+      validatorsMaps.current[key].isValid =
+        type === "collection" ? null : false;
+    });
+    return validatorsMaps.current;
+  }, []);
+
+  // syncValidatorsValue type depends on its context - can be function or object
+  // asyncValidatorsValue type depends on its context - can be boolean, null or object
   const { current: addValidators } = useRef(
-    (path, validatorsFN, validatorsMapsFN) => {
+    (path, syncValidatorsValue, asyncValidatorsValue) => {
       validators.current = {
         ...validators.current,
-        ...mergeValidators(path, validatorsFN)
+        ...mergeValidators(path, syncValidatorsValue)
       };
 
       if (isAsync) {
         validatorsMaps.current = {
           ...validatorsMaps.current,
-          ...mergeValidators(path, validatorsMapsFN)
+          ...mergeValidators(path, asyncValidatorsValue)
         };
       }
 
@@ -64,7 +94,14 @@ export function useValidators(context, nameProp, isMounted, isAsync = false) {
       }
     }
   );
-  return [validators, addValidators, removeValidators, validatorsMaps];
+  return [
+    validators,
+    addValidators,
+    removeValidators,
+    validatorsMaps,
+    updateValidatorsMap,
+    resetValidatorsMap
+  ];
 }
 
 function cleanValidators(validatorObj) {
