@@ -2,6 +2,14 @@
 
 Usetheform is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. I does not depend on any library like redux or others.
 
+<div align="center">
+    <p align="center">
+        <a href="https://iusehooks.github.io/usetheform/" title="Usetheform">
+            <img src="https://raw.githubusercontent.com/iusehooks/usetheform/master/examples/img/example.gif" alt="React library for composing declarative forms and managing their state" width="800" />
+        </a>
+    </p>
+</div>
+
 - [Documentation](https://iusehooks.github.io/usetheform/)
 - [Installation](#Installation)
 - [CodeSandbox Examples](#codesandbox-examples)
@@ -17,6 +25,34 @@ Usetheform is a React library for composing declarative forms and managing their
 
 ```sh
 npm install --save usetheform
+```
+
+# Quickstart
+
+```jsx
+import React from "react";
+import Form, { Input, useValidation } from "usetheform";
+
+export default function App() {
+  const onChange = (formState) => console.log("ON_CHANGE : ", formState);
+  const onSubmit = (formState) => console.log("ON_SUBMIT : ", formState);
+
+  const reduceAge = (next, prev) => (next <= 0 ? 0 : next);
+  const required = (value) =>
+    value && value.trim() !== "" ? undefined : "Required";
+
+  const [status, validation] = useValidation([required]);
+
+  return (
+    <Form onSubmit={onSubmit} onChange={onChange}>
+      <Input name="firstname" type="text" touched {...validation} />
+      {status.error && <span>{status.error}</span>}
+      <Input name="lastname" type="text" />
+      <Input name="age" type="number" value={18} reducers={reduceAge} />
+      <button type="submit">Submit</button>
+    </Form>
+  );
+}
 ```
 
 # CodeSandbox Examples
