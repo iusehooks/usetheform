@@ -3,6 +3,7 @@ import { terser } from "rollup-plugin-terser";
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
+import bundleSize from "rollup-plugin-bundle-size";
 
 const config = {
   input: "./src/index.js",
@@ -36,8 +37,12 @@ if (process.env.NODE_ENV === "production") {
         unsafe: true,
         unsafe_comps: true,
         warnings: false
+      },
+      output: {
+        comments: false
       }
-    })
+    }),
+    bundleSize()
   );
 }
 

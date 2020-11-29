@@ -6,5 +6,6 @@ export default {
   themeConfig: {
     showDarkModeSwitch: false
   },
+  title: "Usetheform - An easy way for building forms in React",
   public: "./docs/gatsby-theme-docz/assets"
 };
