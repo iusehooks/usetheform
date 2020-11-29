@@ -2,12 +2,12 @@
 
 <h3 align="center">An easy way for building forms in React.</h3><br/>
 
-<p align="center"
-
-[![Build Status](https://travis-ci.org/iusehooks/usetheform.svg?branch=master)](https://travis-ci.org/iusehooks/usetheform) [![Package size](https://img.shields.io/bundlephobia/minzip/usetheform.svg)](https://bundlephobia.com/result?p=usetheform) 
-![License](https://img.shields.io/npm/l/usetheform.svg?style=flat)
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks)
+<p align="center">
+<a href="https://travis-ci.org/iusehooks/usetheform"><img src="https://travis-ci.org/iusehooks/usetheform.svg?branch=master" alt="Build info" height="20"/></a>
+<a href="https://bundlephobia.com/result?p=usetheform"><img src="https://img.shields.io/bundlephobia/minzip/usetheform.svg" alt="Bundle size" height="20"/></a>
+<a href="https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" alt="Tweet" height="20"/></a>
 </p><br/><br/>
+
 
 <div align="center">
     <p align="center">
