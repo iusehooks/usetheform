@@ -1,4 +1,5 @@
 export { default } from "./Form";
+export { default as Form } from "./Form";
 export { Input } from "./Input";
 export { Select } from "./Select";
 export { TextArea } from "./TextArea";

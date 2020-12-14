@@ -42,13 +42,13 @@ npm install --save usetheform
 import React from "react";
 import Form, { Input, useValidation } from "usetheform";
 
+const preventNegativeNumber = (next, prev) => (next <= 0 ? 0 : next);
+const required = (value) =>
+    value && value.trim() !== "" ? undefined : "Required";
+
 export default function App() {
   const onChange = (formState) => console.log("ON_CHANGE : ", formState);
   const onSubmit = (formState) => console.log("ON_SUBMIT : ", formState);
-
-  const preventNegativeNumber = (next, prev) => (next <= 0 ? 0 : next);
-  const required = (value) =>
-    value && value.trim() !== "" ? undefined : "Required";
 
   const [status, validation] = useValidation([required]);
 

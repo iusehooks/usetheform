@@ -1,3 +1,4 @@
 export function getValidationMsg(errors) {
-  return errors.find(e => e !== undefined && e !== null);
+  // It uses filter over find for supporting IE 11
+  return errors.filter(e => e !== undefined && e !== null)[0];
 }

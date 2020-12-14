@@ -1,7 +1,7 @@
 import React from "react";
 import Email from "./Email";
 import CollectionAsyncValidation from "./CollectionAsyncValidation";
-import Form, { useForm } from "./../../../src";
+import { Form, useForm } from "./../../../src";
 
 export const SimpleFormTestSumbission = ({
   targetSumbission,

@@ -24,12 +24,7 @@ const expectedValueArrayNested = [
 
 window.CollectionArrayNested = function CollectionArrayNested({ reducers }) {
   return (
-    <Collection
-      array
-      name="arrayNested1"
-      // reducers={reducerArrayNested}
-      value={initialValue}
-    >
+    <Collection array name="arrayNested1" value={initialValue}>
       <Input type="text" data-testid="1" />
       <Input type="text" data-testid="2" />
       <Collection array>

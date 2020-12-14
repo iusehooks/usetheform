@@ -1,4 +1,6 @@
 import React from "react";
+import { act } from "react-dom/test-utils";
+
 import {
   render,
   fireEvent,
@@ -6,10 +8,13 @@ import {
   cleanup
 } from "@testing-library/react";
 
-import Form, { Input, Collection } from "./../src";
+import { Form, Input, Collection } from "./../src";
 
 import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
-import CollectionValidation from "./helpers/components/CollectionValidation";
+import CollectionDynamicAdded from "./helpers/components/CollectionDynamicAdded";
+import CollectionValidation, {
+  CollectionValidationTouched
+} from "./helpers/components/CollectionValidation";
 import CollectionAsyncValidation from "./helpers/components/CollectionAsyncValidation";
 import CollectionArrayNested, {
   initialValue as initialValueNested,
@@ -131,6 +136,96 @@ describe("Component => Collection", () => {
       { ageRange: { start: 18, end: 18 } },
       true
     );
+  });
+
+  it("should add/remove collection dynamically and reset the errors message validation to the proper value", async () => {
+    const children = [<CollectionDynamicAdded key="1" />, <Reset key="2" />];
+    const { getByTestId, getAllByTestId } = mountForm({ children });
+
+    const addCollection = getByTestId("addCollection");
+    const removeCollection = getByTestId("removeCollection");
+
+    // no error initially
+    expect(() => getByTestId("errorLabel")).toThrow();
+    expect(() => getByTestId("errorLabelCollection")).toThrow();
+
+    fireEvent.click(addCollection);
+
+    let input_1 = getByTestId("input1");
+    fireEvent.change(input_1, { target: { value: "ab" } });
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    // Collection has touched = true
+    act(() => {
+      input_1.focus();
+      input_1.blur();
+    });
+    let errorLabelCollection = getByTestId("errorLabelCollection");
+    expect(errorLabelCollection).toBeDefined();
+
+    fireEvent.click(removeCollection);
+    expect(() => getAllByTestId("errorLabel")).toThrow();
+    expect(() => getByTestId("errorLabelCollection")).toThrow();
+
+    fireEvent.click(addCollection);
+    let input_2 = getByTestId("input2");
+    fireEvent.change(input_2, { target: { value: "3" } });
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    // Collection has touched = true
+    act(() => {
+      input_2.focus();
+      input_2.blur();
+    });
+
+    expect(() => getByTestId("errorLabelCollection")).toThrow();
+  });
+
+  it("should trigger validation when touched prop is true and only if any of its children is touched at any nested level", async () => {
+    const children = [
+      <CollectionValidationTouched key="1" />,
+      <Reset key="2" />
+    ];
+    const { getByTestId, getAllByTestId } = mountForm({ children });
+
+    const addMember = getByTestId("addMember");
+    fireEvent.click(addMember);
+
+    let member = getByTestId("member_name");
+
+    expect(() => getAllByTestId("errorLabel")).toThrow();
+    fireEvent.change(member, { target: { value: "Foo" } });
+    expect(() => getAllByTestId("errorLabel")).toThrow();
+
+    // Collection has touched = true
+    act(() => {
+      member.focus();
+      member.blur();
+    });
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    fireEvent.click(addMember);
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(() => getAllByTestId("member")).toThrow();
+    expect(() => getAllByTestId("errorLabel")).toThrow();
+
+    fireEvent.click(addMember);
+    member = getByTestId("member_name");
+
+    // Collection has touched = true
+    act(() => {
+      member.focus();
+      member.blur();
+    });
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
   });
 
   it("should show an error label if Collection is not valid due to sync validator", () => {

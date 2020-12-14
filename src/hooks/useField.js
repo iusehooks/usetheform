@@ -60,6 +60,7 @@ export function useField(props) {
   const checkedField = useRef(initialChecked);
   const fileField = useRef("");
   const valueFieldLastAsyncCheck = useRef(null);
+  const valueFieldLastSyncCheck = useRef(null);
 
   const [initialValueRef, initialCheckedRef] = getInitialValue(
     type,
@@ -100,6 +101,8 @@ export function useField(props) {
 
   const reset = useCallback(formState => {
     valueFieldLastAsyncCheck.current = null;
+    valueFieldLastSyncCheck.current = null;
+
     switch (type) {
       case "number":
       case "range": {
@@ -230,6 +233,8 @@ export function useField(props) {
     }
 
     return () => {
+      resetSyncErr();
+      resetAsyncErr();
       if (context.stillMounted()) {
         if (typeof asyncValidator === "function") {
           context.removeValidatorsAsync(
@@ -267,12 +272,12 @@ export function useField(props) {
 
   const [onSyncBlurState, setSyncOnBlur] = useState(() => false);
   const [onSyncFocusState, setSyncOnFocus] = useState(() => false);
-  const [onAsyncBlurState, setAyncOnBlur] = useState(() => false);
+  const [onAsyncBlurState, setAsyncOnBlur] = useState(() => false);
 
   useEffect(() => {
     if (context.formStatus === STATUS.ON_RESET) {
       setSyncOnBlur(false);
-      setAyncOnBlur(false);
+      setAsyncOnBlur(false);
       setSyncOnFocus(false);
       resetSyncErr();
       resetAsyncErr();
@@ -280,20 +285,35 @@ export function useField(props) {
       context.formStatus !== STATUS.READY &&
       context.formStatus !== STATUS.ON_INIT_ASYNC
     ) {
+      const firstTimeCheck = valueFieldLastSyncCheck.current === null;
       const onlyShowOnSubmit = type === "radio" || type === "checkbox";
       const isCustomCmp = type === "custom";
+      const forceOnBlur = type === "select" && multiple;
+
       if (
+        valueFieldLastSyncCheck.current !== valueField.current &&
         validationObj.current !== null &&
         ((!onlyShowOnSubmit && initialValue !== "") ||
           (isCustomCmp && touched && onSyncBlurState) ||
           context.formStatus === STATUS.ON_SUBMIT ||
-          (!onlyShowOnSubmit && ((touched && onSyncBlurState) || !touched)) ||
+          (!onlyShowOnSubmit &&
+            ((touched && onSyncBlurState) ||
+              (!touched &&
+                forceOnBlur &&
+                (onSyncBlurState || firstTimeCheck)) ||
+              (!touched && !forceOnBlur))) ||
           (onlyShowOnSubmit && onSyncFocusState))
       ) {
+        valueFieldLastSyncCheck.current = valueField.current;
+
         onValidation(
           validationObj.current.checks,
           validationObj.current.isValid
         );
+      }
+
+      if (onSyncBlurState) {
+        context.triggerSyncValidation && context.triggerSyncValidation();
       }
 
       if (
@@ -332,14 +352,15 @@ export function useField(props) {
 
   const onBlur = useCallback(e => {
     e.persist();
-    setAyncOnBlur(true);
+    setAsyncOnBlur(true);
     setSyncOnBlur(true);
     customBlur(e);
   }, []);
 
   const onFocus = useCallback(e => {
     e.persist();
-    setAyncOnBlur(false);
+    setSyncOnBlur(false);
+    setAsyncOnBlur(false);
     setSyncOnFocus(true);
     customFocus(e);
   }, []);

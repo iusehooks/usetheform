@@ -1,8 +1,11 @@
 import React from "react";
+import { act } from "react-dom/test-utils";
 import { render, fireEvent, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import Reset from "./helpers/components/Reset";
+import SelectSyncValidation from "./helpers/components/SelectSyncValidation";
+
 import Form, { Select } from "./../src";
 
 const mountForm = ({ props = {}, children } = {}) =>
@@ -145,5 +148,141 @@ describe("Component => Select", () => {
     ];
     mountForm({ props, children });
     expect(onInit).toHaveReturnedWith({ [name]: 3 });
+  });
+
+  it("should run sync validation on the single Select with touched prop true", () => {
+    const children = [
+      <SelectSyncValidation touched={true} key="1" />,
+      <Reset key="2" />
+    ];
+    const { getByTestId } = mountForm({ children });
+    const select = getByTestId("select");
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    act(() => {
+      select.focus();
+      select.blur();
+    });
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      userEvent.selectOptions(select, ["1"]);
+      select.blur();
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(() => getByTestId("errorLabel")).toThrow();
+  });
+
+  it("should run sync validation on the multiple Select with touched prop true", () => {
+    const children = [
+      <SelectSyncValidation multiple touched={true} key="1" />,
+      <Reset key="2" />
+    ];
+    const { getByTestId } = mountForm({ children });
+    const select = getByTestId("select");
+    const remove = getByTestId("remove");
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    act(() => {
+      select.focus();
+      select.blur();
+    });
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      userEvent.selectOptions(select, ["1"]);
+      select.blur();
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    act(() => {
+      select.focus();
+      select.blur();
+    });
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      fireEvent.click(remove);
+    });
+    expect(() => getByTestId("errorLabel")).toThrow();
+  });
+
+  it("should run sync validation on the single Select with touched prop false", () => {
+    const children = [
+      <SelectSyncValidation touched={false} key="1" />,
+      <Reset key="2" />
+    ];
+    const { getByTestId } = mountForm({ children });
+    const select = getByTestId("select");
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      userEvent.selectOptions(select, ["1"]);
+      select.blur();
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    const remove = getByTestId("remove");
+    act(() => {
+      fireEvent.click(remove);
+    });
+    expect(() => getByTestId("errorLabel")).toThrow();
+  });
+
+  it("should run sync validation on the multiple Select with touched prop false", () => {
+    const children = [
+      <SelectSyncValidation multiple={true} touched={false} key="1" />,
+      <Reset key="2" />
+    ];
+    const { getByTestId } = mountForm({ children });
+    const select = getByTestId("select");
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      userEvent.selectOptions(select, ["1"]);
+      select.blur();
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    const remove = getByTestId("remove");
+    act(() => {
+      fireEvent.click(remove);
+    });
+    expect(() => getByTestId("errorLabel")).toThrow();
   });
 });
