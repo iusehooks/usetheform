@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, useAsyncValidation, withIndex } from "./../../../src";
+import { Input, useAsyncValidation } from "./../../../src";
 
 const asyncTest = value =>
   new Promise((resolve, reject) => {
@@ -10,7 +10,7 @@ const asyncTest = value =>
     }, 50);
   });
 
-export function InputAsync({
+export default function InputAsync({
   name,
   dataTestidNotStart = "asyncNotStartedYet",
   dataTestid = "asyncinput",
@@ -49,5 +49,3 @@ export function InputAsync({
     </div>
   );
 }
-
-export default withIndex(InputAsync);

@@ -83,21 +83,47 @@ Possible values:
 
 ## Basic usage
 
+### Example 1
+
+A simple form with the initial state passed as Form prop.
+
 ```javascript
   import Form, { Input } from 'usetheform'
 ```
 <Playground>
   <Form
-    initialState={{ name: "foo", sex: "M", option1: "option1" }}
+    initialState={{ name: "foo", sex: "M", option1: true }}
+    onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
+    onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
+    onSubmit={(state, isFormValid) => console.log("SUBMIT", state, isFormValid)}
+  >
+    <Input type="text" name="name" />
+    <Input type="radio" name="sex" value="M" />
+    <Input type="radio" name="sex" value="F" />
+    <Input type="checkbox" name="option1" />
+    <Input type="checkbox" name="option2" />
+    <button type="submit">Submit</button>
+  </Form>
+</Playground>
+
+### Example 2
+
+A simple form with the initial state passed straight  to the Form's Field.
+
+```javascript
+  import Form, { Input } from 'usetheform'
+```
+<Playground>
+  <Form
     onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
     onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
     onSubmit={(state, isFormValid) => console.log("SUBMIT", state, isFormValid)}
   >
     <Input type="text" name="name" value="foo" />
-    <Input type="radio" name="sex" value="M" />
+    <Input type="radio" name="sex" value="M" checked />
     <Input type="radio" name="sex" value="F" />
-    <Input type="checkbox" name="option1" value="option1" />
-    <Input type="checkbox" name="option2" value="option2"  />
+    <Input type="checkbox" name="option1" checked />
+    <Input type="checkbox" name="option2" />
     <button type="submit">Submit</button>
   </Form>
 </Playground>

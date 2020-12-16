@@ -8,6 +8,7 @@ export const Collection = withIndex(function Collection({
   name,
   index,
   object,
+  touched,
   value,
   reducers,
   onValidation,
@@ -21,6 +22,7 @@ export const Collection = withIndex(function Collection({
   const props = useObject({
     name,
     index,
+    touched,
     type,
     value,
     reducers,

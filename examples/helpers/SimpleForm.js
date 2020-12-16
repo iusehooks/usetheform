@@ -1,8 +1,13 @@
 /* eslint-disable react/react-in-jsx-scope */
-const { default: Form, Collection, Input, useField } = UseTheForm;
+const { Form, Collection, Input, useField, useValidation } = UseTheForm;
 
 const { useState, useEffect, useRef } = React;
-const { CollectionArrayNested, Reset, Submit } = window;
+const {
+  CollectionArrayNested,
+  Reset,
+  Submit,
+  CollectionValidationTouched
+} = window;
 
 const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
   const props = useField({ type, name, value, index });
@@ -10,69 +15,35 @@ const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
 };
 
 window.SimpleForm = () => {
-  const [inputs, setAdd] = useState([]);
-  const [collections, addCollection] = useState([]);
+  const [input, validationInput] = useValidation([
+    val => {
+      return val && val.length > 3 ? undefined : "erro";
+    }
+  ]);
+
+  const [remove, setRemove] = useState(false);
 
   return (
     <div>
-      <Form
-        onSubmit={state => console.log(state)}
-        onChange={state => console.log(state)}
-        onInit={state => console.log("onInit ", state)}
-      >
-        <Collection array name="check">
-          <Collection array>
-            <Input type="text" value="gg" />
-          </Collection>
-          <label>
-            Input 1: <Input type="text" value="5" />
-          </label>
-
-          <Input type="text" value="4" />
-          {inputs}
-          {collections}
-        </Collection>
-
-        {/* <CollectionArrayNested /> */}
+      <Form>
+        <CollectionArrayNested />
+        <Submit forceEnable />
         <Reset />
-        <Submit />
       </Form>
-      <button
-        onClick={() =>
-          setAdd(prev => [
-            ...prev,
-            <Input type="text" key={prev.length} value={prev.length} />
-          ])
-        }
-      >
-        Add Input
+      <br />
+      <br />
+      <Form>
+        {!remove && <CollectionValidationTouched />}
+        {!remove && (
+          <Input type="text" name="ABC" value="3" {...validationInput} />
+        )}
+        <Submit forceEnable />
+        <Reset />
+      </Form>
+      <button onClick={() => setRemove(true)} type="button">
+        setRemove
       </button>
-
-      <button
-        onClick={() =>
-          addCollection(prev => [
-            ...prev,
-            <Collection key={prev.length}>
-              <Input type="text" value={prev.length} />
-            </Collection>
-          ])
-        }
-      >
-        Add Collection
-      </button>
-
-      <button
-        onClick={() =>
-          addCollection(prev => {
-            const pos = Math.floor(Math.random() * prev.length);
-            return prev.filter((elm, index) => index !== pos);
-          })
-        }
-      >
-        Remove Collection
-      </button>
-
-      <button onClick={() => set(prev => !prev)}>remove Input</button>
+      {input.error && <label>{input.error}</label>}
     </div>
   );
 };

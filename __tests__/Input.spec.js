@@ -1,4 +1,5 @@
 import React from "react";
+import { act } from "react-dom/test-utils";
 import {
   render,
   fireEvent,
@@ -9,6 +10,7 @@ import {
 import Form, { Input } from "./../src";
 
 import InputAsync from "./helpers/components/InputAsync";
+import InputSyncValidation from "./helpers/components/InputSyncValidation";
 import Submit from "./helpers/components/Submit";
 import Reset from "./helpers/components/Reset";
 import { SimpleFormDynamicField } from "./helpers/components/SimpleForm";
@@ -269,6 +271,95 @@ describe("Component => Input", () => {
     const reset = getByTestId("reset");
     fireEvent.click(reset);
     expect(onReset).toHaveBeenCalledWith({ [name]: value }, false);
+  });
+
+  it("should use sync validator functions to validate the Input with touched prop true", () => {
+    const name = "test";
+    const props = { onReset, onChange };
+    const children = [
+      <InputSyncValidation name={name} touched={true} key="1" />,
+      <Reset key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+
+    const input = getByTestId("input");
+    fireEvent.change(input, { target: { value: "1234" } });
+    expect(onChange).toHaveBeenCalledWith({ [name]: "1234" }, true);
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    fireEvent.change(input, { target: { value: "" } });
+    act(() => {
+      input.focus();
+      input.blur();
+    });
+
+    const errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({}, false);
+    expect(() => getByTestId("errorLabel")).toThrow();
+  });
+
+  it("should use sync validator functions to validate the Input with touched prop false", () => {
+    const name = "test";
+    const props = { onReset, onChange };
+    const children = [
+      <InputSyncValidation name={name} touched={false} key="1" />,
+      <Reset key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    const input = getByTestId("input");
+
+    // touched false errorLabel must be present
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    fireEvent.change(input, { target: { value: "1234" } });
+    expect(onChange).toHaveBeenCalledWith({ [name]: "1234" }, true);
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    fireEvent.change(input, { target: { value: "" } });
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({}, false);
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+  });
+
+  it("should use sync validator functions to validate the Input with touched prop false and initial value", () => {
+    const name = "test";
+    const value = "123";
+    const props = { onReset, onChange };
+    const children = [
+      <InputSyncValidation name={name} touched={false} key="1" value={value} />,
+      <Reset key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+    const input = getByTestId("input");
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    fireEvent.change(input, { target: { value: "" } });
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    const reset = getByTestId("reset");
+    fireEvent.click(reset);
+    expect(onReset).toHaveBeenCalledWith({ [name]: value }, true);
+
+    expect(() => getByTestId("errorLabel")).toThrow();
   });
 
   it("should use an async validator function to validate the Input", async () => {

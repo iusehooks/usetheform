@@ -32,6 +32,27 @@ A field's name in Usetheform state.
 
 A field's index in array Collection.
 
+**`touched`**: boolean
+
+Default value *false*. 
+
+- **true**: sync validation messages will be showing only when the event onBlur of any collection's field is triggered by the user action at any level of nesting.
+The async validation messages will be showing only at form submission.
+- **false**: validation messages (sync and async) will be showing only at form submission.
+
+```javascript
+const [status, validation] = useValidation([anyValidationFunc])
+<Collection touched object name="myObject" {...validation}>
+    <Input
+      type="text"
+      name="name"
+      placeholder="Enter your name"
+      value="Foo"
+    />
+</ Collection>
+{status.error && <label>{status.error}</label>}
+```
+
 **`value`**: array | object
 
 Specifies the initial value of a *Collection*.

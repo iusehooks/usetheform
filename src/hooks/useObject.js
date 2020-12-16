@@ -29,7 +29,8 @@ export function useObject(props) {
     resetSyncErr = noop,
     resetAsyncErr = noop,
     asyncValidator,
-    onAsyncValidation = noop
+    onAsyncValidation = noop,
+    touched = false
   } = props;
 
   const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
@@ -58,6 +59,7 @@ export function useObject(props) {
   const state = useRef(init);
   const memoInitialState = useRef(init);
   const prevState = useRef(isArray ? initArray : initObject);
+  const valueFieldLastSyncCheck = useRef(null);
 
   // getValue from parent context
   if (!isMounted.current) {
@@ -95,6 +97,7 @@ export function useObject(props) {
   }, []);
 
   const reset = useCallback(formState => {
+    valueFieldLastSyncCheck.current = null;
     const initAcc = isArray ? [] : {};
     let obj = Object.keys(resetObj.current).reduce((acc, key) => {
       const value = resetObj.current[key](formState);
@@ -233,6 +236,22 @@ export function useObject(props) {
     onAsyncValidation
   );
 
+  const triggerSyncValidation = useCallback(
+    (propagate = true, onSubmit = false) => {
+      if (valueFieldLastSyncCheck.current !== state.current) {
+        if (validationObj.current !== null && (touched || onSubmit)) {
+          valueFieldLastSyncCheck.current = state.current;
+          const { isValid, checks } = validationObj.current;
+          onValidation(checks, isValid);
+        }
+        if (propagate && context.triggerSyncValidation) {
+          context.triggerSyncValidation();
+        }
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     if (context.formStatus === STATUS.ON_RESET) {
       resetSyncErr();
@@ -245,8 +264,7 @@ export function useObject(props) {
         validationObj.current !== null &&
         context.formStatus === STATUS.ON_SUBMIT
       ) {
-        const { isValid, checks } = validationObj.current;
-        onValidation(checks, isValid);
+        triggerSyncValidation(false, true);
       }
 
       if (validationObj.current !== null && !validationObj.current.isValid) {
@@ -314,6 +332,8 @@ export function useObject(props) {
     context.initProp(nameProp.current, newState, memoInitialState.current);
 
     return () => {
+      resetSyncErr();
+      resetAsyncErr();
       isMounted.current = false;
       if (context.stillMounted()) {
         // remove its own by validators
@@ -401,7 +421,8 @@ export function useObject(props) {
     removeValidatorsAsync,
     updateValidatorsMap,
     registerReset,
-    unRegisterReset
+    unRegisterReset,
+    triggerSyncValidation
   };
 }
 
