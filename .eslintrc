@@ -20,11 +20,13 @@
   },
   "rules": {
       "prettier/prettier": ["error", {
-        "endOfLine":"auto"
+        "endOfLine":"auto",
+        "trailingComma": "none",
+        "arrowParens" :"avoid"
       }],
       "react/prop-types": 0,
       "react/display-name": 0
-  },
+   },
   "env": {
       "es6": true,
       "browser": true,

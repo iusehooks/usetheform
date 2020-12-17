@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  render,
-  fireEvent,
-  waitForElement,
-  cleanup
-} from "@testing-library/react";
+import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
 
 import SimpleFormContext from "./helpers/components/SimpleFormContext";
 
@@ -20,11 +15,11 @@ describe("Component => FormContext", () => {
 
   it("should change the Form state due to action", async () => {
     const { getByTestId } = render(<SimpleFormContext onChange={onChange} />);
-    const button1 = await waitForElement(() => getByTestId("button0"));
+    const button1 = await waitFor(() => getByTestId("button0"));
     fireEvent.click(button1);
     expect(onChange).toHaveBeenCalledWith({ tags: [undefined, "blue"] });
 
-    const button2 = await waitForElement(() => getByTestId("button1"));
+    const button2 = await waitFor(() => getByTestId("button1"));
     fireEvent.click(button2);
     expect(onChange).toHaveBeenCalledWith({ tags: [undefined, undefined] });
   });
@@ -33,7 +28,7 @@ describe("Component => FormContext", () => {
     const { getByTestId } = render(
       <SimpleFormContext onChange={onChange} onSubmit={onSubmit} />
     );
-    const button1 = await waitForElement(() => getByTestId("button0"));
+    const button1 = await waitFor(() => getByTestId("button0"));
     fireEvent.click(button1);
 
     const submit = getByTestId("submit");
@@ -50,7 +45,7 @@ describe("Component => FormContext", () => {
         onSubmit={onSubmit}
       />
     );
-    const button1 = await waitForElement(() => getByTestId("button0"));
+    const button1 = await waitFor(() => getByTestId("button0"));
     fireEvent.click(button1);
 
     const submit = getByTestId("submit");

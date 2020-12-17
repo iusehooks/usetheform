@@ -3,7 +3,7 @@ import {
   render,
   cleanup,
   fireEvent,
-  waitForElement,
+  waitFor,
   act
 } from "@testing-library/react";
 
@@ -41,17 +41,15 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
 
     const submit = getByTestId("submit");
 
-    const asyncStartUsername = await waitForElement(() =>
+    const asyncStartUsername = await waitFor(() =>
       getByTestId("asyncStartUsername")
     );
     expect(asyncStartUsername).toBeDefined();
 
-    const asyncStartCity = await waitForElement(() =>
-      getByTestId("asyncStartCity")
-    );
+    const asyncStartCity = await waitFor(() => getByTestId("asyncStartCity"));
     expect(asyncStartCity).toBeDefined();
 
-    const asyncErrorDetails = await waitForElement(() =>
+    const asyncErrorDetails = await waitFor(() =>
       getByTestId("asyncErrorDetails")
     );
     expect(asyncErrorDetails).toBeDefined();
@@ -71,7 +69,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
     const addInputs = getByTestId("addInput");
     const removeInputs = getByTestId("removeInput");
 
-    const asyncErrorDetails = await waitForElement(() =>
+    const asyncErrorDetails = await waitFor(() =>
       getByTestId("asyncErrorDetails")
     );
     expect(asyncErrorDetails).toBeDefined();
@@ -86,7 +84,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
 
     expect(details.value).toBe("3331234567");
 
-    const asyncSuccessDetails = await waitForElement(() =>
+    const asyncSuccessDetails = await waitFor(() =>
       getByTestId("asyncSuccessDetails")
     );
 
@@ -105,9 +103,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
 
     fireEvent.click(submit);
 
-    let asyncErrorCollection = await waitForElement(() =>
-      getByTestId("asyncError")
-    );
+    let asyncErrorCollection = await waitFor(() => getByTestId("asyncError"));
 
     expect(asyncErrorCollection).toBeDefined();
 
@@ -118,7 +114,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
     fireEvent.click(addInputs);
     fireEvent.click(submit);
 
-    const asyncSuccessCollection = await waitForElement(() =>
+    const asyncSuccessCollection = await waitFor(() =>
       getByTestId("asyncSuccess")
     );
 
@@ -128,9 +124,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
     fireEvent.click(removeInputs);
     fireEvent.click(submit);
 
-    asyncErrorCollection = await waitForElement(() =>
-      getByTestId("asyncError")
-    );
+    asyncErrorCollection = await waitFor(() => getByTestId("asyncError"));
 
     expect(asyncErrorCollection).toBeDefined();
 
@@ -154,12 +148,12 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
       details.blur();
     });
 
-    const asyncStartDetailsAfterReset = await waitForElement(() =>
+    const asyncStartDetailsAfterReset = await waitFor(() =>
       getByTestId("asyncStartDetails")
     );
     expect(asyncStartDetailsAfterReset).toBeDefined();
 
-    const asyncErrorDetailsAfterReset = await waitForElement(() =>
+    const asyncErrorDetailsAfterReset = await waitFor(() =>
       getByTestId("asyncErrorDetails")
     );
     expect(asyncErrorDetailsAfterReset).toBeDefined();
@@ -176,7 +170,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
     const [
       asyncStartUsernameAfterReset,
       asyncStartCityAfterReset
-    ] = await waitForElement(() =>
+    ] = await waitFor(() =>
       Promise.all([
         getByTestId("asyncStartUsername"),
         getByTestId("asyncStartCity")

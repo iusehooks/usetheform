@@ -13,7 +13,7 @@ const asyncTest = value =>
 
 let index = 0;
 
-window.CollectionAsyncValidation = function() {
+window.CollectionAsyncValidation = function () {
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
   const [inputs, setInputs] = useChildren([]);
   const addInput = () => {
