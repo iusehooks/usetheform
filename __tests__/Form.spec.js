@@ -715,6 +715,50 @@ describe("Component => Form", () => {
     expect(() => getByTestId("submittedCounter")).toThrow();
   });
 
+  it("should submitted, submitAttempts be equal for async func which does not explicitly resolve or reject", async () => {
+    async function test(mIndex) {
+      return 1;
+    }
+    async function onSubmit() {
+      try {
+        await test();
+      } catch (err) {
+        return;
+      }
+    }
+
+    const attempts = 10;
+
+    const props = { onSubmit };
+    const { getByTestId } = render(
+      <SimpleFormTestSumbission
+        targetSumbission={attempts}
+        targetAttempts={attempts}
+        {...props}
+      />
+    );
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+
+    for (let i = 1; i <= attempts; i++) {
+      fireEvent.click(submit);
+    }
+
+    const submitAttempts = await waitForElement(() =>
+      getByTestId("submitAttempts")
+    );
+    const submittedCounter = await waitForElement(() =>
+      getByTestId("submittedCounter")
+    );
+
+    expect(Number(submitAttempts.innerHTML)).toBe(attempts);
+    expect(Number(submittedCounter.innerHTML)).toBe(attempts);
+
+    fireEvent.click(reset);
+    expect(() => getByTestId("submitAttempts")).toThrow();
+    expect(() => getByTestId("submittedCounter")).toThrow();
+  });
+
   it("should count the total attempts and the total successfully submissions for sync validation fields", () => {
     const onSubmit = () => {};
     const props = { onSubmit, showEmail: true };
