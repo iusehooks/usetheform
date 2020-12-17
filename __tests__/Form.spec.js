@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  render,
-  cleanup,
-  fireEvent,
-  waitForElement
-} from "@testing-library/react";
+import { render, cleanup, fireEvent, waitFor } from "@testing-library/react";
 
 import Form, { Input } from "./../src";
 
@@ -647,10 +642,10 @@ describe("Component => Form", () => {
 
     fireEvent.submit(form);
 
-    const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
     expect(asyncStart).toBeDefined();
 
-    const asyncError = await waitForElement(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"));
     expect(asyncError).toBeDefined();
 
     expect(onSubmit).not.toHaveBeenCalled();
@@ -700,10 +695,8 @@ describe("Component => Form", () => {
       fireEvent.click(submit);
     }
 
-    const submitAttempts = await waitForElement(() =>
-      getByTestId("submitAttempts")
-    );
-    const submittedCounter = await waitForElement(() =>
+    const submitAttempts = await waitFor(() => getByTestId("submitAttempts"));
+    const submittedCounter = await waitFor(() =>
       getByTestId("submittedCounter")
     );
 
@@ -744,10 +737,8 @@ describe("Component => Form", () => {
       fireEvent.click(submit);
     }
 
-    const submitAttempts = await waitForElement(() =>
-      getByTestId("submitAttempts")
-    );
-    const submittedCounter = await waitForElement(() =>
+    const submitAttempts = await waitFor(() => getByTestId("submitAttempts"));
+    const submittedCounter = await waitFor(() =>
       getByTestId("submittedCounter")
     );
 
@@ -824,12 +815,10 @@ describe("Component => Form", () => {
       fireEvent.click(submit);
     }
 
-    const submitAttempts = await waitForElement(() =>
-      getByTestId("submitAttempts")
-    );
+    const submitAttempts = await waitFor(() => getByTestId("submitAttempts"));
     expect(submitAttempts.innerHTML).toBe("1");
 
-    const submittedCounter = await waitForElement(() =>
+    const submittedCounter = await waitFor(() =>
       getByTestId("submittedCounter")
     );
     expect(submittedCounter.innerHTML).toBe("1");

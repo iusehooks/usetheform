@@ -7,7 +7,7 @@ const email = value =>
     : "Mail not Valid";
 const required = value => (value && value !== "" ? undefined : "Required");
 
-window.Email = function({ name = "email", value }) {
+window.Email = function ({ name = "email", value }) {
   const [status, validation] = useValidation([required, email]);
   return (
     <div>

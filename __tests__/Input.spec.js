@@ -1,11 +1,6 @@
 import React from "react";
 import { act } from "react-dom/test-utils";
-import {
-  render,
-  fireEvent,
-  waitForElement,
-  cleanup
-} from "@testing-library/react";
+import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
 
 import Form, { Input } from "./../src";
 
@@ -381,10 +376,10 @@ describe("Component => Input", () => {
     asyncinput.focus();
     asyncinput.blur();
 
-    const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
     expect(asyncStart).toBeDefined();
 
-    const asyncError = await waitForElement(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"));
     expect(asyncError).toBeDefined();
     expect(asyncError.textContent).toBe("Error");
 
@@ -394,15 +389,13 @@ describe("Component => Input", () => {
 
     expect(asyncinput.value).toBe("1234");
 
-    const asyncSuccess = await waitForElement(() =>
-      getByTestId("asyncSuccess")
-    );
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.textContent).toBe("Success");
 
     fireEvent.click(submit);
 
-    const submittedCounter = await waitForElement(() =>
+    const submittedCounter = await waitFor(() =>
       getByTestId("submittedCounter")
     );
     expect(submittedCounter.textContent).toBe("1");
@@ -410,7 +403,7 @@ describe("Component => Input", () => {
     expect(onSubmit).toHaveBeenCalledWith({ [name]: "1234" }, true);
 
     fireEvent.click(reset);
-    const asyncNotStartedYet = await waitForElement(() =>
+    const asyncNotStartedYet = await waitFor(() =>
       getByTestId("asyncNotStartedYet")
     );
     expect(asyncNotStartedYet.textContent).toBe("asyncNotStartedYet");

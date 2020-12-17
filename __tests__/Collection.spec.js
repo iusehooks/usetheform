@@ -1,12 +1,7 @@
 import React from "react";
 import { act } from "react-dom/test-utils";
 
-import {
-  render,
-  fireEvent,
-  waitForElement,
-  cleanup
-} from "@testing-library/react";
+import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
 
 import { Form, Input, Collection } from "./../src";
 
@@ -387,18 +382,16 @@ describe("Component => Collection", () => {
     const addInput = getByTestId("addInput");
 
     fireEvent.click(submit);
-    const asyncStart = await waitForElement(() => getByTestId("asyncStart"));
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
     expect(asyncStart).toBeDefined();
 
-    const asyncError = await waitForElement(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"));
     expect(asyncError).toBeDefined();
 
     fireEvent.click(addInput);
     fireEvent.click(addInput);
     fireEvent.click(submit);
-    const asyncSuccess = await waitForElement(() =>
-      getByTestId("asyncSuccess")
-    );
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
     expect(asyncSuccess).toBeDefined();
   });
 

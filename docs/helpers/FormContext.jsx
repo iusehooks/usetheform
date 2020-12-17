@@ -17,7 +17,17 @@ export const FormContext = ({ onInit, onChange, ...props }) => {
       <FormUsetheform onInit={onInitFN} onChange={onChangeFN} {...props}>
         {props.children}
       </FormUsetheform>
-      <JSONTree data={formState} />
+      <div
+        style={{
+          borderRadius: "4px",
+          paddingLeft: "0.30em",
+          paddingRight: "0.30em",
+          paddingBottom: "0.25em",
+          backgroundColor: "rgb(0, 43, 54)"
+        }}
+      >
+        <JSONTree data={formState} />
+      </div>
     </>
   );
 };
