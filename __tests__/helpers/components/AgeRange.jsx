@@ -1,7 +1,7 @@
 import React from "react";
 import { Input, Collection } from "./../../../src";
 
-const preventAge = (state, prevState, formState) => {
+const preventAge = (state, prevState) => {
   let newState = { ...state };
   if (newState.end < prevState.start) newState.end = prevState.start;
 

@@ -15,7 +15,7 @@ It is a custom React hook which allows to build a custom input primitives.
 **`options`**: object
 
   - **`type`**: string
-
+  
   Strings accepted: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) - "select" - "custom"
 
   - **`name`**: string - (except for children of Collection of type array)
@@ -26,7 +26,7 @@ It is a custom React hook which allows to build a custom input primitives.
 
   A field's index in array Collection.
 
-  - **`value`**: string | number | object
+  - **`value`**: string | number | object (only for type="custom")
 
   Specifies the initial value of an *input* element.
 
@@ -67,6 +67,23 @@ const CustomInput = props => {
   });
   return <input {...fieldInputProps} />;
 }
+```
+
+```javascript
+const CustomField = ({ name, value = { a: "2" } }) => {
+  const props = useField({ type: "custom", name, value });
+  const onChange = () => props.onChange({ target: { value: { a: "1" } } });
+  return (
+    <div>
+      <pre>
+        <code>{JSON.stringify(props.value)}</code>
+      </pre>
+      <button type="button" onClick={onChange}>
+        Change Value
+      </button>
+    </div>
+  );
+};
 ```
 
 ## Reducers

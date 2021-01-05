@@ -12,17 +12,7 @@ const initialValue = [
   ]
 ];
 
-const expectedValueArrayNested = [
-  "input_1",
-  "input_2",
-  [
-    "input_3",
-    "input_4",
-    ["input_5", "input_6", ["input_7", "input_8", ["input_9", "input_10"]]]
-  ]
-];
-
-window.CollectionArrayNested = function CollectionArrayNested({ reducers }) {
+window.CollectionArrayNested = function CollectionArrayNested() {
   return (
     <Collection array name="arrayNested1" value={initialValue}>
       <Input type="text" data-testid="1" />
@@ -46,64 +36,3 @@ window.CollectionArrayNested = function CollectionArrayNested({ reducers }) {
     </Collection>
   );
 };
-
-function reducerArrayNested(value, prevValue) {
-  const newValue = [...value];
-
-  if (!prevValue[0] && newValue[0]) {
-    newValue[0] = `${newValue[0]}_1`;
-  }
-  if (prevValue[1] === undefined && newValue[1])
-    newValue[1] = `${newValue[1]}_1`;
-  if (prevValue[2] === undefined && newValue[2] && newValue[2][0]) {
-    newValue[2][0] = `${newValue[2][0]}_1`;
-  }
-  if (prevValue[2] === undefined && newValue[2] && newValue[2][1]) {
-    newValue[2][1] = `${newValue[2][1]}_1`;
-  }
-
-  if (prevValue[2] !== undefined && newValue[2][2] && newValue[2][2][0]) {
-    newValue[2][2][0] = `${newValue[2][2][0]}_1`;
-  }
-
-  if (prevValue[2] !== undefined && newValue[2][2] && newValue[2][2][1]) {
-    newValue[2][2][1] = `${newValue[2][2][1]}_1`;
-  }
-
-  if (
-    prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    newValue[2][2][2] &&
-    newValue[2][2][2][0]
-  ) {
-    newValue[2][2][2][0] = `${newValue[2][2][2][0]}_1`;
-  }
-
-  if (
-    prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    newValue[2][2][2][1]
-  ) {
-    newValue[2][2][2][1] = `${newValue[2][2][2][1]}_1`;
-  }
-
-  if (
-    prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    prevValue[2][2][2] !== undefined &&
-    newValue[2][2][2][2][0]
-  ) {
-    newValue[2][2][2][2][0] = `${newValue[2][2][2][2][0]}_1`;
-  }
-
-  if (
-    prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    prevValue[2][2][2] !== undefined &&
-    newValue[2][2][2][2][1]
-  ) {
-    newValue[2][2][2][2][1] = `${newValue[2][2][2][2][1]}_1`;
-  }
-
-  return newValue;
-}

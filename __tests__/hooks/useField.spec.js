@@ -1,10 +1,20 @@
 import React from "react";
-import { render, fireEvent, cleanup } from "@testing-library/react";
-import Form, { Collection, useField, withIndex } from "./../../src";
+import { render, fireEvent, cleanup, act } from "@testing-library/react";
+import { Form, Collection, useField, withIndex } from "./../../src";
 
 const InputCustom = withIndex(({ type, name, value, index, ...restAttr }) => {
   const props = useField({ type, name, value, index });
   return <input {...restAttr} {...props}></input>;
+});
+
+const CustomField = withIndex(({ name, value, ...restAttr }) => {
+  const props = useField({ type: "custom", name, value });
+  const onChange = () => props.onChange({ target: { value: "5" } });
+  return (
+    <button type="button" onClick={onChange} {...restAttr}>
+      Change Value
+    </button>
+  );
 });
 
 const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
@@ -57,6 +67,25 @@ describe("Hooks => useField", () => {
     fireEvent.change(input2, { target: { value: "5" } });
     expect(input2.value).toBe("5");
     expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "5" }, true);
+  });
+
+  it("should render a Field of type custom with an initial value", () => {
+    const name = "custom";
+    const props = { onInit, onChange };
+    const initial = { a: "test" };
+
+    const children = [
+      <CustomField key="1" data-testid={name} name={name} value={initial} />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    expect(onInit).toHaveBeenCalledWith({ [name]: initial }, true);
+
+    const custom = getByTestId("custom");
+    act(() => {
+      fireEvent.click(custom);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
   });
 
   it("should change a Field value due to an action", () => {

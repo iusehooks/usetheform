@@ -1,14 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
-const { default: Form, Collection, Input } = UseTheForm;
+const { default: Form, Collection } = UseTheForm;
 
-const {
-  CollectionArrayNested,
-  Reset,
-  Submit,
-  InputAsync,
-  CollectionAsyncValidation,
-  Email
-} = window;
+const { Reset, Submit, InputAsync, CollectionAsyncValidation, Email } = window;
 
 const initialState = {
   username: "Antonio"

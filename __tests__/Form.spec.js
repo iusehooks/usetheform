@@ -419,7 +419,7 @@ describe("Component => Form", () => {
   it("should reduce the Form state with the given reducer function", () => {
     const initialState = { name: "test" };
 
-    const reducer = jest.fn((state, prevState) => {
+    const reducer = jest.fn(state => {
       const newState = { ...state };
       if (newState.name !== "mickey") newState.name = "foo";
       return newState;
@@ -709,7 +709,7 @@ describe("Component => Form", () => {
   });
 
   it("should submitted, submitAttempts be equal for async func which does not explicitly resolve or reject", async () => {
-    async function test(mIndex) {
+    async function test() {
       return 1;
     }
     async function onSubmit() {

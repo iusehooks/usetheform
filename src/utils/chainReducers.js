@@ -1,4 +1,4 @@
-const noop = newValue => newValue;
+import { noop } from "./noop";
 
 export function chainReducers(reducers) {
   if (typeof reducers === "function") {

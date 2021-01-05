@@ -1,14 +1,4 @@
-export const STATUS = {
-  ON_RESET: "ON_RESET",
-  READY: "READY",
-  RESETTED: "RESETTED",
-  ON_CHANGE: "ON_CHANGE",
-  ON_INIT: "ON_INIT",
-  ON_SUBMIT: "ON_SUBMIT",
-  ON_INIT_ASYNC: "ON_INIT_ASYNC",
-  ON_RUN_ASYNC: "ON_RUN_ASYNC",
-  ON_ASYNC_END: "ON_ASYNC_END"
-};
+import { STATUS } from "./constants";
 
 export const createForm = (state = {}) => ({
   state,
@@ -80,11 +70,15 @@ export const flatAsyncValidationMap = asyncInitMap =>
       acc.push(target());
     } else {
       const funcs = flatAsyncValidationMap(target);
-
       acc.push(...funcs);
     }
     return acc;
   }, []);
 
-export const fileList = files =>
-  Object.keys(files).reduce((acc, key) => [...acc, files[key]], []);
+export const fileList = files => {
+  let fileList = [];
+  for (let i = 0, numFiles = files.length; i < numFiles; i++) {
+    fileList.push(files[i]);
+  }
+  return fileList;
+};

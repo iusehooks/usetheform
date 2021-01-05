@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === "test") {
 }
 
 if (process.env.NODE_ENV === "development") {
-  presets = ["@babel/preset-react"];
+  presets = ["@babel/preset-env", "@babel/preset-react"];
 }
 
 module.exports = {

@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import { useOwnContext } from "./useOwnContext";
 import { useNameProp } from "./commons/useNameProp";
-
+import { useMapFields } from "./useMapFields";
 import { useValidators } from "./useValidators";
 import { isValidValue } from "./../utils/isValidValue";
 import { updateState } from "./../utils/updateState";
@@ -9,9 +9,10 @@ import { chainReducers } from "./../utils/chainReducers";
 import { isValidIndex } from "./../utils/isValidIndex";
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
-import { STATUS } from "./../utils/formUtils";
+import { STATUS } from "./../utils/constants";
+import { DISPATCHER_LABEL } from "./../utils/constants";
+import { noop } from "./../utils/noop";
 
-const noop = _ => undefined;
 const initArray = [];
 const initObject = {};
 
@@ -48,6 +49,12 @@ export function useObject(props) {
       throw new Error(errMsg);
     }
   }
+
+  const { unRegisterField, mapFields, updateRegisteredField } = useMapFields(
+    nameProp,
+    context,
+    type
+  );
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
 
@@ -113,18 +120,19 @@ export function useObject(props) {
     return newValue;
   }, []);
 
+  const updateParentProps = useCallback(nextState => {
+    const newState = applyReducers(nextState, state.current, formState.current);
+    const removeProp = Object.keys(newState).length === 0;
+    context.changeProp(nameProp.current, newState, removeProp);
+  }, []);
+
   const changeProp = useCallback((namePropExt, value, removeMe) => {
-    const nexState = updateState(state.current, {
+    const nextState = updateState(state.current, {
       value,
       nameProp: namePropExt,
       removeMe
     });
-
-    const newState = applyReducers(nexState, state.current, formState.current);
-
-    const removeProp = Object.keys(newState).length === 0;
-
-    context.changeProp(nameProp.current, newState, removeProp);
+    updateParentProps(nextState);
   }, []);
 
   const initProp = useCallback(
@@ -213,6 +221,14 @@ export function useObject(props) {
     }
   );
 
+  const setValue = useCallback(resolveNextState => {
+    const nextState =
+      typeof resolveNextState === "function"
+        ? resolveNextState(state.current)
+        : resolveNextState;
+    updateParentProps(nextState);
+  }, []);
+
   const [validators, addValidators, removeValidators] = useValidators(
     context,
     nameProp,
@@ -299,6 +315,9 @@ export function useObject(props) {
       );
     }
 
+    mapFields.current[DISPATCHER_LABEL] = setValue;
+    context.updateRegisteredField(nameProp.current, mapFields.current);
+
     // register to parent any initial async Validators to be run ON_INIT
     if (Object.keys(asyncInitValidation.current).length > 0) {
       context.registerAsyncInitValidation(
@@ -336,6 +355,8 @@ export function useObject(props) {
       resetAsyncErr();
       isMounted.current = false;
       if (context.stillMounted()) {
+        context.unRegisterField(nameProp.current);
+
         // remove its own by validators
         if (typeof asyncValidator === "function") {
           context.removeValidatorsAsync(
@@ -406,6 +427,8 @@ export function useObject(props) {
     formState: context.formState, // pass the global form state down
     formStatus: context.formStatus, // pass the global form status down
     runAsyncValidation: context.runAsyncValidation,
+    unRegisterField,
+    updateRegisteredField,
     registerAsyncInitValidation,
     changeProp,
     initProp,

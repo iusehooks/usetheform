@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-const { Input, Collection, useValidation, useChildren } = UseTheForm;
+const { Collection, useValidation, useChildren } = UseTheForm;
 const { User } = window;
 
 const minLengthTwoMembers = state => {
