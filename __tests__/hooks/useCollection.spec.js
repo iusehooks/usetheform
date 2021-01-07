@@ -1,11 +1,9 @@
 import React from "react";
-import { render, fireEvent, cleanup } from "@testing-library/react";
-import Form, { Collection } from "./../../src";
+import { fireEvent, cleanup } from "@testing-library/react";
+import { Collection } from "./../../src";
 
 import CollectionWithHooks from "./../helpers/components/CollectionWithHooks";
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { mountForm } from "./../helpers/utils/mountForm";
 
 const onInit = jest.fn();
 const onChange = jest.fn();

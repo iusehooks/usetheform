@@ -7,17 +7,13 @@ import {
   act
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
-import { Form, Input } from "./../src";
-
+import { Input } from "./../src";
 import InputAsync from "./helpers/components/InputAsync";
 import InputSyncValidation from "./helpers/components/InputSyncValidation";
 import Submit from "./helpers/components/Submit";
 import Reset from "./helpers/components/Reset";
 import { SimpleFormDynamicField } from "./helpers/components/SimpleForm";
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { mountForm } from "./helpers/utils/mountForm";
 
 const onInit = jest.fn();
 const onChange = jest.fn();
@@ -431,8 +427,10 @@ describe("Component => Input", () => {
     const reset = getByTestId("reset");
     const asyncinput = getByTestId("asyncinput");
 
-    asyncinput.focus();
-    asyncinput.blur();
+    act(() => {
+      asyncinput.focus();
+      asyncinput.blur();
+    });
 
     const asyncStart = await waitFor(() => getByTestId("asyncStart"));
     expect(asyncStart).toBeDefined();
@@ -442,8 +440,11 @@ describe("Component => Input", () => {
     expect(asyncError.textContent).toBe("Error");
 
     fireEvent.change(asyncinput, { target: { value: "1234" } });
-    asyncinput.focus();
-    asyncinput.blur();
+
+    act(() => {
+      asyncinput.focus();
+      asyncinput.blur();
+    });
 
     expect(asyncinput.value).toBe("1234");
 

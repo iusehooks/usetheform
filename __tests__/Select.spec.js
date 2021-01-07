@@ -1,15 +1,12 @@
 import React from "react";
-import { act } from "react-dom/test-utils";
-import { render, fireEvent, cleanup } from "@testing-library/react";
+import { fireEvent, cleanup, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import Reset from "./helpers/components/Reset";
 import SelectSyncValidation from "./helpers/components/SelectSyncValidation";
+import { mountForm } from "./helpers/utils/mountForm";
 
-import Form, { Select } from "./../src";
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { Select } from "./../src";
 
 const dataTestid = "select";
 const name = "select";

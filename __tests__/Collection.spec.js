@@ -1,9 +1,7 @@
 import React from "react";
-import { act } from "react-dom/test-utils";
+import { fireEvent, waitFor, cleanup, act } from "@testing-library/react";
 
-import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
-
-import { Form, Input, Collection } from "./../src";
+import { Input, Collection } from "./../src";
 
 import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
 import CollectionDynamicAdded from "./helpers/components/CollectionDynamicAdded";
@@ -28,9 +26,7 @@ import CollectionObjectNested, {
 import Reset from "./helpers/components/Reset";
 import Submit from "./helpers/components/Submit";
 import AgeRange from "./helpers/components/AgeRange";
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { mountForm } from "./helpers/utils/mountForm";
 
 const dataTestid = "username";
 const name = "user";

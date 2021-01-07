@@ -1,29 +1,10 @@
 import React from "react";
-import { render, fireEvent, cleanup, act } from "@testing-library/react";
-import { Form, Collection, useField, withIndex } from "./../../src";
-
-const InputCustom = withIndex(({ type, name, value, index, ...restAttr }) => {
-  const props = useField({ type, name, value, index });
-  return <input {...restAttr} {...props}></input>;
-});
-
-const CustomField = withIndex(({ name, value, ...restAttr }) => {
-  const props = useField({ type: "custom", name, value });
-  const onChange = () => props.onChange({ target: { value: "5" } });
-  return (
-    <button type="button" onClick={onChange} {...restAttr}>
-      Change Value
-    </button>
-  );
-});
-
-const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
-  const props = useField({ type, name, value, index });
-  return <input {...restAttr} {...props}></input>;
-};
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { fireEvent, cleanup, act } from "@testing-library/react";
+import { Collection } from "./../../src";
+import { mountForm } from "./../helpers/utils/mountForm";
+import { InputCustom } from "./../helpers/components/InputCustom";
+import { CustomField } from "./../helpers/components/CustomField";
+import { InputCustomNoAutoIndex } from "./../helpers/components/InputCustomNoAutoIndex";
 
 const onInit = jest.fn();
 const onChange = jest.fn();

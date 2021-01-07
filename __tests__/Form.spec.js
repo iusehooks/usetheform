@@ -1,8 +1,6 @@
 import React from "react";
 import { render, cleanup, fireEvent, waitFor } from "@testing-library/react";
 
-import Form, { Input } from "./../src";
-
 import { SimpleFormTestSumbission } from "./helpers/components/SimpleFormTestSumbission";
 import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
 import SimpleForm from "./helpers/components/SimpleForm";
@@ -12,9 +10,9 @@ import {
   ComplexFormInitValueAsProps,
   initialState as initialStateComplexForm
 } from "./helpers/components/ComplexForm";
+import { mountForm } from "./helpers/utils/mountForm";
 
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { Input } from "./../src";
 
 const dataTestid = "email";
 const typeInput = "text";

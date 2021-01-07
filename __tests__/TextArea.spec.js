@@ -1,10 +1,7 @@
 import React from "react";
-import { render, fireEvent, cleanup } from "@testing-library/react";
-
-import Form, { TextArea } from "./../src";
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { fireEvent, cleanup } from "@testing-library/react";
+import { mountForm } from "./helpers/utils/mountForm";
+import { TextArea } from "./../src";
 
 const dataTestid = "TextArea";
 const name = "TextArea";

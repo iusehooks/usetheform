@@ -1,16 +1,10 @@
 import React from "react";
-import { render, fireEvent, cleanup, act } from "@testing-library/react";
+import { fireEvent, cleanup, act } from "@testing-library/react";
 import { CmpWithSelectorToggle } from "./../helpers/components/CmpWithSelectorToggle";
-import { Form, Input, withIndex, Collection, useField } from "./../../src";
+import { Input, Collection } from "./../../src";
 import Reset from "./../helpers/components/Reset";
-
-const InputCustom = withIndex(({ type, name, value, index, ...restAttr }) => {
-  const props = useField({ type, name, value, index });
-  return <input {...restAttr} {...props}></input>;
-});
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(<Form {...props}>{children}</Form>);
+import { mountForm } from "./../helpers/utils/mountForm";
+import { InputCustom } from "./../helpers/components/InputCustom";
 
 const onReset = jest.fn();
 const onChange = jest.fn();

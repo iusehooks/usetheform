@@ -1,7 +1,6 @@
 import React from "react";
-import { render, cleanup, fireEvent } from "@testing-library/react";
+import { cleanup, fireEvent } from "@testing-library/react";
 
-import Form from "./../src";
 import {
   CollectionDynamicField,
   CollectionNestedDynamicField,
@@ -13,13 +12,7 @@ import {
 import { CollectionObjectNestedRadios } from "./helpers/components/CollectionObjectNested";
 
 import Reset from "./helpers/components/Reset";
-
-const mountForm = ({ props = {}, children } = {}) =>
-  render(
-    <React.StrictMode>
-      <Form {...props}>{children}</Form>
-    </React.StrictMode>
-  );
+import { mountForm } from "./helpers/utils/mountForm";
 
 const onInit = jest.fn(state => state);
 const onChange = jest.fn(state => state);
