@@ -1,8 +1,14 @@
 import React from "react";
-import { act } from "react-dom/test-utils";
-import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
+import {
+  render,
+  fireEvent,
+  waitFor,
+  cleanup,
+  act
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-import Form, { Input } from "./../src";
+import { Form, Input } from "./../src";
 
 import InputAsync from "./helpers/components/InputAsync";
 import InputSyncValidation from "./helpers/components/InputSyncValidation";
@@ -124,6 +130,58 @@ describe("Component => Input", () => {
 
     fireEvent.click(submit);
     expect(onSubmit).toHaveBeenCalledWith({ text: "text" }, true);
+  });
+
+  it("should render Input of type file single/multiple and upload files", () => {
+    const singeFile = "singeFile";
+    const multipleFile = "multipleFile";
+    const props = { onChange };
+    const fileValue = new File(["(⌐□_□)"], "file.xml", {
+      type: "application/xml"
+    });
+    const files = [
+      new File(["hello"], "hello.png", { type: "image/png" }),
+      new File(["there"], "there.png", { type: "image/png" })
+    ];
+
+    const children = [
+      <Input key="1" data-testid={singeFile} type="file" name={singeFile} />,
+      <Input
+        key="2"
+        multiple
+        data-testid={multipleFile}
+        type="file"
+        name={multipleFile}
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+    const fileInput = getByTestId(singeFile);
+    const fileInputMultiple = getByTestId(multipleFile);
+
+    act(() => {
+      userEvent.upload(fileInput, fileValue);
+    });
+    expect(onChange).toHaveBeenCalledWith({ [singeFile]: fileValue }, true);
+
+    act(() => {
+      userEvent.upload(fileInputMultiple, files);
+    });
+
+    expect(onChange).toHaveBeenCalledWith(
+      { [singeFile]: fileValue, [multipleFile]: files },
+      true
+    );
+
+    expect(fileInput.type).toBe("file");
+    expect(fileInput.files[0]).toStrictEqual(fileValue);
+    expect(fileInput.files.item(0)).toStrictEqual(fileValue);
+    expect(fileInput.files).toHaveLength(1);
+
+    expect(fileInputMultiple.type).toBe("file");
+    expect(fileInputMultiple.multiple).toBe(true);
+    expect(fileInputMultiple.files).toHaveLength(2);
+    expect(fileInputMultiple.files[0]).toStrictEqual(files[0]);
+    expect(fileInputMultiple.files[1]).toStrictEqual(files[1]);
   });
 
   it("should trigger onChange event when the Input value changes", () => {

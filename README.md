@@ -64,8 +64,13 @@ export default function App() {
 }
 ```
 
+## Author
+
+- Antonio Pangallo [@antonio_pangall](https://twitter.com/antonio_pangall)
+
 ## Code Sandboxes
 
+- Twitter What's Happening Form Bar: [Sandbox](https://codesandbox.io/s/twitter-bar-form-czx3o)
 - Shopping Cart: [Sandbox](https://codesandbox.io/s/shopping-cart-97y5k)
 - Examples: Slider, Select, Collections etc..: [Sandbox](https://codesandbox.io/s/formexample2-mmcjs)
 - Various Implementation: [Sandbox](https://codesandbox.io/s/035l4l75ln)

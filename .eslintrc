@@ -19,6 +19,7 @@
     }
   },
   "rules": {
+      "no-unused-vars": ["error", { "varsIgnorePattern": "omit" }],
       "prettier/prettier": ["error", {
         "endOfLine":"auto",
         "trailingComma": "none",

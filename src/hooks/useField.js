@@ -3,12 +3,12 @@ import { useOwnContext } from "./useOwnContext";
 import { useNameProp } from "./commons/useNameProp";
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
-import { STATUS, fileList } from "./../utils/formUtils";
+import { fileList } from "./../utils/formUtils";
+import { STATUS } from "./../utils/constants";
 import { chainReducers } from "./../utils/chainReducers";
 import { isValidValue } from "./../utils/isValidValue";
 import { isValidIndex } from "./../utils/isValidIndex";
-
-const noop = () => undefined;
+import { noop } from "./../utils/noop";
 
 export function useField(props) {
   const context = useOwnContext();
@@ -168,6 +168,22 @@ export function useField(props) {
     context.changeProp(nameProp.current, newValue, false);
   }, []);
 
+  const setValue = useCallback(resolveNextState => {
+    const nextValue =
+      typeof resolveNextState === "function"
+        ? resolveNextState(valueField.current)
+        : resolveNextState;
+
+    const newValue = applyReducers(
+      nextValue,
+      valueField.current,
+      formState.current
+    );
+
+    customChange(newValue);
+    context.changeProp(nameProp.current, newValue, false);
+  }, []);
+
   /* it runs once and set the inital `value` if passed
     and registers the validators functions if there is any
   */
@@ -181,6 +197,9 @@ export function useField(props) {
     if (validators.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
     }
+
+    // register field for the useSelector
+    context.updateRegisteredField(nameProp.current, setValue);
 
     // Adding asyncValidator function and mapping its value as false
     if (typeof asyncValidator === "function") {
@@ -236,6 +255,8 @@ export function useField(props) {
       resetSyncErr();
       resetAsyncErr();
       if (context.stillMounted()) {
+        context.unRegisterField(nameProp.current);
+
         if (typeof asyncValidator === "function") {
           context.removeValidatorsAsync(
             nameProp.current,

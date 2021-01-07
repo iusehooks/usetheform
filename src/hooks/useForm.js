@@ -1,10 +1,11 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useValidators } from "./useValidators";
+import { useMapFields } from "./useMapFields";
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
-
+import { noop } from "./../utils/noop";
+import { STATUS } from "./../utils/constants";
 import {
-  STATUS,
   createForm,
   isFormValid,
   isFormValidAsync,
@@ -13,7 +14,6 @@ import {
   flatAsyncValidationMap
 } from "./../utils/formUtils";
 
-const noop = _ => undefined;
 const emptyStateValue = {};
 
 export function useForm({
@@ -73,6 +73,8 @@ export function useForm({
   ] = useValidators(undefined, undefined, isMounted, true);
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
+
+  const { unRegisterField, mapFields, updateRegisteredField } = useMapFields();
 
   const changeProp = useCallback((nameProp, value, removeMe = false) => {
     const newState = updateState(stateRef.current.state, {
@@ -348,7 +350,6 @@ export function useForm({
   useEffect(() => {
     isMounted.current = true;
 
-    // It is using the useMultipleForm hook
     const pristine =
       (isMultipleForm &&
         (_getInitilaStateForm_(name) == undefined ||
@@ -378,6 +379,9 @@ export function useForm({
     ...formState, // { isValid, state, status, pristine, isSubmitting }
     formState: formState.state, // pass the global form state down
     formStatus: formState.status, // pass the global form status down
+    mapFields: mapFields.current,
+    unRegisterField,
+    updateRegisteredField,
     registerAsyncInitValidation,
     runAsyncValidation,
     dispatchNewState,

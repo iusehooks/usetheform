@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
-const { Form, Collection, Input, useField, useValidation } = UseTheForm;
+const { Form, Input, useValidation, useField } = UseTheForm;
 
-const { useState, useEffect, useRef } = React;
+const { useState } = React;
 const {
   CollectionArrayNested,
   Reset,
@@ -9,15 +9,25 @@ const {
   CollectionValidationTouched
 } = window;
 
-const InputCustomNoAutoIndex = ({ type, name, value, index, ...restAttr }) => {
-  const props = useField({ type, name, value, index });
-  return <input {...restAttr} {...props}></input>;
+const CustomField = ({ name, value = { a: "2" } }) => {
+  const props = useField({ type: "custom", name, value });
+  const onChange = () => props.onChange({ target: { value: { a: "1" } } });
+  return (
+    <div>
+      <pre>
+        <code>{JSON.stringify(props.value)}</code>
+      </pre>
+      <button type="button" onClick={onChange}>
+        Change Value
+      </button>
+    </div>
+  );
 };
 
 window.SimpleForm = () => {
   const [input, validationInput] = useValidation([
     val => {
-      return val && val.length > 3 ? undefined : "erro";
+      return val && val.length > 3 ? undefined : "error";
     }
   ]);
 
@@ -25,8 +35,11 @@ window.SimpleForm = () => {
 
   return (
     <div>
-      <Form>
+      <Form onChange={state => console.log(state)}>
+        <CustomField name="custom" />
         <CollectionArrayNested />
+        <Input type="file" name="fileMultiple" multiple />
+        <Input type="file" name="fileSingle" />
         <Submit forceEnable />
         <Reset />
       </Form>
@@ -41,7 +54,7 @@ window.SimpleForm = () => {
         <Reset />
       </Form>
       <button onClick={() => setRemove(true)} type="button">
-        setRemove
+        Remove
       </button>
       {input.error && <label>{input.error}</label>}
     </div>

@@ -2,7 +2,7 @@
 const { useForm } = UseTheForm;
 
 window.Submit = ({ forceEnable }) => {
-  const { isValid, submitted, isSubmitting, submitAttempts } = useForm();
+  const { isValid } = useForm();
   return (
     <button
       data-testid="submit"

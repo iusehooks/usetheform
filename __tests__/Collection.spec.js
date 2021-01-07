@@ -303,7 +303,7 @@ describe("Component => Collection", () => {
   it("should reduce a Collection of type object value with the given reducer function", () => {
     const initalValue = { name: "test" };
     const props = { onInit };
-    const reducer = jest.fn((state, prevState) => {
+    const reducer = jest.fn(state => {
       const newState = { ...state };
       if (newState.name !== "mickey") newState.name = "foo";
       return newState;
