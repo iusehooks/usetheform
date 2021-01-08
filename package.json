@@ -5,6 +5,7 @@
   "main": "./build/index.js",
   "module": "./build/es/index.js",
   "repository": "github:iusehooks/usetheform",
+  "homepage": "https://iusehooks.github.io/usetheform",
   "scripts": {
     "build": "npm run clean && node ./build_config/build.js",
     "clean": "rimraf build coverage",
