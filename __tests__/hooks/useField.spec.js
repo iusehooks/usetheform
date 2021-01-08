@@ -50,23 +50,172 @@ describe("Hooks => useField", () => {
     expect(onChange).toHaveBeenCalledWith({ number: "50", number2: "5" }, true);
   });
 
-  it("should render a Field of type custom with an initial value", () => {
+  it("should render a Field of type custom with an initial value passed as prop", () => {
     const name = "custom";
     const props = { onInit, onChange };
     const initial = { a: "test" };
+    const jestFN = jest.fn();
 
     const children = [
-      <CustomField key="1" data-testid={name} name={name} value={initial} />
+      <CustomField key="1" name={name} value={initial} jestFN={jestFN} />
     ];
     const { getByTestId } = mountForm({ children, props });
+
+    expect(jestFN).toHaveBeenCalledWith(initial);
+
     expect(onInit).toHaveBeenCalledWith({ [name]: initial }, true);
 
-    const custom = getByTestId("custom");
+    const buttonChange = getByTestId("buttonChange");
     act(() => {
-      fireEvent.click(custom);
+      fireEvent.click(buttonChange);
     });
 
     expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
+  });
+
+  it("should render a Field of type text with an initial value passed as prop", () => {
+    const name = "text";
+    const props = { onInit, onChange };
+    const initial = "test";
+    const jestFN = jest.fn();
+
+    const children = [
+      <CustomField
+        key="1"
+        type="text"
+        name={name}
+        value={initial}
+        jestFN={jestFN}
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(jestFN).toHaveBeenCalledWith(initial);
+
+    expect(onInit).toHaveBeenCalledWith({ [name]: initial }, true);
+
+    const buttonChange = getByTestId("buttonChange");
+    act(() => {
+      fireEvent.click(buttonChange);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
+  });
+
+  it("should render a Field of type radio with an initial value passed as prop", () => {
+    const name = "radio";
+    const props = { onChange };
+    const initial = "5";
+    const jestFN = jest.fn();
+
+    const children = [
+      <CustomField
+        key="1"
+        type="radio"
+        name={name}
+        value={initial}
+        jestFN={jestFN}
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(jestFN).toHaveBeenCalledWith(initial);
+
+    const buttonChange = getByTestId("buttonChange");
+    act(() => {
+      fireEvent.click(buttonChange);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
+  });
+
+  it("should render a Field of type checkbox with an initial value passed as prop", () => {
+    const name = "checkbox";
+    const props = { onChange };
+    const initial = "5";
+    const jestFN = jest.fn();
+
+    const children = [
+      <CustomField
+        key="1"
+        type="checkbox"
+        name={name}
+        value={initial}
+        jestFN={jestFN}
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(jestFN).toHaveBeenCalledWith(initial);
+
+    const buttonChange = getByTestId("buttonChange");
+    act(() => {
+      fireEvent.click(buttonChange);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
+  });
+
+  it("should render a Field of type select single with an initial value passed as prop", () => {
+    const name = "select";
+    const props = { onInit, onChange };
+    const initial = "5";
+    const jestFN = jest.fn();
+
+    const children = [
+      <CustomField
+        key="1"
+        type="select"
+        data-testid="buttonChange"
+        name={name}
+        value={initial}
+        jestFN={jestFN}
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(jestFN).toHaveBeenCalledWith(initial);
+
+    expect(onInit).toHaveBeenCalledWith({ [name]: initial }, true);
+
+    const buttonChange = getByTestId("buttonChange");
+    act(() => {
+      fireEvent.click(buttonChange);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
+  });
+
+  it("should render a Field of type select multiple with an initial value passed as prop", () => {
+    const name = "select";
+    const props = { onInit, onChange };
+    const initial = ["5", "6"];
+    const valueAfterClick = ["7", "8"];
+
+    const jestFN = jest.fn();
+
+    const children = [
+      <CustomField
+        key="1"
+        type="select"
+        name={name}
+        valueToChange={valueAfterClick}
+        value={initial}
+        jestFN={jestFN}
+      />
+    ];
+    const { getByTestId } = mountForm({ children, props });
+
+    expect(jestFN).toHaveBeenCalledWith(initial);
+
+    expect(onInit).toHaveBeenCalledWith({ [name]: initial }, true);
+
+    const buttonChange = getByTestId("buttonChange");
+    act(() => {
+      fireEvent.click(buttonChange);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ [name]: valueAfterClick }, true);
   });
 
   it("should change a Field value due to an action", () => {

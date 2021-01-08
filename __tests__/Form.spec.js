@@ -12,7 +12,7 @@ import {
 } from "./helpers/components/ComplexForm";
 import { mountForm } from "./helpers/utils/mountForm";
 
-import { Input } from "./../src";
+import { Input, Select, Collection, TextArea } from "./../src";
 
 const dataTestid = "email";
 const typeInput = "text";
@@ -90,6 +90,71 @@ describe("Component => Form", () => {
     const props = { initialState, onInit };
     render(<SimpleForm {...props} />);
     expect(onInit).toHaveReturnedWith(initialState);
+  });
+
+  it("should override a initialized the Form state if Fields contain the value prop", () => {
+    const initialState = {
+      text: "foo",
+      number: 1,
+      checkbox: "1",
+      radio: "2",
+      range: 2,
+      selectSingle: "1",
+      selectMultiple: ["3"],
+      object: { text: "foo" },
+      object1: { text: "foo" },
+      textarea: "foo",
+      array: ["foo"],
+      array1: ["foo"]
+    };
+    const props = { initialState, onInit };
+    const children = [
+      <Input type="text" name="text" value="BeBo" key="1" />,
+      <Input type="number" name="number" value={10} key="2" />,
+      <Input type="checkbox" name="checkbox" value="4" key="3" checked />,
+      <Input type="radio" name="radio" value="6" key="4" checked />,
+      <Input type="range" min="0" max="120" name="range" value={7} key="5" />,
+      <Select name="selectSingle" value="2" key="6">
+        <option value="" />
+        <option value="1">1</option>
+        <option value="2">2</option>
+      </Select>,
+      <Select key="7" multiple name="selectMultiple" value={["1", "2"]}>
+        <option value="" />
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="2">3</option>
+      </Select>,
+      <Collection key="8" object name="object">
+        <Input type="text" name="text" value="BeBo" />,
+      </Collection>,
+      <Collection key="9" object name="object1" value={{ text: "BeBo" }}>
+        <Input type="text" name="text" />,
+      </Collection>,
+      <TextArea name="textarea" value="BeBo" key="10" />,
+      <Collection key="11" array name="array" value={["foo"]}>
+        <Input type="text" value="BeBo" />,
+      </Collection>,
+      <Collection key="12" array name="array1" value={["BeBo"]}>
+        <Input type="text" />,
+      </Collection>
+    ];
+    mountForm({ props, children });
+
+    expect(onInit).toHaveReturnedWith({
+      text: "BeBo",
+      number: 10,
+      checkbox: "4",
+      radio: "6",
+      range: 7,
+      selectSingle: "2",
+      selectMultiple: ["1", "2"],
+      object: { text: "BeBo" },
+      object1: { text: "BeBo" },
+      textarea: "BeBo",
+      array: ["BeBo"],
+      array1: ["BeBo"]
+    });
   });
 
   it("should reset the Form state", () => {

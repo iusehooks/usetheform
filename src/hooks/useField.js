@@ -72,29 +72,33 @@ export function useField(props) {
     context
   );
 
-  if (type === "checkbox" || type === "radio") {
+  if (!isMounted.current && initialValueRef.current) {
     valueField.current = initialValueRef.current;
-    checkedField.current =
-      type === "checkbox"
-        ? state[nameProp.current] !== undefined ||
-          (!isMounted.current && initialChecked === true)
-        : state[nameProp.current] === initialValueRef.current;
-  } else if (type === "select") {
-    valueField.current =
-      state[nameProp.current] !== undefined
-        ? state[nameProp.current]
-        : !multiple
-        ? ""
-        : [];
-  } else if (type === "file") {
-    valueField.current = state[nameProp.current];
-    fileField.current =
-      state[nameProp.current] !== undefined ? fileField.current : "";
-  } else if (type === "custom") {
-    valueField.current = state[nameProp.current];
   } else {
-    valueField.current =
-      state[nameProp.current] !== undefined ? state[nameProp.current] : "";
+    if (type === "checkbox" || type === "radio") {
+      valueField.current = initialValueRef.current;
+      checkedField.current =
+        type === "checkbox"
+          ? state[nameProp.current] !== undefined ||
+            (!isMounted.current && initialChecked === true)
+          : state[nameProp.current] === initialValueRef.current;
+    } else if (type === "select") {
+      valueField.current =
+        state[nameProp.current] !== undefined
+          ? state[nameProp.current]
+          : !multiple
+          ? ""
+          : [];
+    } else if (type === "file") {
+      valueField.current = state[nameProp.current];
+      fileField.current =
+        state[nameProp.current] !== undefined ? fileField.current : "";
+    } else if (type === "custom") {
+      valueField.current = state[nameProp.current];
+    } else {
+      valueField.current =
+        state[nameProp.current] !== undefined ? state[nameProp.current] : "";
+    }
   }
 
   const { current: applyReducers } = useRef(chainReducers(reducers));
