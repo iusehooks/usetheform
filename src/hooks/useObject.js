@@ -70,10 +70,7 @@ export function useObject(props) {
 
   // getValue from parent context
   if (!isMounted.current) {
-    state.current =
-      context.state[nameProp.current] !== undefined
-        ? context.state[nameProp.current]
-        : init;
+    state.current = initValue || context.state[nameProp.current] || init;
   } else {
     state.current =
       context.state[nameProp.current] || (isArray ? initArray : initObject);

@@ -7,3 +7,12 @@ export const InputCustom = withIndex(
     return <input {...restAttr} {...props}></input>;
   }
 );
+
+export const InputUseField = withIndex(({ type, name, value }) => {
+  const props = useField({ type, name, value });
+  return (
+    <pre>
+      <code>{JSON.stringify(props.value)}</code>
+    </pre>
+  );
+});
