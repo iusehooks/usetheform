@@ -8,7 +8,7 @@ import { Form } from "./helpers/Form";
 import { Input, useAsyncValidation } from './../src';
 
 # useAsyncValidation
-It is a custom hook function which provides the async validation logic to any Field.
+`useAsyncValidation(validator: Function)` provides the async validation logic to any Field.
 
 ```javascript
   const [asyncStatus, validationAsyncAttr] = useAsyncValidation(fn);
@@ -16,7 +16,7 @@ It is a custom hook function which provides the async validation logic to any Fi
 
 ## Arguments
 
-**`fn`**: function
+**`validator`**: function
 
   - A function which receive the value of the field and return a promise.
 

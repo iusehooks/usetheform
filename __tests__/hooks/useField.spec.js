@@ -55,9 +55,18 @@ describe("Hooks => useField", () => {
     const props = { onInit, onChange };
     const initial = { a: "test" };
     const jestFN = jest.fn();
+    const valueToChange = prev => {
+      return { ...prev, a: "BeBo" };
+    };
 
     const children = [
-      <CustomField key="1" name={name} value={initial} jestFN={jestFN} />
+      <CustomField
+        key="1"
+        valueToChange={valueToChange}
+        name={name}
+        value={initial}
+        jestFN={jestFN}
+      />
     ];
     const { getByTestId } = mountForm({ children, props });
 
@@ -70,7 +79,7 @@ describe("Hooks => useField", () => {
       fireEvent.click(buttonChange);
     });
 
-    expect(onChange).toHaveBeenCalledWith({ [name]: "5" }, true);
+    expect(onChange).toHaveBeenCalledWith({ [name]: { a: "BeBo" } }, true);
   });
 
   it("should render a Field of type text with an initial value passed as prop", () => {

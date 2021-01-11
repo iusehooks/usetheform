@@ -1,6 +1,6 @@
 import { noop } from "./noop";
 
-export function chainReducers(reducers) {
+export function chainReducers(reducers = []) {
   if (typeof reducers === "function") {
     return reducers;
   }

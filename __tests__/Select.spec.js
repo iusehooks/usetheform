@@ -126,6 +126,26 @@ describe("Component => Select", () => {
     expect(onReset).toHaveBeenCalledWith({ [name]: ["1", "2"] }, true);
   });
 
+  it("should accept an innerRef prop to access to DOM", () => {
+    const name = "test";
+    const value = "1";
+    const ref = React.createRef();
+    const children = [
+      <Select key="1" innerRef={ref} name={name} value={value}>
+        <option value="" />
+        <option value={value}>{value}</option>
+      </Select>
+    ];
+
+    act(() => {
+      mountForm({ children });
+    });
+
+    expect(ref.current).toBeDefined();
+    expect(ref.current.value).toBe("1");
+    expect(ref.current.name).toBe(name);
+  });
+
   it("should use a reducer to reduce the Select value", () => {
     const props = { onInit };
     const reducer = value => value + 2;

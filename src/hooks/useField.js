@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useOwnContext } from "./useOwnContext";
 import { useNameProp } from "./commons/useNameProp";
 import { useValidationFunction } from "./commons/useValidationFunction";
@@ -10,13 +10,14 @@ import { isValidValue } from "./../utils/isValidValue";
 import { isValidIndex } from "./../utils/isValidIndex";
 import { noop } from "./../utils/noop";
 
+const validatorsDefault = [];
 export function useField(props) {
   const context = useOwnContext();
 
   let {
     name,
     index,
-    validators = [],
+    validators = validatorsDefault,
     asyncValidator,
     type,
     onFocus: customFocus = noop,
@@ -30,7 +31,7 @@ export function useField(props) {
     checked: initialChecked = false,
     touched = false,
     multiple = false,
-    reducers = []
+    reducers
   } = props;
 
   const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
@@ -101,7 +102,7 @@ export function useField(props) {
     }
   }
 
-  const { current: applyReducers } = useRef(chainReducers(reducers));
+  const applyReducers = useMemo(() => chainReducers(reducers), []);
 
   const reset = useCallback(formState => {
     valueFieldLastAsyncCheck.current = null;
@@ -130,6 +131,17 @@ export function useField(props) {
         return value === "" ? undefined : value;
       }
     }
+  }, []);
+
+  const updateValue = useCallback((nextValue, event) => {
+    const newValue = applyReducers(
+      nextValue,
+      valueField.current,
+      formState.current
+    );
+
+    customChange(newValue, event);
+    context.changeProp(nameProp.current, newValue, false);
   }, []);
 
   const onChange = useCallback(event => {
@@ -161,15 +173,7 @@ export function useField(props) {
     } else {
       nextValue = target.value;
     }
-
-    const newValue = applyReducers(
-      nextValue,
-      valueField.current,
-      formState.current
-    );
-
-    customChange(newValue, event);
-    context.changeProp(nameProp.current, newValue, false);
+    updateValue(nextValue, event);
   }, []);
 
   const setValue = useCallback(resolveNextState => {
@@ -177,15 +181,7 @@ export function useField(props) {
       typeof resolveNextState === "function"
         ? resolveNextState(valueField.current)
         : resolveNextState;
-
-    const newValue = applyReducers(
-      nextValue,
-      valueField.current,
-      formState.current
-    );
-
-    customChange(newValue);
-    context.changeProp(nameProp.current, newValue, false);
+    updateValue(nextValue);
   }, []);
 
   /* it runs once and set the inital `value` if passed
@@ -399,7 +395,8 @@ export function useField(props) {
     fileValue: fileField.current,
     type,
     name,
-    multiple
+    multiple,
+    setValue
   });
 
   return attributes;
@@ -408,15 +405,33 @@ export function useField(props) {
 function filterProps(allProps) {
   switch (allProps.type) {
     case "file": {
-      const { value: omitValue, fileValue, ...props } = allProps;
+      const {
+        value: omitVal,
+        setValue: omitSetVal,
+        fileValue,
+        ...props
+      } = allProps;
       return { ...props, value: fileValue };
     }
     case "select": {
-      const { type: omitType, fileValue: omitfileValue, ...props } = allProps;
+      const {
+        type: omitType,
+        setValue: omitSetVal,
+        fileValue: omitFileVal,
+        ...props
+      } = allProps;
+      return props;
+    }
+    case "custom": {
+      const { fileValue: omitfileVal, ...props } = allProps;
       return props;
     }
     default:
-      const { fileValue: omitfileValue, ...props } = allProps;
+      const {
+        fileValue: omitFileVal,
+        setValue: omitSetVal,
+        ...props
+      } = allProps;
       return props;
   }
 }

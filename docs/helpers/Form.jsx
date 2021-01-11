@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { default as FormUsetheform } from "./../../src";
 import JSONTree from "react-json-tree";
 
-export const Form = ({ onInit, onChange, ...props }) => {
+export const Form = ({ onInit, onChange, onReset, ...props }) => {
   const [formState, setState] = useState({});
   const onInitFN = state => {
     onInit && onInit(state);
@@ -12,9 +12,19 @@ export const Form = ({ onInit, onChange, ...props }) => {
     onChange && onChange(state);
     setState(state);
   };
+
+  const onResetFN = state => {
+    onReset && onReset(state);
+    setState(state);
+  };
   return (
     <>
-      <FormUsetheform onInit={onInitFN} onChange={onChangeFN} {...props}>
+      <FormUsetheform
+        onInit={onInitFN}
+        onReset={onResetFN}
+        onChange={onChangeFN}
+        {...props}
+      >
         {props.children}
       </FormUsetheform>
       <div

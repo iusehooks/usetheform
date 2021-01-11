@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useMemo } from "react";
 import { useOwnContext } from "./useOwnContext";
 import { useNameProp } from "./commons/useNameProp";
 import { useMapFields } from "./useMapFields";
@@ -15,6 +15,7 @@ import { noop } from "./../utils/noop";
 
 const initArray = [];
 const initObject = {};
+const validatorsDefault = [];
 
 export function useObject(props) {
   const context = useOwnContext();
@@ -24,8 +25,8 @@ export function useObject(props) {
     index,
     type,
     value: initValue,
-    reducers = [],
-    validators: validatorsFuncs = [],
+    reducers,
+    validators: validatorsFuncs = validatorsDefault,
     onValidation = noop,
     resetSyncErr = noop,
     resetAsyncErr = noop,
@@ -56,7 +57,7 @@ export function useObject(props) {
     type
   );
 
-  const { current: applyReducers } = useRef(chainReducers(reducers));
+  const applyReducers = useMemo(() => chainReducers(reducers), []);
 
   const isMounted = useRef(false);
   const stillMounted = useCallback(() => isMounted.current, []);

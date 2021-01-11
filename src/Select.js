@@ -19,6 +19,7 @@ export const Select = withIndex(function Select({
   value,
   touched,
   reducers,
+  innerRef,
   ...extraProps
 }) {
   const props = useField({
@@ -41,7 +42,7 @@ export const Select = withIndex(function Select({
   });
 
   return (
-    <select {...extraProps} {...props}>
+    <select {...extraProps} {...props} ref={innerRef}>
       {children}
     </select>
   );

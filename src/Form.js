@@ -15,6 +15,7 @@ function Form({
   _onMultipleForm_, // Private API
   name,
   action,
+  innerRef,
   ...rest
 }) {
   const { onSubmitForm, ...props } = useForm({
@@ -42,7 +43,13 @@ function Form({
 
   return (
     <Context.Provider value={ctx}>
-      <form action={action} onSubmit={onSubmitForm} {...rest} name={name}>
+      <form
+        action={action}
+        onSubmit={onSubmitForm}
+        {...rest}
+        name={name}
+        ref={innerRef}
+      >
         {children}
       </form>
     </Context.Provider>

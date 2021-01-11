@@ -17,6 +17,7 @@ export const TextArea = withIndex(function TextArea({
   value,
   touched,
   reducers,
+  innerRef,
   ...extraProps
 }) {
   const props = useField({
@@ -37,5 +38,5 @@ export const TextArea = withIndex(function TextArea({
     reducers
   });
 
-  return <textarea {...extraProps} {...props} />;
+  return <textarea {...extraProps} {...props} ref={innerRef} />;
 });
