@@ -1,6 +1,6 @@
 export default {
   base: "/usetheform",
-  ignore: ["README.md", "LICENSE.md"],
+  ignore: ["README.md", "LICENSE.md", "CONTRIBUTING.md"],
   menu: ["Introduction", "Components", "Hooks"],
   themesDir: "./docs",
   themeConfig: {

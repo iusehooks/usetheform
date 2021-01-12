@@ -10,7 +10,13 @@ export const CustomField = withIndex(
     valueToChange = "5"
   }) => {
     const props = useField({ type, name, value });
-    const onChange = () => props.onChange({ target: { value: valueToChange } });
+    const onChange = () => {
+      if (type === "custom") {
+        props.setValue(valueToChange);
+      } else {
+        props.onChange({ target: { value: valueToChange } });
+      }
+    };
     useEffect(() => {
       jestFN(props.value);
     }, []);

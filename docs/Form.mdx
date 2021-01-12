@@ -10,7 +10,7 @@ import { Input } from './../src';
 # Form
 The Form is the most important component in Usetheform. It renders all the Fields and keeps synchronized the entire form state.
 
-### Props
+## Props
 
 **`onInit`**: function
 
@@ -80,6 +80,15 @@ Possible values:
 
  - An absolute URL - points to another web site (like action="http://www.example.com/example.htm")
  - A relative URL - points to a file within a web site (like action="example.htm")
+
+**`innerRef`**: object (a mutable ref object)
+
+When you need to access the underlying DOM node created by Form (e.g. to call focus), you can use a ref to store a reference to the form dom node.
+
+```javascript
+const ref = useRef(null)
+<Form innerRef={ref} name="form">...fields...</Form>
+```
 
 ## Basic usage
 

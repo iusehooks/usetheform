@@ -20,6 +20,7 @@ export const Input = withIndex(function Input({
   touched,
   multiple,
   reducers,
+  innerRef,
   ...extraProps
 }) {
   const props = useField({
@@ -42,5 +43,5 @@ export const Input = withIndex(function Input({
     multiple
   });
 
-  return <input {...extraProps} {...props} />;
+  return <input {...extraProps} {...props} ref={innerRef} />;
 });

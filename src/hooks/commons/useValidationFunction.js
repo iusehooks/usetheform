@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { passValidation } from "./../../utils/passValidation";
 import { getValidationMsg } from "./../../utils/getValidationMsg";
 
-export function useValidationFunction(validators) {
+export function useValidationFunction(validators = []) {
   const validationMsg = useRef(undefined);
   const validationObj = useRef(null);
   const validationFN = useRef((value, stateForm) => {

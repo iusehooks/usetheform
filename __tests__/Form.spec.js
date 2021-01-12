@@ -1,5 +1,11 @@
 import React from "react";
-import { render, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  cleanup,
+  fireEvent,
+  waitFor,
+  act
+} from "@testing-library/react";
 
 import { SimpleFormTestSumbission } from "./helpers/components/SimpleFormTestSumbission";
 import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
@@ -12,7 +18,7 @@ import {
 } from "./helpers/components/ComplexForm";
 import { mountForm } from "./helpers/utils/mountForm";
 
-import { Input, Select, Collection, TextArea } from "./../src";
+import { Input, Select, Collection, TextArea, Form } from "./../src";
 
 const dataTestid = "email";
 const typeInput = "text";
@@ -512,6 +518,18 @@ describe("Component => Form", () => {
       { name: "mickey" },
       { name: "foo" }
     );
+  });
+
+  it("should accept an innerRef prop to access to DOM", () => {
+    const name = "foo";
+    const ref = React.createRef();
+
+    act(() => {
+      render(<Form innerRef={ref} name={name} />);
+    });
+
+    expect(ref.current).toBeDefined();
+    expect(ref.current.name).toBe(name);
   });
 
   it("should run reducer functions applied to Form on fields removal", () => {

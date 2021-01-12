@@ -180,6 +180,23 @@ describe("Component => Input", () => {
     expect(fileInputMultiple.files[1]).toStrictEqual(files[1]);
   });
 
+  it("should accept an innerRef prop to access to DOM", () => {
+    const type = "text";
+    const name = "email";
+    const ref = React.createRef();
+    const children = [
+      <Input key="1" innerRef={ref} type={type} name={name} value="1" />
+    ];
+    act(() => {
+      mountForm({ children });
+    });
+
+    expect(ref.current).toBeDefined();
+    expect(ref.current.type).toBe(type);
+    expect(ref.current.value).toBe("1");
+    expect(ref.current.name).toBe(name);
+  });
+
   it("should trigger onChange event when the Input value changes", () => {
     const onChangeInput = jest.fn(value => value);
     const children = [
@@ -518,11 +535,7 @@ describe("Component => Input", () => {
     expect(checkbox.checked).toBe(true);
 
     onInit.mockClear();
-    children = [<Input key="1" type="custom" name={name} value={{ a: 1 }} />];
-    mountForm({ props, children });
-    expect(onInit).toHaveBeenCalledWith({ [name]: { a: 1 } }, true);
 
-    onInit.mockClear();
     children = [
       <Input
         key="1"

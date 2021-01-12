@@ -8,10 +8,10 @@ import { Form } from "./helpers/Form";
 import { Input, useValidation } from './../src';
 
 # useValidation
-It is a custom hook function which provides the validation logic to any Field.
+`useValidation(functions: Array)` provides the validation logic to any Field.
 
 ```javascript
-  const [status, validation] = useValidation([...functions])
+  const [status, validation] = useValidation([fn1, fn2, ...fnN])
 ```
 
 ## Arguments
