@@ -5,7 +5,7 @@ route: /
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { Input, useValidation } from './../src';
+import { Input, useValidation, Collection } from './../src';
 
 ## What is usetheform about?
 
@@ -27,12 +27,22 @@ npm install --save usetheform
 
 <Playground>
   <Form>
-    <Input type="text" name="name" value="foo" />
-    <Input type="radio" name="sex" value="M" />
-    <Input type="radio" name="sex" value="F" />
-    <Input type="checkbox" name="one" checked />
-    <Input type="checkbox" name="second" />
-    <Input type="file" name="file" />
+    <Collection object name="user"> 
+      <Input type="text" name="name" value="BeBo" placeholder="Your Name..." />
+      <Input type="text" name="surname" placeholder="Your Surname..." />
+    </Collection>
+    <Input type="radio" name="gender" value="M" />
+    <Input type="radio" name="gender" value="F" />
+    <Input type="radio" name="gender" value="Other" />
+    <Collection object name="options"> 
+      <Input type="checkbox" name="one" checked />
+      <Input type="checkbox" name="second" />
+    </Collection  >
+    <Collection array name="media"> 
+      <Input type="file" />
+      <Input type="file" />
+      <Input type="file" />
+    </Collection  >
   </Form>
 </Playground>
 
