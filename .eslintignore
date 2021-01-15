@@ -1,3 +1,4 @@
 **/build/**
 **/dev/**
 **/node_modules/**
+/**/*.d.ts
