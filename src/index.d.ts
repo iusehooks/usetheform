@@ -1,0 +1,20 @@
+declare module "usetheform" {
+    export const Index: any;
+    export const Form: any;
+    export const Input: any;
+    export const Select: any;
+    export const TextArea: any;
+    export const Collection: any;
+    export const FormContext: any;
+    export const getValueByPath: any;
+    export const STATUS: any;
+    export const useForm: any;
+    export const useValidation: any;
+    export const useSelector: any;
+    export const useAsyncValidation: any;
+    export const useChildren: any;
+    export const useField: any;
+    export const useCollection: any;
+    export const useMultipleForm: any;
+    export const withIndex: any;
+  }

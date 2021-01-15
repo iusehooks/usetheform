@@ -4,6 +4,7 @@ import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import bundleSize from "rollup-plugin-bundle-size";
+import copy from "rollup-plugin-copy";
 
 const config = {
   input: "./src/index.js",
@@ -25,6 +26,9 @@ const config = {
     }),
     replace({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
+    }),
+    copy({
+      targets: [{ src: "src/index.d.ts", dest: "build" }]
     })
   ]
 };

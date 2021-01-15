@@ -1,9 +1,10 @@
 {
   "name": "usetheform",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
+  "types": "./build/index.d.ts",
   "repository": "github:iusehooks/usetheform",
   "homepage": "https://iusehooks.github.io/usetheform",
   "scripts": {
@@ -24,6 +25,7 @@
   "author": "Antonio Pangallo (https://github.com/antoniopangallo)",
   "files": [
     "build/index.js",
+    "build/index.d.ts",
     "build/index.es.js",
     "build/es",
     "build/umd"
@@ -80,6 +82,7 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.35.1",
     "rollup-plugin-bundle-size": "^1.0.3",
+    "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-terser": "^7.0.2"
   },
   "jest": {
