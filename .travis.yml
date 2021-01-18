@@ -17,3 +17,5 @@ deploy:
   github_token: $GITHUB_TOKEN
   on:
     branch: master
+after_success:
+- npm run coveralls

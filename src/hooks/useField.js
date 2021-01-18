@@ -5,9 +5,8 @@ import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { fileList } from "./../utils/formUtils";
 import { STATUS } from "./../utils/constants";
+import { validateProps } from "./../utils/validateProps";
 import { chainReducers } from "./../utils/chainReducers";
-import { isValidValue } from "./../utils/isValidValue";
-import { isValidIndex } from "./../utils/isValidIndex";
 import { noop } from "./../utils/noop";
 
 const validatorsDefault = [];
@@ -41,13 +40,11 @@ export function useField(props) {
   );
 
   if (process.env.NODE_ENV !== "production") {
-    const errMsg = validateProps(
+    validateProps(
+      "<Input />",
       { ...props, index: nameProp.current },
       context.type
     );
-    if (errMsg) {
-      throw new Error(errMsg);
-    }
   }
 
   const { state } = context;
@@ -334,7 +331,7 @@ export function useField(props) {
       }
 
       if (onSyncBlurState) {
-        context.triggerSyncValidation && context.triggerSyncValidation();
+        context?.triggerSyncValidation?.();
       }
 
       if (
@@ -433,47 +430,6 @@ function filterProps(allProps) {
         ...props
       } = allProps;
       return props;
-  }
-}
-
-function validateProps(
-  { name, index, value, checked, type, asyncValidator },
-  contextType
-) {
-  if (type === undefined) {
-    return `The prop "type" -> "${type}"" passed to "useField" is not allowed. It must be a string.`;
-  }
-
-  if (type === "file" && value && value !== "") {
-    return `The prop "value" -> "${value}" passed to "useField": ${name} of type: ${type} is not allowed. Input of type "file" does not support any default value.`;
-  }
-
-  if (
-    type === "radio" &&
-    (value === undefined ||
-      (typeof value === "string" && value.replace(/ /g, "") === ""))
-  ) {
-    return `Input of type => ${type}, must have a valid prop "value".`;
-  }
-
-  if (contextType === "array" && !isValidIndex(index)) {
-    return `The prop "index": ${index} of type "${typeof index}" passed to a field "${type}" must be either a string or number represent as integers.`;
-  }
-
-  if (
-    typeof asyncValidator !== "undefined" &&
-    typeof asyncValidator !== "function"
-  ) {
-    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a function.`;
-  }
-
-  if (type !== "checkbox" && type !== "radio" && checked) {
-    return `The prop "checked" -> "${checked}" passed to "useField": ${name} of type: ${type} is not allowed. You can use "value" prop instead to set an initial value.`;
-  }
-
-  if (!isValidValue(name, contextType)) {
-    const nameContext = contextType || "<Form />";
-    return `The prop "name": ${name} of type "${typeof name}" passed to "${type}" it is not allowed within context a of type "${nameContext}".`;
   }
 }
 

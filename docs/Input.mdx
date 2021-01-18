@@ -6,7 +6,9 @@ menu: Components
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
 import { Submit } from "./helpers/Submit";
-import { Input, useValidation, useAsyncValidation } from './../src';
+import { asyncTestInput } from "./helpers/utils/index.js";
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { useValidation, useAsyncValidation } from './../src';
 
 # Input
 It renders all the inputs of type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) and accepts as props any html attribute listed at: [Html Input Attributes](https://www.w3schools.com/tags/tag_input.asp).
@@ -64,14 +66,14 @@ const ref = useRef(null)
 ```javascript
   import Form, { Input, Collection } from 'usetheform'
 ```
-
 <Playground>
   <Form>
-    <Input type="text" name="name" value="foo" />
-    <Input type="radio" name="sex" value="M" />
-    <Input type="radio" name="sex" value="F" />
-    <Input type="checkbox" name="one" checked />
-    <Input type="checkbox" name="second" />
+    <Input type="text" name="name" value="foo" placeholder="Name" />
+    <Input type="radio" name="sex" value="M" placeholder="M" />
+    <Input type="radio" name="sex" value="F" placeholder="F" />
+    <Input type="radio" name="sex" value="Other" placeholder="Other" />
+    <Input type="checkbox" name="option1" checked placeholder="Option 1" />
+    <Input type="checkbox" name="option2" placeholder="Option 2" />
     <Input type="file" name="file" />
   </Form>
 </Playground>
@@ -84,11 +86,11 @@ const ref = useRef(null)
 
 <Playground>
 {() => {
-    const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
-    const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
+    const prevNumberGreater10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
+    const prevNumberLessThan1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
     return (
       <Form>
-        <Input type="number" name="numberWithReducer" reducers={[minNumber1, maxNumber10]} value="1" />
+        <Input type="number" name="numberWithReducer" reducers={[prevNumberLessThan1, prevNumberGreater10]} placeholder="Number" value="1" />
       </Form>
     )
   }
@@ -111,7 +113,7 @@ const ref = useRef(null)
     const [status, validation] = useValidation([required, isValidEmail]);
     return (
       <Form>
-        <Input type="text" name="email" touched {...validation} />
+        <Input type="text" name="email" touched placeholder="Email" {...validation} />
         {status.error && <label>{status.error}</label>}
         <Submit />
       </Form>
@@ -124,37 +126,16 @@ const ref = useRef(null)
 ## Validation - Async
 
 ```javascript
-import { useAsyncValidation, useForm } from 'usetheform'
-
-const Submit = () => {
-  const { isValid } = useForm();
-  return (
-    <button disabled={!isValid} type="submit">
-      Submit
-    </button>
-  );
-};
-
+import { Form, Input } from 'usetheform';
 ```
 
 <Playground>
 {() => {
-    const asyncTest = value =>
-      new Promise((resolve, reject) => {
-        // it could be an API call or any async operation
-        setTimeout(() => {
-          if (value === "foo") {
-            reject("username already in use");
-          } else {
-            resolve("Success");
-          }
-        }, 1000);
-    });
-    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTestInput);
     return (
       <Form>
-        <Input type="text" name="username" touched {...asyncValidation} />
-        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        <Input type="text" name="username" touched placeholder="Username" {...asyncValidation} />
+        {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
         {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
         {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
@@ -165,3 +146,30 @@ const Submit = () => {
   }
 }
 </Playground>
+
+#### Detailed Explanation:
+
+```javascript
+import { useForm } from 'usetheform'
+
+export const asyncTestInput = value =>
+  new Promise((resolve, reject) => {
+    // it could be an API call or any async operation
+    setTimeout(() => {
+      if (value === "foo") {
+        reject("username already in use");
+      } else {
+        resolve("Success");
+      }
+    }, 1000);
+  });
+
+export const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+```

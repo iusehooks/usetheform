@@ -1,10 +1,10 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { Form } from "./../../../src";
+import { FormWithValidation } from "./../components/FormWithValidation";
 
 export const mountForm = ({ props = {}, children } = {}) =>
   render(
     <React.StrictMode>
-      <Form {...props}>{children}</Form>
+      <FormWithValidation {...props}>{children}</FormWithValidation>
     </React.StrictMode>
   );

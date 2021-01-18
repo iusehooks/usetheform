@@ -21,16 +21,19 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
     <script type="text/babel" src="./helpers/Email.js"></script>
     <script type="text/babel" src="./helpers/CollectionArrayNested.js"></script>
     <script type="text/babel" src="./helpers/CollectionSyncValidation.js"></script>
+    <script type="text/babel" src="./helpers/CollectionNestedDynamicField.js"></script>
+    <script type="text/babel" src="./helpers/CollectionAsyncValidation.js"></script>
+    <script type="text/babel" src="./helpers/CollectionNestedDynamicFieldIndex.js"></script>
+    <script type="text/babel" src="./helpers/FormContextWithValidation.js"></script>
     <script type="text/babel" src="./helpers/SimpleForm.js"></script>
     <script type="text/babel" src="./helpers/BigForm.js"></script>
-    <script type="text/babel" src="./helpers/CollectionAsyncValidation.js"></script>
     <script type="text/babel" src="./helpers/SimpleFormWithAsync.js"></script>
   </head>
   <body>
     <div id="main" /> 
     <script type="text/babel">
         const { SimpleForm, SimpleFormWithAsync, BigForm } = window
-        ReactDOM.render(<React.StrictMode> <SimpleForm /><br /> <SimpleFormWithAsync/> <br /> <BigForm/><br />  </React.StrictMode>, document.getElementById('main')
+        ReactDOM.render(<React.StrictMode> <FormContextWithValidation /> <br /> <SimpleFormWithAsync />  <br /> <SimpleForm /> <br /> <BigForm /> </React.StrictMode>, document.getElementById('main')
       );
      </script>
   </body>

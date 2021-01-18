@@ -139,7 +139,7 @@ const Submit = () => {
     return (
       <Form>
         <TextArea name="text" touched {...asyncValidation} />
-        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
         {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
         {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}

@@ -96,7 +96,7 @@ const CustomField = ({ name, initialValue = { a: "2" } }) => {
 
 ```javascript
 const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
-const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
+const minNumber1 = (nextValue, prevValue) => nextValue <= 1 ? prevValue : nextValue;
 
 const CustomInput = props => {
   const fieldInputProps = useField({

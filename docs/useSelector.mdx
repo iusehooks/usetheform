@@ -6,7 +6,7 @@ menu: Hooks
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
 import { CounterReader } from "./helpers/CounterReader";
-import { Input } from './../src';
+import { InputLabel as Input } from "./helpers/InputLabel";
 
 # useSelector
 `useSelector(selector: Function)` allows to pick a single "Field" from the Form state using a selector function.
@@ -27,7 +27,6 @@ The Counter component will re-render on changes.
 ```javascript
 // BAD 👎
 const [counter, setCounter] = useSelector(state => ({ counter1 : state.anyprop, counter2 : state.anyprop }));
-const [counter2, setCounter2] = useSelector(state => state.counter2);
 ```
 ```javascript
 // OK 👍   
@@ -75,7 +74,7 @@ import{ Form, Input } from 'usetheform'
 
 <Playground>
   <Form>
-    <Input type="number" name="counter" value="0" />
+    <Input type="number" name="counter" value="0" placeholder="Counter" />
     <CounterReader />
   </Form>
 </Playground>

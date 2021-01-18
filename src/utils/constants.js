@@ -11,3 +11,4 @@ export const STATUS = {
 };
 
 export const DISPATCHER_LABEL = "__$$USETHEFORM_DISPATCHER$$__";
+export const FORM_VALIDATION_LABEL = "__$$USETHEFORM_VALIDATION$$__";

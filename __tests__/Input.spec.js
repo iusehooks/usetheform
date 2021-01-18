@@ -700,17 +700,17 @@ describe("Component => Input", () => {
     console.error = jest.fn();
     let children = [<Input key="1" name="test" type="radio" />];
     expect(() => mountForm({ children })).toThrowError(
-      /Input of type => radio, must have a valid prop "value"./i
+      /<Input \/> of type => radio, must have a valid prop "value"./i
     );
 
     children = [<Input key="1" name="test" type="radio" value="" />];
     expect(() => mountForm({ children })).toThrowError(
-      /Input of type => radio, must have a valid prop "value"./i
+      /<Input \/> of type => radio, must have a valid prop "value"./i
     );
 
     children = [<Input key="1" name="test" type="radio" value="   " />];
     expect(() => mountForm({ children })).toThrowError(
-      /Input of type => radio, must have a valid prop "value"./i
+      /<Input \/> of type => radio, must have a valid prop "value"./i
     );
 
     console.error = originalError;

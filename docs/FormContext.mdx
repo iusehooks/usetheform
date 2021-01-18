@@ -5,7 +5,10 @@ menu: Components
 
 import { Playground } from 'docz';
 import { FormContext, Form } from "./helpers/FormContext";
-import { Input, useForm } from './../src';
+import { asyncTestForm } from "./helpers/utils/index.js";
+import { Submit } from "./helpers/Submit";
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { useForm, useSelector, Collection, useValidation, useAsyncValidation } from './../src';
 
 # FormContext
 
@@ -73,6 +76,12 @@ It is a plain object that rappresent the initial state of the form.
 An array whose values correspond to different reducing functions.
 Reducers functions specify how the Form's state change.
 
+**`touched`**: boolean
+
+Default value *false*. 
+
+If *true* sync validation messages will be showing only when the event onBlur of any forms's field is triggered by the user action at any level of nesting.
+
 ## Basic usage
 
 ```js
@@ -89,32 +98,28 @@ export const Form = ({ children }) => {
 
 <Playground>
   {() => {
-    const ResetName = () => {
-      const { dispatch } = useForm();
-      const resetName = () => {
-        dispatch(prev => {
-          const { name: omitName, ...newState } = prev;
-          return newState;
-        })
-      }
-      return (
-        <button type="button" onClick={resetName}>
-          Reset Name
+    const Tags = () => {
+      const [tags  = [], setTags] = useSelector(state => state.tags);
+      const resetTag = target =>
+        setTags(prev => prev.filter((val) => val !== target));
+      return tags.map((tag, index) => (
+        <button type="button" key={tag} onClick={() => resetTag(tag)}>
+        {`${tag} X`}
         </button>
-      )
+      ));
     }
+    const onSubmit = (state) => alert(JSON.stringify(state));
     return (
-      <FormContext
-        initialState={{ name: "foo" }}
-        onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
-        onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
-        onSubmit={(state, isFormValid) => console.log("SUBMIT", state, isFormValid)}
-      >
-        <ResetName />
+      <FormContext onSubmit={onSubmit}>
         <Form>
-          <Input type="text" name="name" />
+          <Collection array name="tags">
+            <Input type="checkbox" value="Blue" checked placeholder="Tag Blue" />
+            <Input type="checkbox" value="Red" placeholder="Tag Red" />
+            <Input type="checkbox" value="Pink" placeholder="Tag Pink" />
+          </Collection>
           <button type="submit">Submit</button>
         </Form>
+        <Tags />
       </FormContext>
     );
     }
@@ -136,18 +141,113 @@ export const Form = ({ children }) => {
       return nextState;
     };
     const minNumber1 = (nextState, prevState) => { 
-      if (nextState.myNumber <= 0) {
-        nextState.myNumber = 0;
+      if (nextState.myNumber <= 1) {
+        nextState.myNumber = 1;
       }
       return nextState;
     };
     return (
       <FormContext reducers={[minNumber1, maxNumber10]}>
         <Form>
-          <Input type="number" name="myNumber" value="1" />
+          <Input type="number" name="anyNumber" value="1"  placeholder="Number" />
         </Form>
       </FormContext>
     )
   }
 }
 </Playground>
+
+
+## Validation - Sync
+
+Validation at FormContext level:
+
+- **touched=false**: errors messages will be showing on FormContext initialization and when any Field is edited.
+- **touched=true**: errors messages will be showing when any Field at any level of nesting is touched/visited.
+
+```javascript
+  import { FormContext, Input, Collection, useValidation } from 'usetheform'
+```
+
+<Playground>
+{() => {
+    const graterThan10 = ({ values }) => ((values && (values["A"] + values["B"] > 10)) ? undefined : "A+B must be > 10");
+    const [status, validationProps] = useValidation([graterThan10]);
+    return (
+      <FormContext touched {...validationProps}>
+        <Form>
+          <Collection object name="values" >
+            <Input type="number" name="A" placeholder="Number A" value="1" />
+            <Input type="number" name="B" placeholder="Number B" value="2" />
+          </Collection>
+          {status.error && <label>{status.error}</label>}
+          <button type="submit">Press to see results</button>
+        </Form>
+      </FormContext>
+    )
+  }
+}
+</Playground>
+
+## Validation - Async
+
+Async Validation for **FormContext** is triggered on Sumbit event. The form submission is prevented if the validation fails.
+It means that the onSubmit function passed as prop to the **FormContext** component will not be invoked.
+
+```javascript
+import { FormContext, Collection, Input, useAsyncValidation } from 'usetheform';
+```
+
+<Playground>
+{() => {
+    const [asyncStatus, validationProps] = useAsyncValidation(asyncTestForm);
+    const onSubmit = (state) => alert(JSON.stringify(state));
+    return (
+      <FormContext onSubmit={onSubmit} {...validationProps}>
+        <Form>
+          <Collection object name="values">
+            <Input type="number" name="a" placeholder="Number A" value="1" />
+            <Input type="number" name="b" placeholder="Number B" value="2" />
+          </Collection>
+          {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
+          {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+          {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
+          {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
+          <Submit />
+        </Form>
+      </FormContext>
+    )
+  }
+}
+</Playground>
+
+#### Detailed Explanation:
+
+```javascript
+import { useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+
+export const asyncTestForm = ({ values }) =>
+  new Promise((resolve, reject) => {
+    // it could be an API call or any async operation
+    setTimeout(() => {
+      if (!values || !values.a || !values.b) {
+        reject("Emtpy values are not allowed ");
+      }
+      if (values.a + values.b >= 5) {
+        reject("The sum must be less than '5'");
+      } else {
+        resolve("Success");
+      }
+    }, 1000);
+  });
+```
+

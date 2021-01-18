@@ -1,4 +1,4 @@
-import { STATUS } from "./constants";
+import { STATUS, FORM_VALIDATION_LABEL } from "./constants";
 
 export const createForm = (state = {}) => ({
   state,
@@ -11,6 +11,9 @@ export const createForm = (state = {}) => ({
 });
 
 export const getValueByPath = (path, obj, separator = "/") => {
+  if (path === FORM_VALIDATION_LABEL) {
+    return obj;
+  }
   const properties = Array.isArray(path) ? path : path.split(separator);
   return properties.reduce((prev, curr) => prev && prev[curr], obj);
 };

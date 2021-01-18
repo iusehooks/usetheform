@@ -8,7 +8,8 @@ import { Form } from "./helpers/Form";
 import { Submit } from "./helpers/Submit";
 import { Reset } from "./helpers/Reset";
 import { CounterSubmitAttempts } from "./helpers/CounterSubmitAttempts";
-import { Input, useValidation } from './../src';
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { useValidation } from './../src';
 
 # useForm
 `useForm()` is a custom React hook that will return helpers and the current state of the form.
@@ -27,7 +28,7 @@ An object that holds:
   - **`pristine`**: a boolean which tells whether the form fields have been modified or not.
   - **`submitted`**: a number which counts the number of times the form has been submitted with success.
   - **`submitAttempts`**: a number which counts the total number of submission attempts.
-  - **`reset`**: a helper function which redset the Form state to an initial State.
+  - **`reset`**: a helper function which resets the Form state to an initial State.
   - **`formStatus`**: a string indicating the form status. It can be one of: "ON_CHANGE", "ON_SUBMIT", "ON_RESET", "ON_INIT".
   - **`dispatch`**: a function used to update the form state. It accepts object which will be the new state of the form.
     ```javascript
@@ -39,14 +40,38 @@ An object that holds:
 ## Basic usage
 
 ```javascript
+  import Form, { Input } from 'usetheform'
+```
+
+<Playground>
+{() => {
+    const email = value =>
+    !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
+      ? undefined
+      : "Mail not Valid";
+    const required = val => (val && val.trim() !== "" ? undefined : "Required");
+    const [status, validation] = useValidation([required, email]);
+    
+    return (
+      <Form initialState={{ email: "foo@google.com" }}>
+        <Input type="text" name="email" placeholder="Email" touched {...validation} />
+        {status.error && <label>{status.error}</label>}
+        <Submit />
+        <Reset />
+        <CounterSubmitAttempts />
+      </Form>
+    )
+  }
+}
+</Playground>
+
+#### Detailed Explanation:
+
+```javascript
 const Reset = props => {
   const { reset, pristine } = useForm();
   return (
-    <button
-      disabled={pristine}
-      type="button"
-      onClick={reset}
-    >
+    <button disabled={pristine} type="button" onClick={reset}>
       Reset
     </button>
   );
@@ -74,32 +99,3 @@ const CounterSubmitAttempts = props => {
   );
 }
 ```
-
-## Example
-
-```javascript
-  import Form, { Input } from 'usetheform'
-```
-
-<Playground>
-{() => {
-    const email = value =>
-    !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
-      ? undefined
-      : "Mail not Valid";
-    const required = value => (value && value.trim() !== "" ? undefined : "Required");
-    const [status, validation] = useValidation([required, email]);
-    return (
-      <Form initialState={{ email: "foo@google.com" }}>
-        <div>
-          <Input type="text" name="email" touched {...validation} />
-          {status.error && <label>{status.error}</label>}
-        </div>
-        <Submit />
-        <Reset />
-        <CounterSubmitAttempts />
-      </Form>
-    )
-  }
-}
-</Playground>

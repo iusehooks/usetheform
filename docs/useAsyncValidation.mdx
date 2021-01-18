@@ -5,7 +5,8 @@ menu: Hooks
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { Input, useAsyncValidation } from './../src';
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { useAsyncValidation } from './../src';
 
 # useAsyncValidation
 `useAsyncValidation(validator: Function)` provides the async validation logic to any Field.
@@ -58,11 +59,11 @@ An array that holds:
           } else resolve("Success");
         }, 1500);
       });
-    const [asyncStatus, validationAsyncAttr] = useAsyncValidation(asyncTest)
+    const [asyncStatus, validationProps] = useAsyncValidation(asyncTest)
     return (
       <Form>
-        <Input type="text" name="name" touched {...validationAsyncAttr} />
-        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        <Input type="text" name="name" touched placeholder="Name" {...validationProps} />
+        {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
         {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
         {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}

@@ -48,7 +48,6 @@ export function useValidators(context, nameProp, isMounted, isAsync = false) {
           ...mergeValidators(path, asyncValidatorsValue)
         };
       }
-
       if (
         nameProp !== undefined &&
         isMounted.current &&
