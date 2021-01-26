@@ -239,7 +239,7 @@ export function useField(props) {
       // a checkbox might have a value otherwise its value will be true
       let val = initialValue;
       if (type === "checkbox") {
-        val = type === "checkbox" ? initialValue || true : initialValue;
+        val = initialValue || true;
       } else if (type === "number" || type === "range") {
         val = Number(val);
       }

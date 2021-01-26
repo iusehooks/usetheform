@@ -8,7 +8,7 @@ import { Form } from "./helpers/Form";
 import { Submit } from "./helpers/Submit";
 import { asyncTestForm } from "./helpers/utils/index.js";
 import { InputLabel as Input } from "./helpers/InputLabel";
-import { Item, recudeTotalPrice, recudeTotalQuantity } from "./helpers/Item";
+import { Item, reduceTotalPrice, reduceTotalQuantity } from "./helpers/Item";
 import { useValidation, useAsyncValidation, Collection } from './../src';
 
 # Form
@@ -107,20 +107,20 @@ const ref = useRef(null)
 A simple form with the initial state passed as Form prop.
 
 ```javascript
-  import Form, { Input } from 'usetheform'
+  import { Form, Input } from 'usetheform'
 ```
 
 <Playground>
   <Form
-    initialState={{ name: "foo", sex: "M", option1: true }}
+    initialState={{ name: "foo", gender: "M", option1: true }}
     onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
     onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
     onSubmit={(state) => alert(JSON.stringify(state))}
   >
     <Input type="text" name="name" placeholder="Name" />
-    <Input type="radio" name="sex" value="M" placeholder="M" />
-    <Input type="radio" name="sex" value="F" placeholder="F" />
-    <Input type="radio" name="sex" value="Other" placeholder="Other" />
+    <Input type="radio" name="gender" value="M" placeholder="M" />
+    <Input type="radio" name="gender" value="F" placeholder="F" />
+    <Input type="radio" name="gender" value="Other" placeholder="Other" />
     <Input type="checkbox" name="option1" placeholder="Option 1" />
     <Input type="checkbox" name="option2" placeholder="Option 2" />
     <button type="submit">Submit</button>
@@ -132,7 +132,7 @@ A simple form with the initial state passed as Form prop.
 A simple form with the initial state passed straight to the Form's Field.
 
 ```javascript
-  import Form, { Input } from 'usetheform'
+  import { Form, Input } from 'usetheform'
 ```
 <Playground>
   <Form
@@ -141,9 +141,9 @@ A simple form with the initial state passed straight to the Form's Field.
     onSubmit={(state) => alert(JSON.stringify(state))}
   >
     <Input type="text" name="name" value="foo" placeholder="Name" />
-    <Input type="radio" name="sex" value="M" checked placeholder="M" />
-    <Input type="radio" name="sex" value="F" placeholder="F" />
-    <Input type="radio" name="sex" value="Other" placeholder="Other" />
+    <Input type="radio" name="gender" value="M" checked placeholder="M" />
+    <Input type="radio" name="gender" value="F" placeholder="F" />
+    <Input type="radio" name="gender" value="Other" placeholder="Other" />
     <Input type="checkbox" name="option1" checked placeholder="Option 1" />
     <Input type="checkbox" name="option2" placeholder="Option 2" />
     <button type="submit">Submit</button>
@@ -153,12 +153,12 @@ A simple form with the initial state passed straight to the Form's Field.
 ## Reducers
 
 ```javascript
-import Form, { Collection } from 'usetheform';
+import { Form, Collection } from 'usetheform';
 import { Item } from './components/Item';
-import { recudeTotalPrice, recudeTotalQuantity } from './components/Item/utils';
+import { reduceTotalPrice,reduceTotalQuantity } from './components/Item/utils';
 ```
 <Playground>
-  <Form reducers={[recudeTotalPrice, recudeTotalQuantity]}>
+  <Form reducers={[reduceTotalPrice, reduceTotalQuantity]}>
     <Collection array name="items">
       <Item price={5} desc="White Shoes" />
       <Item price={3} desc="Red Bag" /> 
@@ -173,16 +173,17 @@ import { recudeTotalPrice, recudeTotalQuantity } from './components/Item/utils';
 #### Detailed Explanation:
 
 ```javascript
-export const Item = ({ price, qty }) => {
+export const Item = ({ price, qty, desc }) => {
   return (
     <Collection object>
-      <Input type="number" name="price" placeholder="Price" value={price} />
-      <Input type="number" name="qty" placeholder="Quantity" value={qty} />
+      <Input type="number" name="price" placeholder="Price" min={1} value={price} />
+      <Input type="number" name="qty" placeholder="Quantity" min={1} value={qty} />
+      <Input type="text" name="description" placeholder="Description" value={desc} />
     </Collection>
   );
 }
 
-export const recudeTotalPrice = formState => {
+export const reduceTotalPrice = formState => {
   const { items = [] } = formState;
   const totalPrice = items.reduce((total, { price = 0, qty = 0 }) => {
     total += price * qty;
@@ -191,7 +192,7 @@ export const recudeTotalPrice = formState => {
   return { ...formState, totalPrice };
 };
 
-export const recudeTotalQuantity = (formState) => { 
+export const reduceTotalQuantity = (formState) => { 
   const { items = [] } = formState;
   const totalQuantity = items.reduce((total, { qty = 0 }) => {
     total += qty;
@@ -209,7 +210,7 @@ Validation at Form level:
 - **touched=true**: errors messages will be showing when any Field at any level of nesting is touched/visited.
 
 ```javascript
-  import Form, { Input, Collection, useValidation } from 'usetheform'
+  import { Form, Input, Collection, useValidation } from 'usetheform'
 ```
 
 <Playground>

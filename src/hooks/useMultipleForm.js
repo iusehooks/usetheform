@@ -5,9 +5,7 @@ export function useMultipleForm(onChange) {
   // private API
   const { current: _onMultipleForm_ } = useRef((formName, state) => {
     stateRef.current[formName] = state;
-    if (typeof onChange === "function") {
-      onChange(mergeFormStates(stateRef.current));
-    }
+    onChange?.(mergeFormStates(stateRef.current));
   });
 
   // private API

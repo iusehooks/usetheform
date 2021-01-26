@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, cleanup, act } from "@testing-library/react";
 import { Collection } from "./../../src";
 import { mountForm } from "./../helpers/utils/mountForm";
+import Submit from "./../helpers/components/Submit";
 import { InputCustom } from "./../helpers/components/InputCustom";
 import { CustomField } from "./../helpers/components/CustomField";
 import { InputCustomNoAutoIndex } from "./../helpers/components/InputCustomNoAutoIndex";
@@ -225,6 +226,101 @@ describe("Hooks => useField", () => {
     });
 
     expect(onChange).toHaveBeenCalledWith({ [name]: valueAfterClick }, true);
+  });
+
+  it("should sync validate an InputCustom", () => {
+    const props = { onChange };
+    const name = "BeBo";
+    const children = [
+      <InputCustom
+        key="1"
+        type="custom"
+        name={name}
+        touched
+        validators={[
+          value =>
+            value === undefined ||
+            (value && value.trim() === "") ||
+            (value && value.trim() === "1")
+              ? "error"
+              : undefined
+        ]}
+        data-testid="input1"
+      />,
+      <Submit key="2" />
+    ];
+    const { getByTestId } = mountForm({ props, children });
+
+    const input1 = getByTestId("input1");
+    const submit = getByTestId("submit");
+
+    expect(submit.disabled).toBe(true);
+
+    act(() => {
+      fireEvent.change(input1, { target: { value: "50" } });
+    });
+
+    expect(submit.disabled).toBe(false);
+    expect(input1.value).toBe("50");
+    expect(onChange).toHaveBeenCalledWith({ [name]: "50" }, true);
+
+    act(() => {
+      fireEvent.change(input1, { target: { value: "1" } });
+    });
+
+    act(() => {
+      input1.focus();
+      input1.blur();
+    });
+
+    expect(() => getByTestId("errorLabel")).not.toThrow();
+
+    expect(submit.disabled).toBe(true);
+  });
+
+  it("should sync validate an InputCustom of type radio", () => {
+    const props = { onChange };
+    const name = "BeBo";
+    const children = [
+      <InputCustom
+        key="1"
+        type="radio"
+        name={name}
+        value="red"
+        validators={[
+          value =>
+            value === undefined ||
+            (value && value.trim() === "") ||
+            (value && value.trim() !== "pippo")
+              ? "error"
+              : undefined
+        ]}
+        data-testid="radio"
+      />,
+      <Submit key="2" />
+    ];
+    const { getByTestId } = mountForm({ props, children });
+
+    const radio = getByTestId("radio");
+    const submit = getByTestId("submit");
+
+    expect(submit.disabled).toBe(true);
+
+    act(() => {
+      fireEvent.click(radio);
+    });
+
+    expect(submit.disabled).toBe(true);
+    expect(radio.value).toBe("red");
+
+    act(() => {
+      radio.focus();
+      radio.blur();
+    });
+
+    expect(() => getByTestId("errorLabel")).not.toThrow();
+
+    expect(submit.disabled).toBe(true);
   });
 
   it("should change a Field value due to an action", () => {

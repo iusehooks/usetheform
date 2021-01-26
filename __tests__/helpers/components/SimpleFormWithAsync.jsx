@@ -1,5 +1,5 @@
 import React from "react";
-import Form, { Collection } from "./../../../src";
+import { Form, Collection } from "./../../../src";
 import Submit from "./Submit";
 import Reset from "./Reset";
 import InputAsync from "./InputAsync";

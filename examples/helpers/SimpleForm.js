@@ -62,7 +62,6 @@ window.SimpleForm = () => {
   const [statusForm, validationFormProp] = useValidation([isArrayOfMailValid]);
 
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
-  console.log("asyncStatus ", asyncStatus);
 
   return (
     <div>

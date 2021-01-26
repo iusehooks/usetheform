@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Form, { Input, useMultipleForm } from "./../../../src";
+import { Form, Input, useMultipleForm } from "./../../../src";
 
 export default function Wizard({ onSubmitWizard, onChangeWizard }) {
   const [page, setState] = useState(1);

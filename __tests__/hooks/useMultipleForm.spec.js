@@ -1,10 +1,26 @@
 import React from "react";
-import { render, fireEvent, cleanup } from "@testing-library/react";
+import { render, fireEvent, cleanup, act } from "@testing-library/react";
 import Wizard from "./../helpers/components/Wizard";
 
 afterEach(cleanup);
 
 describe("Hooks => useMultipleForm", () => {
+  it("should render multiple Forms as a Wizard", () => {
+    const onSubmitWizard = jest.fn();
+    const props = { onSubmitWizard };
+
+    const { getByTestId } = render(<Wizard {...props} />);
+    const next = getByTestId("next");
+    act(() => {
+      fireEvent.click(next);
+    });
+
+    const submit = getByTestId("submit");
+    act(() => {
+      fireEvent.click(submit);
+    });
+    expect(onSubmitWizard).toHaveBeenCalledWith({});
+  });
   it("should handle multiple Forms as a Wizard", () => {
     const onChangeWizard = jest.fn();
     const onSubmitWizard = jest.fn();

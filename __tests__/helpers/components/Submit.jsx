@@ -12,6 +12,7 @@ export default function Sumbit({ forceEnable }) {
       >
         Submit
       </button>
+      <span data-testid="isValid">{isValid ? "true" : "false"}</span>
       <span data-testid="submittedCounter">{submitted}</span>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Form, { Collection, Input } from "./../../../src";
+import { Form, Collection, Input } from "./../../../src";
 import Submit from "./Submit";
 import Email from "./Email";
 import TextField from "./TextField";

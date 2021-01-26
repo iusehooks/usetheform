@@ -295,13 +295,13 @@ describe("Component => Form", () => {
       true
     );
 
-    const sexM = getByTestId("sexm");
-    fireEvent.click(sexM);
+    const genderM = getByTestId("genderm");
+    fireEvent.click(genderM);
 
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "M",
+        gender: "M",
         1: 1,
         2: 2
       },
@@ -314,7 +314,7 @@ describe("Component => Form", () => {
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "M",
+        gender: "M",
         1: 1
       },
       true
@@ -324,7 +324,7 @@ describe("Component => Form", () => {
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "M",
+        gender: "M",
         1: 1,
         3: 3
       },
@@ -365,12 +365,12 @@ describe("Component => Form", () => {
       true
     );
 
-    const sexF = getByTestId("sexf");
-    fireEvent.click(sexF);
+    const genderF = getByTestId("genderf");
+    fireEvent.click(genderF);
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "F",
+        gender: "F",
         1: 1,
         3: 3
       },
@@ -443,13 +443,13 @@ describe("Component => Form", () => {
       true
     );
 
-    const sexM = getByTestId("sexm");
-    fireEvent.click(sexM);
+    const genderM = getByTestId("genderm");
+    fireEvent.click(genderM);
 
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "M",
+        gender: "M",
         1: 1,
         2: 2
       },
@@ -462,7 +462,7 @@ describe("Component => Form", () => {
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "M",
+        gender: "M",
         1: 1
       },
       true
@@ -472,7 +472,7 @@ describe("Component => Form", () => {
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "M",
+        gender: "M",
         1: 1,
         3: 3
       },
@@ -513,12 +513,12 @@ describe("Component => Form", () => {
       true
     );
 
-    const sexF = getByTestId("sexf");
-    fireEvent.click(sexF);
+    const genderF = getByTestId("genderf");
+    fireEvent.click(genderF);
     expect(onChange).toHaveBeenCalledWith(
       {
         ...initialStateComplexForm,
-        sex: "F",
+        gender: "F",
         1: 1,
         3: 3
       },

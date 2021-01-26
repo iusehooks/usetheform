@@ -8,6 +8,7 @@ import {
   CollectionObjectDynamicField
 } from "./helpers/components/CollectionDynamicField";
 import CollectionDynamicAdded from "./helpers/components/CollectionDynamicAdded";
+import CollectionInputAsyncDynamicAdded from "./helpers/components/CollectionInputAsyncDynamicAdded";
 import CollectionValidation, {
   CollectionValidationTouched
 } from "./helpers/components/CollectionValidation";
@@ -585,7 +586,7 @@ describe("Component => Collection", () => {
       true
     );
   });
-  it("should add/remove fields dyncamically from a object Collection", () => {
+  it("should add/remove fields dynamically from an object Collection", () => {
     const props = { onInit, onChange };
     const children = [<CollectionObjectDynamicField key="1" />];
 
@@ -605,6 +606,72 @@ describe("Component => Collection", () => {
     });
 
     expect(onChange).toHaveBeenCalledWith({}, true);
+  });
+
+  it("should add/remove input fields with async validators dynamically from an array Collection", async () => {
+    const props = { onInit, onChange, onSubmit };
+    const children = [
+      <CollectionInputAsyncDynamicAdded key="1" />,
+      <Submit key="2" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+
+    const addInput = getByTestId("addInput");
+    const submit = getByTestId("submit");
+    const isValid = getByTestId("isValid");
+    const removeInput = getByTestId("removeInput");
+
+    expect(onInit).toHaveBeenCalledWith({}, true);
+    act(() => {
+      fireEvent.click(addInput);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ asyncCollection: ["1"] }, false);
+
+    expect(() => getByTestId("asyncNotStartedYet")).not.toThrow();
+    expect(() => getByTestId("asyncSuccess")).toThrow();
+    expect(() => getByTestId("asyncError")).toThrow();
+
+    const input = getByTestId("asyncinput");
+    act(() => {
+      input.focus();
+      input.blur();
+    });
+
+    const asyncError = await waitFor(() => getByTestId("asyncError"));
+    expect(asyncError).toBeDefined();
+
+    expect(submit.disabled).toBe(true);
+    expect(isValid.innerHTML).toBe("false");
+
+    act(() => {
+      fireEvent.click(submit);
+    });
+
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    act(() => {
+      fireEvent.change(input, { target: { value: "12345" } });
+    });
+
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    expect(asyncSuccess.innerHTML).toBe("Success");
+
+    expect(submit.disabled).toBe(false);
+    expect(isValid.innerHTML).toBe("true");
+
+    act(() => {
+      fireEvent.click(removeInput);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({}, true);
+
+    act(() => {
+      fireEvent.click(submit);
+    });
+
+    expect(onSubmit).toHaveBeenCalledWith({}, true);
   });
 
   it("should run reducer functions on Collection fields removal", () => {

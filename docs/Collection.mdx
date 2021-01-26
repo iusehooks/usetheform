@@ -67,7 +67,7 @@ Reducers functions specify how the Collection's value change.
 ## Basic usage
 
 ```javascript
-  import Form, { Input, Collection } from 'usetheform'
+  import { Form, Input, Collection } from 'usetheform'
 ```
 
 <Playground>
@@ -75,9 +75,9 @@ Reducers functions specify how the Collection's value change.
     <Collection object name="myObject">
       <Input type="text" name="name" placeholder="First Name" value="Foo" />
       <Input type="text" name="lastname" placeholder="Last Name" />
-      <Input type="radio" name="sex" placeholder="M" value="M" />
-      <Input type="radio" name="sex" placeholder="F" value="F" />
-      <Input type="radio" name="sex" placeholder="Other" value="Other" />
+      <Input type="radio" name="gender" placeholder="M" value="M" />
+      <Input type="radio" name="gender" placeholder="F" value="F" />
+      <Input type="radio" name="gender" placeholder="Other" value="Other" />
       <Input type="checkbox" name="one" value="one" placeholder="Opt 1" />
       <Input type="checkbox" name="two" value="two" placeholder="Opt 2" />
     </Collection>
@@ -93,7 +93,7 @@ Reducers functions specify how the Collection's value change.
 ### Nested Collections
 
 ```javascript
-  import Form, { Input, Collection } from 'usetheform'
+  import { Form, Input, Collection } from 'usetheform'
 ```
 
 <Playground>
@@ -121,7 +121,7 @@ Array Collection of Input fields with indexes handled automatically.
 
 ```javascript
 import React from "react";
-import Form { Input, Collection } from "usetheform";
+import { Form, Input, Collection } from "usetheform";
 ```
 
 <Playground>
@@ -159,7 +159,7 @@ const CustomInput = withIndex(({ type, name, value, index, ...restAttr }) => {
 Array Collection of Input fields with indexes handled maunally.
 
 ```javascript
-  import Form, { Input, Collection } from 'usetheform'
+  import { Form, Input, Collection } from 'usetheform'
 ```
 
 <Playground>
@@ -174,7 +174,7 @@ Array Collection of Input fields with indexes handled maunally.
 ## Reducers
 
 ```javascript
-  import Form, { Input, Collection } from 'usetheform'
+  import { Form, Input, Collection } from 'usetheform'
 ```
 
 <Playground>
@@ -204,7 +204,7 @@ Array Collection of Input fields with indexes handled maunally.
 Validation at Collection level starts only on form submission if the prop **`touched`** is false.
 
 ```javascript
-  import Form, { Input, Collection, useValidation } from 'usetheform'
+  import { Form, Input, Collection, useValidation } from 'usetheform'
 ```
 
 <Playground>

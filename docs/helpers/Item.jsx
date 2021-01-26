@@ -8,6 +8,7 @@ export const Item = ({ price = 10, qty = 1, desc }) => {
       <Collection object>
         <InputLabel
           type="number"
+          min={1}
           name="price"
           placeholder="Price $"
           value={price}
@@ -15,6 +16,7 @@ export const Item = ({ price = 10, qty = 1, desc }) => {
         <InputLabel
           type="number"
           name="qty"
+          min={1}
           placeholder="Quantity"
           value={qty}
         />
@@ -29,7 +31,7 @@ export const Item = ({ price = 10, qty = 1, desc }) => {
   );
 };
 
-export const recudeTotalPrice = formState => {
+export const reduceTotalPrice = formState => {
   const { items = [] } = formState;
   const totalPrice = items.reduce((total, { price = 0, qty = 0 }) => {
     total += price * qty;
@@ -38,7 +40,7 @@ export const recudeTotalPrice = formState => {
   return { ...formState, totalPrice };
 };
 
-export const recudeTotalQuantity = formState => {
+export const reduceTotalQuantity = formState => {
   const { items = [] } = formState;
   const totalQuantity = items.reduce((total, { qty = 0 }) => {
     total += qty;

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import Form, { Collection, Input, Select, TextArea } from "./../../../src";
+import { Form, Collection, Input, Select, TextArea } from "./../../../src";
 import Submit from "./Submit";
 import Email from "./Email";
 import TextField from "./TextField";
@@ -11,7 +11,7 @@ export const initialState = {
     lastname: "micky",
     email: "abc@test.it"
   },
-  sex: "F",
+  gender: "F",
   other: ["1", "3"],
   age: 20,
   date: "2019-11-14",
@@ -39,8 +39,8 @@ export const ComplexForm = props => {
           <TextField label="LastName" name="lastname" data-testid="lastname" />
           <Email name="email" />
         </Collection>
-        <Input type="radio" name="sex" data-testid="sexm" value="M" />
-        <Input type="radio" name="sex" data-testid="sexf" value="F" />
+        <Input type="radio" name="gender" data-testid="genderm" value="M" />
+        <Input type="radio" name="gender" data-testid="genderf" value="F" />
         <Collection array name="other">
           <Input type="checkbox" data-testid="other1" />
           <Input type="checkbox" data-testid="other2" />
@@ -94,8 +94,14 @@ export const ComplexFormInitValueAsProps = props => {
           />
           <Email name="email" value="abc@test.it" />
         </Collection>
-        <Input type="radio" name="sex" data-testid="sexm" value="M" />
-        <Input type="radio" name="sex" data-testid="sexf" value="F" checked />
+        <Input type="radio" name="gender" data-testid="genderm" value="M" />
+        <Input
+          type="radio"
+          name="gender"
+          data-testid="genderf"
+          value="F"
+          checked
+        />
         <Collection array name="other">
           <Input type="checkbox" data-testid="other1" value="1" checked />
           <Input type="checkbox" data-testid="other2" value="3" checked />
