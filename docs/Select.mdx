@@ -181,7 +181,7 @@ const Submit = () => {
           <option value="2">2</option>
           <option value="3">3</option>
         </Select>
-        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
         {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
         {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}

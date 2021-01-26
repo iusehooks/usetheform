@@ -1,10 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useValidators } from "./useValidators";
 import { useMapFields } from "./useMapFields";
+import { useValidationFunction } from "./commons/useValidationFunction";
+import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
 import { noop } from "./../utils/noop";
-import { STATUS } from "./../utils/constants";
+import { STATUS, FORM_VALIDATION_LABEL } from "./../utils/constants";
 import {
   createForm,
   isFormValid,
@@ -15,14 +17,22 @@ import {
 } from "./../utils/formUtils";
 
 const emptyStateValue = {};
+const validatorsDefault = [];
 
 export function useForm({
   initialState,
+  touched,
   onChange = noop,
   onReset = noop,
   onInit = noop,
   onSubmit = noop,
-  reducers = [],
+  onValidation = noop,
+  resetSyncErr = noop,
+  validators: validatorsFuncs = validatorsDefault,
+  resetAsyncErr = noop,
+  asyncValidator,
+  onAsyncValidation = noop,
+  reducers,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
@@ -54,13 +64,21 @@ export function useForm({
 
   const memoInitialState = useRef({ ...formState });
   const isMounted = useRef(false);
-
-  const { current: stillMounted } = useRef(() => isMounted.current);
+  const stillMounted = useCallback(() => isMounted.current, []);
 
   const [validators, addValidators, removeValidators] = useValidators(
     undefined,
     undefined,
     isMounted
+  );
+
+  const { validationMsg, validationObj, validationFN } = useValidationFunction(
+    validatorsFuncs
+  );
+
+  const [validationFNAsync] = useValidationFunctionAsync(
+    asyncValidator,
+    onAsyncValidation
   );
 
   const [
@@ -72,7 +90,7 @@ export function useForm({
     resetValidatorsMap
   ] = useValidators(undefined, undefined, isMounted, true);
 
-  const { current: applyReducers } = useRef(chainReducers(reducers));
+  const applyReducers = useMemo(() => chainReducers(reducers), []);
 
   const { unRegisterField, mapFields, updateRegisteredField } = useMapFields();
 
@@ -202,6 +220,7 @@ export function useForm({
     }
 
     const submitAttempts = prevAttempts + 1;
+
     if (
       isValid &&
       Object.keys(validatorsAsync.current).length > 0 &&
@@ -227,12 +246,10 @@ export function useForm({
 
       Promise.all(asyncArrayProm)
         .then(() => {
-          dispatchFormState({ ...stateRef.current, status, isValid: true });
-          if (
-            typeof action === "string" &&
-            typeof target.submit === "function"
-          ) {
+          if (typeof action === "string") {
             target.submit();
+          } else {
+            dispatchFormState({ ...stateRef.current, status, isValid: true });
           }
         })
         .catch(() => {
@@ -259,6 +276,26 @@ export function useForm({
     }
     propagateState(newState, false);
   }, []);
+
+  const isFormTouchedOnce = useRef(false);
+  const lastStateSyncCheck = useRef(null);
+  const triggerSyncValidation = useCallback(
+    (omitArg1, omitArg2, touchedEventField = true) => {
+      if (
+        lastStateSyncCheck.current !== stateRef.current.state &&
+        validationObj.current !== null &&
+        (isFormTouchedOnce.current ||
+          (touched && touchedEventField) ||
+          !touched)
+      ) {
+        isFormTouchedOnce.current = true;
+        lastStateSyncCheck.current = stateRef.current.state;
+        const { isValid, checks } = validationObj.current;
+        onValidation(checks, isValid);
+      }
+    },
+    []
+  );
 
   // used to register async validation Actions
   const asyncInitValidation = useRef({});
@@ -350,6 +387,20 @@ export function useForm({
   useEffect(() => {
     isMounted.current = true;
 
+    // Add its own validators
+    if (validatorsFuncs.length > 0) {
+      addValidators(FORM_VALIDATION_LABEL, validationFN.current);
+    }
+
+    // Add its own async validator func
+    if (typeof asyncValidator === "function") {
+      addValidatorsAsync(
+        FORM_VALIDATION_LABEL,
+        validationFNAsync.current,
+        null
+      );
+    }
+
     const pristine =
       (isMultipleForm &&
         (_getInitilaStateForm_(name) == undefined ||
@@ -375,11 +426,33 @@ export function useForm({
     dispatchFormState(stateRef.current);
   }, []);
 
+  useEffect(() => {
+    const formStatus = formState.status;
+    if (formStatus === STATUS.ON_RESET) {
+      isFormTouchedOnce.current = false;
+      lastStateSyncCheck.current = false;
+      resetSyncErr();
+      resetAsyncErr();
+    } else if (
+      formStatus !== STATUS.READY &&
+      formStatus !== STATUS.ON_INIT_ASYNC
+    ) {
+      if (validationObj.current !== null) {
+        triggerSyncValidation(false, true, false);
+      }
+
+      if (validationObj.current !== null && !validationObj.current.isValid) {
+        resetAsyncErr();
+      }
+    }
+  }, [validationMsg.current, formState.status]);
+
   return {
     ...formState, // { isValid, state, status, pristine, isSubmitting }
     formState: formState.state, // pass the global form state down
     formStatus: formState.status, // pass the global form status down
     mapFields: mapFields.current,
+    triggerSyncValidation,
     unRegisterField,
     updateRegisteredField,
     registerAsyncInitValidation,

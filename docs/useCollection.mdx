@@ -86,7 +86,7 @@ const CustomCollection = props => {
 import { useCollection } from "usetheform";
 
 const maxNumber10 = (nextValue, prevValue) => nextValue > 10 ? prevValue : nextValue;
-const minNumber1 = (nextValue, prevValue) => nextValue <= 0 ? prevValue : nextValue;
+const minNumber1 = (nextValue, prevValue) => nextValue <= 1 ? prevValue : nextValue;
 
 const CustomCollection = props => {
   const { value, state, updateCollection } = useCollection({

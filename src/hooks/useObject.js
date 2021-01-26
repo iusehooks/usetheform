@@ -3,10 +3,9 @@ import { useOwnContext } from "./useOwnContext";
 import { useNameProp } from "./commons/useNameProp";
 import { useMapFields } from "./useMapFields";
 import { useValidators } from "./useValidators";
-import { isValidValue } from "./../utils/isValidValue";
+import { validateProps } from "./../utils/validateProps";
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
-import { isValidIndex } from "./../utils/isValidIndex";
 import { useValidationFunction } from "./commons/useValidationFunction";
 import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync";
 import { STATUS } from "./../utils/constants";
@@ -42,13 +41,11 @@ export function useObject(props) {
   );
 
   if (process.env.NODE_ENV !== "production") {
-    const errMsg = validateProps(
+    validateProps(
+      "<Collection /> ",
       { ...props, index: nameProp.current },
       context.type
     );
-    if (errMsg) {
-      throw new Error(errMsg);
-    }
   }
 
   const { unRegisterField, mapFields, updateRegisteredField } = useMapFields(
@@ -258,8 +255,8 @@ export function useObject(props) {
           const { isValid, checks } = validationObj.current;
           onValidation(checks, isValid);
         }
-        if (propagate && context.triggerSyncValidation) {
-          context.triggerSyncValidation();
+        if (propagate) {
+          context?.triggerSyncValidation?.();
         }
       }
     },
@@ -300,7 +297,7 @@ export function useObject(props) {
       context.registerIndex(uniqueIDarrayContext, setNameProp);
     }
 
-    // Add the its own validators
+    // Add its own validators
     if (validatorsFuncs.length > 0) {
       context.addValidators(nameProp.current, validationFN.current);
     }
@@ -445,32 +442,4 @@ export function useObject(props) {
     unRegisterReset,
     triggerSyncValidation
   };
-}
-
-function validateProps(
-  { name, type, index, value, asyncValidator },
-  contextType
-) {
-  if (
-    typeof asyncValidator !== "undefined" &&
-    typeof asyncValidator !== "function"
-  ) {
-    return `The prop "asyncValidator" -> "${asyncValidator}" passed to "useField": ${name} of type: ${type} is not allowed. It must be a function`;
-  }
-
-  if (
-    typeof value !== "undefined" &&
-    ((type === "array" && value.constructor !== Array) ||
-      (type === "object" && typeof value !== "object"))
-  ) {
-    return `The prop "value": ${value} of type "${type}" passed to "${name} Collection" it is not allowed as initial value.`;
-  }
-
-  if (contextType === "array" && !isValidIndex(index)) {
-    return `The prop "index": ${index} of type "${typeof index}" passed to a Collection "${type}" must be either a string or number represent as integers.`;
-  }
-
-  if (!isValidValue(name, contextType)) {
-    return `The prop "name": ${name} of type "${typeof name}" passed to "${name} Collection" it is not allowed within context a of type "${contextType}".`;
-  }
 }

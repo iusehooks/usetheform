@@ -5,7 +5,11 @@ menu: Components
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { Input } from './../src';
+import { Submit } from "./helpers/Submit";
+import { asyncTestForm } from "./helpers/utils/index.js";
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { Item, recudeTotalPrice, recudeTotalQuantity } from "./helpers/Item";
+import { useValidation, useAsyncValidation, Collection } from './../src';
 
 # Form
 The Form is the most important component in Usetheform. It renders all the Fields and keeps synchronized the entire form state.
@@ -30,7 +34,7 @@ const onChange = (formState, isFormValid) => { // some operation }
 
 **`onReset`**: function
 
-A function invoked when the form has been reset to its initial State.
+A function invoked when the form has been resetted to its initial state.
 
 ```javascript
 const onReset = (formState, isFormValid) => { // some operation }
@@ -72,14 +76,20 @@ It is a plain object that rappresent the initial state of the form.
 An array whose values correspond to different reducing functions.
 Reducers functions specify how the Form's state change.
 
+**`touched`**: boolean
+
+Default value *false*. 
+
+If *true* sync validation messages will be showing only when the event onBlur of any forms's field is triggered by the user action at any level of nesting.
+
 **`action`**: string
 
 The action attribute specifies where to send the form-data when a form is submitted.
 
 Possible values:
 
- - An absolute URL - points to another web site (like action="http://www.example.com/example.htm")
- - A relative URL - points to a file within a web site (like action="example.htm")
+ - An absolute URL - points to another web site (like action="http://www.example.com/example.html")
+ - A relative URL - points to a file within a web site (like action="example.html")
 
 **`innerRef`**: object (a mutable ref object)
 
@@ -99,25 +109,27 @@ A simple form with the initial state passed as Form prop.
 ```javascript
   import Form, { Input } from 'usetheform'
 ```
+
 <Playground>
   <Form
     initialState={{ name: "foo", sex: "M", option1: true }}
     onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
     onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
-    onSubmit={(state, isFormValid) => console.log("SUBMIT", state, isFormValid)}
+    onSubmit={(state) => alert(JSON.stringify(state))}
   >
-    <Input type="text" name="name" />
-    <Input type="radio" name="sex" value="M" />
-    <Input type="radio" name="sex" value="F" />
-    <Input type="checkbox" name="option1" />
-    <Input type="checkbox" name="option2" />
+    <Input type="text" name="name" placeholder="Name" />
+    <Input type="radio" name="sex" value="M" placeholder="M" />
+    <Input type="radio" name="sex" value="F" placeholder="F" />
+    <Input type="radio" name="sex" value="Other" placeholder="Other" />
+    <Input type="checkbox" name="option1" placeholder="Option 1" />
+    <Input type="checkbox" name="option2" placeholder="Option 2" />
     <button type="submit">Submit</button>
   </Form>
 </Playground>
 
 ### Example 2
 
-A simple form with the initial state passed straight  to the Form's Field.
+A simple form with the initial state passed straight to the Form's Field.
 
 ```javascript
   import Form, { Input } from 'usetheform'
@@ -126,13 +138,14 @@ A simple form with the initial state passed straight  to the Form's Field.
   <Form
     onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
     onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
-    onSubmit={(state, isFormValid) => console.log("SUBMIT", state, isFormValid)}
+    onSubmit={(state) => alert(JSON.stringify(state))}
   >
-    <Input type="text" name="name" value="foo" />
-    <Input type="radio" name="sex" value="M" checked />
-    <Input type="radio" name="sex" value="F" />
-    <Input type="checkbox" name="option1" checked />
-    <Input type="checkbox" name="option2" />
+    <Input type="text" name="name" value="foo" placeholder="Name" />
+    <Input type="radio" name="sex" value="M" checked placeholder="M" />
+    <Input type="radio" name="sex" value="F" placeholder="F" />
+    <Input type="radio" name="sex" value="Other" placeholder="Other" />
+    <Input type="checkbox" name="option1" checked placeholder="Option 1" />
+    <Input type="checkbox" name="option2" placeholder="Option 2" />
     <button type="submit">Submit</button>
   </Form>
 </Playground>
@@ -140,28 +153,139 @@ A simple form with the initial state passed straight  to the Form's Field.
 ## Reducers
 
 ```javascript
-  import Form, { Input } from 'usetheform'
+import Form, { Collection } from 'usetheform';
+import { Item } from './components/Item';
+import { recudeTotalPrice, recudeTotalQuantity } from './components/Item/utils';
+```
+<Playground>
+  <Form reducers={[recudeTotalPrice, recudeTotalQuantity]}>
+    <Collection array name="items">
+      <Item price={5} desc="White Shoes" />
+      <Item price={3} desc="Red Bag" /> 
+      <Item price={6} desc="Blue Trouser" />
+      { /* try to copy and paste a new item within the items Collection */ }
+    </Collection>
+    <Input type="number" name="totalPrice" readOnly placeholder="Total Price $" />
+    <Input type="number" name="totalQuantity" readOnly placeholder="Total Quantity" />
+  </Form>
+</Playground>
+
+#### Detailed Explanation:
+
+```javascript
+export const Item = ({ price, qty }) => {
+  return (
+    <Collection object>
+      <Input type="number" name="price" placeholder="Price" value={price} />
+      <Input type="number" name="qty" placeholder="Quantity" value={qty} />
+    </Collection>
+  );
+}
+
+export const recudeTotalPrice = formState => {
+  const { items = [] } = formState;
+  const totalPrice = items.reduce((total, { price = 0, qty = 0 }) => {
+    total += price * qty;
+    return total;
+  }, 0);
+  return { ...formState, totalPrice };
+};
+
+export const recudeTotalQuantity = (formState) => { 
+  const { items = [] } = formState;
+  const totalQuantity = items.reduce((total, { qty = 0 }) => {
+    total += qty;
+    return total;
+  }, 0);
+  return { ...formState, totalQuantity };
+}; 
+```
+
+## Validation - Sync
+
+Validation at Form level:
+
+- **touched=false**: errors messages will be showing on Form initialization and when any Field is edited.
+- **touched=true**: errors messages will be showing when any Field at any level of nesting is touched/visited.
+
+```javascript
+  import Form, { Input, Collection, useValidation } from 'usetheform'
 ```
 
 <Playground>
 {() => {
-    const maxNumber10 = (nextState, prevState) => { 
-      if (nextState.myNumber > 10) {
-        nextState.myNumber = 10;
-      }
-      return nextState;
-    };
-    const minNumber1 = (nextState, prevState) => { 
-      if (nextState.myNumber <= 0) {
-        nextState.myNumber = 0;
-      }
-      return nextState;
-    };
+    const graterThan10 = ({ values }) => ((values && (values["A"] + values["B"] > 10)) ? undefined : "A+B must be > 10");
+    const [status, validationProps] = useValidation([graterThan10]);
     return (
-      <Form reducers={[minNumber1, maxNumber10]}>
-        <Input type="number" name="myNumber" value="1" />
+      <Form touched {...validationProps}>
+        <Collection object name="values" >
+          <Input type="number" name="A" placeholder="Number A" value="1" />
+          <Input type="number" name="B" placeholder="Number B" value="2" />
+        </Collection>
+        {status.error && <label>{status.error}</label>}
+        <button type="submit">Press to see results</button>
       </Form>
     )
   }
 }
 </Playground>
+
+## Validation - Async
+
+Async Validation for **Form** is triggered on Sumbit event. The form submission is prevented if the validation fails.
+It means that the onSubmit function passed as prop to the **Form** component will not be invoked.
+
+```javascript
+import { Form, Collection, Input, useAsyncValidation } from 'usetheform';
+```
+
+<Playground>
+{() => {
+    const [asyncStatus, validationProps] = useAsyncValidation(asyncTestForm);
+    const onSubmit = (state) => alert(JSON.stringify(state));
+    return (
+      <Form onSubmit={onSubmit} {...validationProps}>
+        <Collection object name="values">
+          <Input type="number" name="a" placeholder="Number A" value="1" />
+          <Input type="number" name="b" placeholder="Number B" value="2" />
+        </Collection>
+        {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+        {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}
+        <Submit />
+      </Form>
+    )
+  }
+}
+</Playground>
+
+#### Detailed Explanation:
+
+```javascript
+import { useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+
+export const asyncTestForm = ({ values }) =>
+  new Promise((resolve, reject) => {
+    // it could be an API call or any async operation
+    setTimeout(() => {
+      if (!values || !values.a || !values.b) {
+        reject("Emtpy values are not allowed ");
+      }
+      if (values.a + values.b >= 5) {
+        reject("The sum must be less than '5'");
+      } else {
+        resolve("Success");
+      }
+    }, 1000);
+  });
+```

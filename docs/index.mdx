@@ -5,17 +5,30 @@ route: /
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { Input, useValidation, Collection } from './../src';
+import { Reset } from "./helpers/Reset";
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { useValidation, Collection } from './../src';
 
-## What is usetheform about?
+## Getting Started
 
-Usetheform is a React library for composing declarative forms and managing their state. It uses the Context API and React Hooks. It does not depend on any library like redux or others.
+Welcome! 👋 Usetheform is a React library for composing declarative forms and managing their state. It does not depend on any external library like Redux, MobX or others, which makes it to be easily adoptedable without other dependencies.
 
-[![Package size](https://img.shields.io/bundlephobia/minzip/usetheform.svg)](https://bundlephobia.com/result?p=usetheform) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks)
+## Features
 
-✅ Zero dependencies 
+- Easy integration with other libraries. 👉🏻 [Play with React Select/Material UI](https://codesandbox.io/s/materialuireactselect-6ufc2) - [React Dropzone/MaterialUI Dropzone](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w).
+- Support Sync and Async validation at [Form](https://iusehooks.github.io/usetheform/docs-form#validation---sync), [Field](https://iusehooks.github.io/usetheform/docs-input#validation---sync) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#validation---sync) level. 👉🏻 [Play with Sync and Async validation](https://iusehooks.github.io/usetheform/docs-input#validation---sync).
+- Support [Yup](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormYUP.jsx), [Zod](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormZOD.jsx), [Superstruct](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormSuperStruct.jsx), [Joi](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormJOI.jsx) or custom. 👉🏻 [Play with YUP - ZOD - Superstruct - Joi validations](https://codesandbox.io/s/schema-validations-uc1m6).
+- Follows HTML standard for validation. 👉🏻 [Play with HTML built-in form validation](https://codesandbox.io/s/built-informvalidation-lp672?file=/src/Info.jsx).
+- Support reducers functions at [Form](https://iusehooks.github.io/usetheform/docs-form#reducers), [Field](https://iusehooks.github.io/usetheform/docs-input#reducers) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#reducers) level. 👉🏻 [Play with Reducers](https://iusehooks.github.io/usetheform/docs-form#reducers).
+- Easy to handle arrays, objects or nested collections. 👉🏻 [Play with nested collections](https://iusehooks.github.io/usetheform/docs-collection#nested-collections).
+- Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
+- Typescript supported.
 
-✅ Only peer dependencies: React >= 16.8.0
+## Motivation
+
+**usetheform** has been built having in mind the necessity of developing a lightweight library able to provide an easy API to build complex forms composed by nested levels (arrays, objects, custom inputs, etc.) with a declarative approach and without the need to include external libraries within your react projects.  
+
+It's easy to start using it in your existing project and gives you a full controll over Field, Collection at any level of nesting which makes easy to manipulate the form state based on your needs. Synchronous and asynchronous validations are simple and error messages easy to customize and display. If you find it useful please leave a star 🙏🏻.
 
 ## Installation
 
@@ -23,28 +36,38 @@ Usetheform is a React library for composing declarative forms and managing their
 npm install --save usetheform
 ```
 
-## Quickstart
+## ⚡ Quickstart
 
 <Playground>
-  <Form>
+  <Form onSubmit={(state) => alert(JSON.stringify(state))}>
     <Collection object name="user"> 
-      <Input type="text" name="name" value="BeBo" placeholder="Your Name..." />
-      <Input type="text" name="surname" placeholder="Your Surname..." />
+      <Input type="text" name="name" placeholder="Your Name" />
+      <Input type="text" name="surname" placeholder="Your Surname" />
     </Collection>
-    <Input type="radio" name="gender" value="M" />
-    <Input type="radio" name="gender" value="F" />
-    <Input type="radio" name="gender" value="Other" />
+    <Collection object name="nested"> 
+      <Collection object name="user"> 
+        <Input type="text" name="name" placeholder="Nested Name" />
+        <Input type="text" name="surname" placeholder="Nested Surname" />
+      </Collection>
+    </Collection>
+    <Input type="radio" name="gender" value="M" placeholder="M" />
+    <Input type="radio" name="gender" value="F" placeholder="F" />
+    <Input type="radio" name="gender" value="Other" placeholder="Other" />
     <Collection object name="options"> 
-      <Input type="checkbox" name="one" checked />
-      <Input type="checkbox" name="second" />
-    </Collection  >
+      <Input type="checkbox" name="one" checked placeholder="Opt 1" />
+      <Input type="checkbox" name="second" placeholder="Opt 2" />
+    </Collection>
     <Collection array name="media"> 
       <Input type="file" />
       <Input type="file" />
       <Input type="file" />
-    </Collection  >
+    </Collection>
+    <button type="submit">Submit</button>
+    <Reset />
   </Form>
 </Playground>
+
+🔎 [**Check out the Reset Button**](https://iusehooks.github.io/usetheform/docs-use-form#basic-usage)
 
 ## CodeSandbox Examples
 
@@ -55,6 +78,8 @@ npm install --save usetheform
 - Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)
 - FormContext: [Sandbox](https://codesandbox.io/s/formcontext-ukvc5)
 - Material UI - React Select: [Sandbox](https://codesandbox.io/s/materialuireactselect-6ufc2)
+- Validation using Yup, ZOD, JOI, Superstruct: [Sandbox](https://codesandbox.io/s/schema-validations-uc1m6)
+- React Dropzone - Material UI Dropzone: [Sandbox](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w)
 
 ## Author
 

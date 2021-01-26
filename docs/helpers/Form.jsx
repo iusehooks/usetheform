@@ -4,17 +4,17 @@ import JSONTree from "react-json-tree";
 
 export const Form = ({ onInit, onChange, onReset, ...props }) => {
   const [formState, setState] = useState({});
-  const onInitFN = state => {
-    onInit && onInit(state);
+  const onInitFN = (state, isValid) => {
+    onInit && onInit(state, isValid);
     setState(state);
   };
-  const onChangeFN = state => {
-    onChange && onChange(state);
+  const onChangeFN = (state, isValid) => {
+    onChange && onChange(state, isValid);
     setState(state);
   };
 
-  const onResetFN = state => {
-    onReset && onReset(state);
+  const onResetFN = (state, isValid) => {
+    onReset && onReset(state, isValid);
     setState(state);
   };
   return (

@@ -1,6 +1,6 @@
 {
   "name": "usetheform",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
@@ -69,6 +69,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-react": "^7.21.5",
+    "gatsby": "2.29.1",
     "gatsby-link": "^2.8.0",
     "gatsby-plugin-sass": "^2.8.0",
     "gatsby-react-router-scroll": "^3.4.0",

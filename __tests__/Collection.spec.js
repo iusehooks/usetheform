@@ -3,7 +3,10 @@ import { fireEvent, waitFor, cleanup, act } from "@testing-library/react";
 
 import { Input, Collection } from "./../src";
 
-import { CollectionDynamicCart } from "./helpers/components/CollectionDynamicField";
+import {
+  CollectionDynamicCart,
+  CollectionObjectDynamicField
+} from "./helpers/components/CollectionDynamicField";
 import CollectionDynamicAdded from "./helpers/components/CollectionDynamicAdded";
 import CollectionValidation, {
   CollectionValidationTouched
@@ -582,6 +585,27 @@ describe("Component => Collection", () => {
       true
     );
   });
+  it("should add/remove fields dyncamically from a object Collection", () => {
+    const props = { onInit, onChange };
+    const children = [<CollectionObjectDynamicField key="1" />];
+
+    const { getByTestId } = mountForm({ children, props });
+
+    const addInput = getByTestId("addInput");
+    const removeInput = getByTestId("removeInput");
+    expect(onInit).toHaveBeenCalledWith({}, true);
+    act(() => {
+      fireEvent.click(addInput);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({ dynamic: { 1: "1" } }, true);
+
+    act(() => {
+      fireEvent.click(removeInput);
+    });
+
+    expect(onChange).toHaveBeenCalledWith({}, true);
+  });
 
   it("should run reducer functions on Collection fields removal", () => {
     const props = { onSubmit, onChange, onReset };
@@ -650,6 +674,38 @@ describe("Component => Collection", () => {
       </Collection>
     ];
     expect(() => mountForm({ children })).toThrowError(/The prop "index"/i);
+
+    console.error = originalError;
+  });
+
+  it("should throw an error if the a prop 'name' is used within an array Collection", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [
+      <Collection key="1" array name="array">
+        <Input type="text" name="abc" />
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(
+      /it is not allowed within context a of type \"array\"/i
+    );
+
+    console.error = originalError;
+  });
+
+  it("should throw an error for an invalid 'asyncValidator' prop", () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    let children = [
+      <Collection key="1" array name="array" asyncValidator={true}>
+        <Collection object>
+          <Input type="text" name="test" />
+        </Collection>
+      </Collection>
+    ];
+    expect(() => mountForm({ children })).toThrowError(
+      /It must be a function/i
+    );
 
     console.error = originalError;
   });

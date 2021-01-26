@@ -10,7 +10,14 @@ function Form({
   onInit,
   onReset,
   onSubmit,
+  onValidation,
+  resetSyncErr,
+  validators,
+  asyncValidator,
+  onAsyncValidation,
+  resetAsyncErr,
   reducers,
+  touched,
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
@@ -20,10 +27,17 @@ function Form({
 }) {
   const { onSubmitForm, ...props } = useForm({
     initialState,
+    touched,
     onChange,
     onInit,
     onReset,
     onSubmit,
+    onValidation,
+    resetSyncErr,
+    validators,
+    asyncValidator,
+    onAsyncValidation,
+    resetAsyncErr,
     reducers,
     _getInitilaStateForm_,
     _onMultipleForm_,

@@ -98,6 +98,60 @@ describe("Component => Form", () => {
     expect(onInit).toHaveReturnedWith(initialState);
   });
 
+  it("should onInit Form callback called only once", () => {
+    const props = { onInit, onChange };
+    const { getByTestId } = render(<SimpleForm {...props} />);
+    const textField = getByTestId("name");
+
+    expect(onInit).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      fireEvent.change(textField, { target: { value: "Antonio" } });
+    });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onInit).toHaveBeenCalledTimes(1);
+  });
+
+  it("should onReset callback called only once", () => {
+    const props = { onReset, onChange };
+    const { getByTestId } = render(<SimpleForm {...props} />);
+    const textField = getByTestId("name");
+    const reset = getByTestId("reset");
+
+    act(() => {
+      fireEvent.change(textField, { target: { value: "Antonio" } });
+    });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      fireEvent.click(reset);
+    });
+
+    expect(onReset).toHaveBeenCalledTimes(1);
+  });
+
+  it("should test 'pristine' value after resetting form", () => {
+    const { getByTestId } = render(<SimpleForm />);
+    const textField = getByTestId("name");
+    const reset = getByTestId("reset");
+
+    expect(() => getByTestId("pristine")).not.toThrow();
+
+    act(() => {
+      fireEvent.change(textField, { target: { value: "Antonio" } });
+    });
+
+    expect(() => getByTestId("pristine")).toThrow();
+
+    act(() => {
+      fireEvent.click(reset);
+    });
+
+    expect(() => getByTestId("pristine")).not.toThrow();
+  });
+
   it("should override a initialized the Form state if Fields contain the value prop", () => {
     const initialState = {
       text: "foo",
@@ -625,10 +679,7 @@ describe("Component => Form", () => {
       user: { name: "foo", lastname: "anything", email: "anything@google.com" }
     };
 
-    const props = {
-      initialState,
-      action: "http://yourapiserver.com/submit"
-    };
+    const props = { initialState, action: "http://yourapiserver.com/submit" };
 
     const { getByTestId } = render(<SimpleForm {...props} />);
     const form = getByTestId("form");
@@ -636,6 +687,34 @@ describe("Component => Form", () => {
     const isNotPrevented = fireEvent.submit(form);
 
     expect(isNotPrevented).toBe(true);
+    console.error = originalError;
+  });
+
+  it("should `preventDefault` Form submission if action props is present and Async validation is applied at any level", async () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const initialState = { username: "BeBo" };
+
+    const props = {
+      onSubmit,
+      initialState,
+      action: "http://yourapiserver.com/submit"
+    };
+
+    const { getByTestId } = render(<SimpleFormWithAsync {...props} />);
+
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    expect(asyncSuccess).toBeDefined();
+    const submitbutton = getByTestId("submit");
+    expect(submitbutton.disabled).toBe(false);
+
+    const form = getByTestId("form");
+    form.submit = jest.fn();
+
+    const isNotPrevented = fireEvent.submit(form);
+    expect(isNotPrevented).toBe(false);
+    expect(onSubmit).not.toHaveBeenCalled();
+
     console.error = originalError;
   });
 
@@ -702,17 +781,37 @@ describe("Component => Form", () => {
     console.error = originalError;
   });
 
+  it("should <Submit /> button being enabled for a valid Form with Async Fields validators functions", async () => {
+    const originalError = console.error;
+    console.error = jest.fn();
+    const initialState = { username: "abcde" };
+
+    const props = { initialState, onSubmit };
+
+    const { getByTestId } = render(<SimpleFormWithAsync {...props} />);
+
+    const asyncinput = getByTestId("asyncinput");
+    expect(asyncinput.value).toBe(initialState.username);
+
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
+    expect(asyncStart).toBeDefined();
+
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    expect(asyncSuccess).toBeDefined();
+
+    expect(() => getByTestId("asyncError")).toThrow();
+
+    const submitbutton = getByTestId("submit");
+    expect(submitbutton.disabled).toBe(false);
+
+    console.error = originalError;
+  });
+
   it("should <Submit /> button being disabled for an a invalid Form with Async Fields validators functions", async () => {
     const originalError = console.error;
     console.error = jest.fn();
-    const initialState = {
-      username: "foo"
-    };
-
-    const props = {
-      initialState,
-      onSubmit
-    };
+    const initialState = { username: "foo" };
+    const props = { initialState, onSubmit };
 
     const { getByTestId } = render(<SimpleFormWithAsync {...props} />);
     const form = getByTestId("form");

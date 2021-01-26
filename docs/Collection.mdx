@@ -6,8 +6,9 @@ menu: Components
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
 import { Submit } from "./helpers/Submit";
+import { InputLabel as Input } from "./helpers/InputLabel";
 import { CustomInput } from "./helpers/CustomInput"
-import { Collection, useValidation, Input, useAsyncValidation } from './../src';
+import { Collection, useValidation, useAsyncValidation } from './../src';
 
 # Collection
 
@@ -45,13 +46,8 @@ The async validation messages will be showing only at form submission.
 ```javascript
 const [status, validation] = useValidation([anyValidationFunc])
 <Collection touched object name="myObject" {...validation}>
-    <Input
-      type="text"
-      name="name"
-      placeholder="Enter your name"
-      value="Foo"
-    />
-</ Collection>
+  <Input type="text" name="name" value="BeBo" />
+</Collection>
 {status.error && <label>{status.error}</label>}
 ```
 
@@ -77,12 +73,13 @@ Reducers functions specify how the Collection's value change.
 <Playground>
   <Form>
     <Collection object name="myObject">
-      <Input type="text" name="name" placeholder="Enter your name" value="Foo" />
-      <Input type="text" name="lastname" placeholder="Enter your Last Name" />
-      <Input type="radio" name="sex" value="M" />
-      <Input type="radio" name="sex" value="F" />
-      <Input type="checkbox" name="one" value="one" />
-      <Input type="checkbox" name="two" value="two" />
+      <Input type="text" name="name" placeholder="First Name" value="Foo" />
+      <Input type="text" name="lastname" placeholder="Last Name" />
+      <Input type="radio" name="sex" placeholder="M" value="M" />
+      <Input type="radio" name="sex" placeholder="F" value="F" />
+      <Input type="radio" name="sex" placeholder="Other" value="Other" />
+      <Input type="checkbox" name="one" value="one" placeholder="Opt 1" />
+      <Input type="checkbox" name="two" value="two" placeholder="Opt 2" />
     </Collection>
     <Collection array name="myArray">
       <Input type="number" placeholder="Enter value: 1" value="1" />
@@ -103,16 +100,16 @@ Reducers functions specify how the Collection's value change.
   <Form>
     <Collection object name="myObject">
       <Collection object name="user">
-        <Input type="text" name="name" value="foo" />
-        <Input type="text" name="lastname" value="foo" />
+        <Input type="text" name="name" placeholder="First Name" />
+        <Input type="text" name="lastname" placeholder="Last Name" />
         <Collection object name="info">
-          <Input type="tel" name="tel" value="1234" />
-          <Input type="text" name="website" value="www.google.com" />
+          <Input type="tel" name="tel" placeholder="Telephone" />
+          <Input type="text" name="website" placeholder="Personal Website" />
         </Collection>
       </Collection>
       <Collection array name="checkboxes">
-        <Input type="checkbox" value="one" />
-        <Input type="checkbox" value="two" />
+        <Input type="checkbox" value="one" placeholder="Opt 1" />
+        <Input type="checkbox" value="two" placeholder="Opt 2" />
       </Collection>
     </Collection>
   </Form>
@@ -128,12 +125,12 @@ import Form { Input, Collection } from "usetheform";
 ```
 
 <Playground>
-      <Form>
-        <Collection array name="numberList">
-          <Input label="One" type="number" value="1" />
-          <Input label="Two" type="number" value="2" />
-        </Collection>
-      </Form>
+  <Form>
+    <Collection array name="numberList">
+      <Input label="One" type="number" placeholder="Number 1" value="1" />
+      <Input label="Two" type="number" placeholder="Number 2" value="2" />
+    </Collection>
+  </Form>
 </Playground>
 
 <br />
@@ -166,18 +163,12 @@ Array Collection of Input fields with indexes handled maunally.
 ```
 
 <Playground>
-      <Form>
-        <Collection array name="numberList"  >
-          <label>
-            One: 
-            <Input type="number" index="0" value="1" />
-          </label>
-           <label>
-             Two:
-            <Input type="number" index="1" value="2" />
-          </label>
-        </Collection>
-      </Form>
+  <Form>
+    <Collection array name="numberList"  >
+      <Input type="number" index="0" value="1" placeholder="Number 1" />
+      <Input type="number" index="1" value="2" placeholder="Number 2" />
+    </Collection>
+  </Form>
 </Playground>
 
 ## Reducers
@@ -198,9 +189,9 @@ Array Collection of Input fields with indexes handled maunally.
     return (
       <Form>
         <Collection object name="person" reducers={fullNameFN}>
-          <Input type="text" name="name" value="foo" />
-          <Input type="text" name="lastname" value="pluto" />
-          <Input type="text" name="fullName" readOnly />
+          <Input type="text" name="name" value="foo" placeholder="First Name" />
+          <Input type="text" name="lastname" value="pluto" placeholder="Last Name" />
+          <Input type="text" name="fullName" readOnly placeholder="Full Name" />
         </Collection>
       </Form>
     )
@@ -210,7 +201,7 @@ Array Collection of Input fields with indexes handled maunally.
 
 ## Validation - Sync
 
-Validation for Collection starts only on form submission.
+Validation at Collection level starts only on form submission if the prop **`touched`** is false.
 
 ```javascript
   import Form, { Input, Collection, useValidation } from 'usetheform'
@@ -220,11 +211,13 @@ Validation for Collection starts only on form submission.
 {() => {
     const graterThan10 = value => ((value && (value["A"] + value["B"] > 10)) ? undefined : "A+B must be > 10");
     const [status, validation] = useValidation([graterThan10]);
+    const onSubmit = (state) => alert(JSON.stringify(state));
+    
     return (
-      <Form>
+      <Form onSubmit={onSubmit}>
         <Collection object name="sum" {...validation}>
-          <Input type="number" name="A" value="1" />
-          <Input type="number" name="B" value="2" />
+          <Input type="number" name="A" value="1" placeholder="Number A" />
+          <Input type="number" name="B" value="2" placeholder="Number B" />
         </Collection>
         {status.error && <label>{status.error}</label>}
         <button type="submit">Press to see results</button>
@@ -237,6 +230,7 @@ Validation for Collection starts only on form submission.
 ## Validation - Async
 
 Async Validation for Collections are triggered on Sumbit event, the form submission is prevented if the validation fails.
+It means that the onSubmit function passed as prop to the **Form** component will not be invoked.
 
 ```javascript
 import { useAsyncValidation, useForm } from 'usetheform'
@@ -265,14 +259,15 @@ const Submit = () => {
           }
         }, 1000);
     });
-    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+    const [asyncStatus, validationProps] = useAsyncValidation(asyncTest);
+    const onSubmit = (state) => alert(JSON.stringify(state));
     return (
-      <Form>
-        <Collection object name="sum" {...asyncValidation}>
-          <Input type="number" name="a" value="1" />
-          <Input type="number" name="b" value="2" />
+      <Form onSubmit={onSubmit}>
+        <Collection object name="sum" {...validationProps}>
+          <Input type="number" name="a" value="1" placeholder="Number A" />
+          <Input type="number" name="b" value="2" placeholder="Number B" />
         </Collection>
-        {asyncStatus.status === undefined && <label>asyncNotStartedYet</label>}
+        {asyncStatus.status === undefined && <label>Async Check Not Started Yet</label>}
         {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
         {asyncStatus.status === "asyncError" && <label>{asyncStatus.value}</label>}
         {asyncStatus.status === "asyncSuccess" && <label>{asyncStatus.value}</label>}

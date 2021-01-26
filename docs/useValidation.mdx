@@ -5,7 +5,8 @@ menu: Hooks
 
 import { Playground } from 'docz';
 import { Form } from "./helpers/Form";
-import { Input, useValidation } from './../src';
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { useValidation } from './../src';
 
 # useValidation
 `useValidation(functions: Array)` provides the validation logic to any Field.
@@ -48,7 +49,7 @@ An array that holds:
     const [status, validationAttr] = useValidation([required]);
     return (
       <Form>
-        <Input type="text" name="anyname" touched {...validationAttr} />
+        <Input type="text" name="username" touched placeholder="Username" {...validationAttr} />
         {status.error && <label>{status.error}</label>}
       </Form>
     )
