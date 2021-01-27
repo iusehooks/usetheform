@@ -4,7 +4,7 @@ import { useField, withIndex, useValidation } from "./../../../src";
 export const InputCustom = withIndex(
   ({ type, name, value, index, validators = [], touched, ...restAttr }) => {
     const [status, propsValidators] = useValidation(validators);
-    const props = useField({
+    const { setValue: omitsetValue, ...props } = useField({
       type,
       name,
       value,
@@ -12,6 +12,7 @@ export const InputCustom = withIndex(
       touched,
       ...propsValidators
     });
+
     return (
       <div>
         <input {...restAttr} {...props}></input>;
@@ -21,11 +22,33 @@ export const InputCustom = withIndex(
   }
 );
 
-export const InputUseField = withIndex(({ type, name, value }) => {
-  const props = useField({ type, name, value });
-  return (
-    <pre>
-      <code>{JSON.stringify(props.value)}</code>
-    </pre>
-  );
-});
+export const InputUseField = withIndex(
+  ({ type, name, index, value, validators, touched, ...inputProps }) => {
+    const [status, propsValidators] = useValidation(validators);
+
+    const props = useField({
+      type,
+      name,
+      index,
+      value,
+      touched,
+      ...propsValidators
+    });
+
+    return (
+      <div>
+        <pre>
+          <code>{JSON.stringify(props.value)}</code>
+        </pre>
+        <input
+          onBlur={props.onBlur}
+          onFocus={props.onFocus}
+          onChange={props.onChange}
+          {...inputProps}
+        />
+        {/* helps to change value */}
+        {status.error && <label data-testid="errorLabel">{status.error}</label>}
+      </div>
+    );
+  }
+);
