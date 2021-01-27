@@ -3,7 +3,10 @@ import { fireEvent, cleanup, act } from "@testing-library/react";
 import { Collection } from "./../../src";
 import { mountForm } from "./../helpers/utils/mountForm";
 import Submit from "./../helpers/components/Submit";
-import { InputCustom } from "./../helpers/components/InputCustom";
+import {
+  InputCustom,
+  InputUseField
+} from "./../helpers/components/InputCustom";
 import { CustomField } from "./../helpers/components/CustomField";
 import { InputCustomNoAutoIndex } from "./../helpers/components/InputCustomNoAutoIndex";
 
@@ -232,7 +235,7 @@ describe("Hooks => useField", () => {
     const props = { onChange };
     const name = "BeBo";
     const children = [
-      <InputCustom
+      <InputUseField
         key="1"
         type="custom"
         name={name}

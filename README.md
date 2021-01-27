@@ -48,7 +48,7 @@ npm install --save usetheform
 
 ```jsx
 import React from "react";
-import Form, { Input, useValidation } from "usetheform";
+import { Form, Input, useValidation } from "usetheform";
 
 const preventNegativeNumber = (next, prev) => (next <= 0 ? 0 : next);
 const required = (value) =>
@@ -81,7 +81,8 @@ It's easy to start using it in your existing project and gives you a full contro
 ## Author
 
 - Antonio Pangallo [@antonio_pangall](https://twitter.com/antonio_pangall)
-
+### &#8627; Stargazers
+[![Stargazers repo roster for @iusehooks/usetheform](https://reporoster.com/stars/iusehooks/usetheform)](https://github.com/iusehooks/usetheform/stargazers)
 ## Code Sandboxes
 
 - Twitter What's Happening Form Bar: [Sandbox](https://codesandbox.io/s/twitter-bar-form-czx3o)
