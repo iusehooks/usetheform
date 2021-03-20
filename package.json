@@ -99,8 +99,5 @@
     "hooks": {
       "pre-push": "npm test"
     }
-  },
-  "dependencies": {
-    "usetheform": "^3.4.0"
   }
 }
