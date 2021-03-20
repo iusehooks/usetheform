@@ -9,3 +9,5 @@ dev
 coverage
 _config.yml
 package-lock.json
+cypress/videos
+cypress/screenshots
