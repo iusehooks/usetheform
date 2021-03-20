@@ -4,18 +4,18 @@ const { default: Form, Collection } = UseTheForm;
 const { Reset, Submit, InputAsync, CollectionAsyncValidation, Email } = window;
 
 const initialState = {
-  username: "Antonio"
+  username: ""
 };
 
 window.SimpleFormWithAsync = props => (
-  <Form data-testid="form" initialState={initialState} {...props}>
+  <Form data-testid="formWithAsync" initialState={initialState} {...props}>
     <CollectionAsyncValidation />
     <Email />
     <InputAsync name="username" />
     <Collection object name="address">
-      <InputAsync name="city" value="Milan" />
+      <InputAsync name="city" value="" />
       <Collection array name="details">
-        <InputAsync value="333" />
+        <InputAsync value="" />
       </Collection>
     </Collection>
     <Submit />
