@@ -8,6 +8,6 @@ build
 dev
 coverage
 _config.yml
-package-lock.json
 cypress/videos
 cypress/screenshots
+cypress/integration/examples
