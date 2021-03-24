@@ -12,36 +12,36 @@ import { Collection, useValidation, useAsyncValidation } from './../src';
 
 # Collection
 
-It creates a nested piece of state within a Form. <br />
+Creates a nested piece of state within a Form. <br />
 A Collection can be of type: **object** or **array**.
 
 ## Props
 
 **`object`**: boolean
 
-It creates a collecion of type **object** if "true".
+- Creates a collection of type **object** if "true".
 
 **`array`**: boolean
 
-It creates a collecion of type **array** if "true".
+- Creates a collection of type **array** if "true".
 
 **`name`**: string
 
-A field's name in Usetheform state. <br />
-If your Collection is rendered within a `<Collection array />`, **name** is not allowed as prop.
+- A field's name in Usetheform state. <br />
+- If your Collection is rendered within a `<Collection array />`, **name** is not allowed as a prop.
 
 **`index`**: string
 
-A field's index in array Collection. <br />
-**index** is only allowed If your Collection is rendered within a `<Collection array /> `. 
+- A field's index in an array Collection. <br />
+- **index** is only allowed if your Collection is rendered within a `<Collection array /> `. 
 
 **`touched`**: boolean
 
-Default value *false*. 
+- Default value is *false*. 
 
-- **true**: sync validation messages will be showing only when the event onBlur of any collection's field is triggered by the user action at any level of nesting.
+  * **true**: sync validation messages will be showing only when the event onBlur of any collection's field is triggered by the user action at any level of nesting.
 The async validation messages will be showing only at form submission.
-- **false**: validation messages (sync and async) will be showing only at form submission.
+  * **false**: validation messages (sync and async) will be showing only at form submission.
 
 ```javascript
 const [status, validation] = useValidation([anyValidationFunc])
@@ -53,7 +53,7 @@ const [status, validation] = useValidation([anyValidationFunc])
 
 **`value`**: array | object
 
-Specifies the initial value of a *Collection*.
+- Specifies the initial value of a *Collection*.
 
 **`reducers`**: array | function
 
@@ -61,8 +61,8 @@ Specifies the initial value of a *Collection*.
 (nextValue, prevValue, formState) => nextValue
 ```
  
-An array whose values correspond to different reducing functions.
-Reducers functions specify how the Collection's value change.
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Collection's value changes.
 
 ## Basic usage
 
@@ -229,8 +229,8 @@ Validation at Collection level starts only on form submission if the prop **`tou
 
 ## Validation - Async
 
-Async Validation for Collections are triggered on Sumbit event, the form submission is prevented if the validation fails.
-It means that the onSubmit function passed as prop to the **Form** component will not be invoked.
+Async Validation for Collections is triggered on Submit event. The form submission is prevented if the validation fails.
+This means that the onSubmit function passed as prop to the **Form** component will not be invoked.
 
 ```javascript
 import { useAsyncValidation, useForm } from 'usetheform'
