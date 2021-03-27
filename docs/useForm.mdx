@@ -23,14 +23,14 @@ import { useValidation } from './../src';
 (**`helpers`**): object
 
 An object that holds:
-  - **`state`**: the current State of the entire Form.
-  - **`isValid`**: a boolean which tells whether the form has passed all the validations constrains or not.
-  - **`pristine`**: a boolean which tells whether the form fields have been modified or not.
-  - **`submitted`**: a number which counts the number of times the form has been submitted with success.
-  - **`submitAttempts`**: a number which counts the total number of submission attempts.
-  - **`reset`**: a helper function which resets the Form state to an initial State.
-  - **`formStatus`**: a string indicating the form status. It can be one of: "ON_CHANGE", "ON_SUBMIT", "ON_RESET", "ON_INIT".
-  - **`dispatch`**: a function used to update the form state. It accepts object which will be the new state of the form.
+  - **`state`**: the current state of the entire form.
+  - **`isValid`**: a boolean value indicating whether the form has passed all the validation constraints or not.
+  - **`pristine`**: a boolean value indicating whether the form fields have been modified or not.
+  - **`submitted`**: an integer which counts the number of times the form has been submitted with success.
+  - **`submitAttempts`**: an integer which counts the total number of submission attempts.
+  - **`reset`**: a helper function which resets the form's state to an initial State.
+  - **`formStatus`**: a string indicating the form's status. Can be a status of: "ON_CHANGE", "ON_SUBMIT", "ON_RESET", "ON_INIT".
+  - **`dispatch`**: a function used to update the form's state. It accepts object, which will be the new state of the form.
     ```javascript
       dispatch(prev => ({ ...prev, newProp }))
     ```
