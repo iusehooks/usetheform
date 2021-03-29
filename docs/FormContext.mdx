@@ -12,13 +12,13 @@ import { useForm, useSelector, Collection, useValidation, useAsyncValidation } f
 
 # FormContext
 
-It is a react component that provides a context of the "form" at wider level.
+A React component that provides a more in-depth context of the "Form".
 
 ## Props
 
 **`onInit`**: function
 
-A function invoked when the Form is initialized.
+- A function invoked when the Form is initialized.
 
 ```javascript
 const onInit = (formState, isFormValid) => { // some operation }
@@ -26,7 +26,7 @@ const onInit = (formState, isFormValid) => { // some operation }
 
 **`onChange`**: function
 
-A function invoked when any Form Field changes its value.
+- A function invoked when any Form Field changes its value.
 
 ```javascript
 const onChange = (formState, isFormValid) => { // some operation }
@@ -34,7 +34,7 @@ const onChange = (formState, isFormValid) => { // some operation }
 
 **`onReset`**: function
 
-A function invoked when the form has been reset to its initial State.
+- A function invoked when the form has been reset to its initial State.
 
 ```javascript
 const onReset = (formState, isFormValid) => { // some operation }
@@ -42,30 +42,30 @@ const onReset = (formState, isFormValid) => { // some operation }
 
 **`onSubmit`**: function
 
-A function invoked when the submit button has been pressed. 
-The function may return either a Promise or a boolean value true/false.
+- A function invoked when the submit button has been pressed. 
+- The function may return either a Promise or a boolean value of true/false.
 
 ```js
 const onSubmit = (formState) => { // some operation };
 const onSubmit = (formState) => new Promise((resolve, reject) => { // some async operation  });
 ```
 
-Cases:
- - If the function returns a Promise which is resolved it will increment the value named **submitted**.
- - If the function returns a boolean value `true` or no return at all it will increment the value named **submitted**.
- - If the function returns a Promise which is rejected the value named **submitted** will not be incremented.
- - If the function returns a boolean value `false` the value named **submitted** will not be incremented.
+- Cases:
+    * If the function returns a Promise which is resolved, it will increment the value named **submitted**.
+    * If the function returns a boolean value `true`, or no return at all, it will increment the value named **submitted**.
+    * If the function returns a Promise which is rejected, the value named **submitted** will not be incremented.
+    * If the function returns a boolean value `false`, the value named **submitted** will not be incremented.
 
 ```js
   const { submitted, submitAttempts } = useForm();
 ```
 
-It will be only invoked if your form passes all the validations added at any level (Collections or Fields).
-For each invokation the value **submitAttempts** will be incremented.
+- It will be only invoked if your form passes all validations added at any level (Collections or Fields).
+- For each invocation, the value **submitAttempts** will be incremented.
 
 **`initialState`**: object
 
-It is a plain object that rappresent the initial state of the form.
+- It is a plain object that represents the initial state of the form.
 
 **`reducers`**: array | function
 
@@ -73,14 +73,14 @@ It is a plain object that rappresent the initial state of the form.
 (nextState, prevState) => nextState
 ```
 
-An array whose values correspond to different reducing functions.
-Reducers functions specify how the Form's state change.
+- An array whose values correspond to different reducer functions.
+- Reducer functions specify how the Form's state changes.
 
 **`touched`**: boolean
 
-Default value *false*. 
+- Default value of *false*. 
 
-If *true* sync validation messages will be showing only when the event onBlur of any forms's field is triggered by the user action at any level of nesting.
+- If *true*, sync validation messages will be shown but only when the event onBlur of any forms's field is triggered by a user action at any level of nesting.
 
 ## Basic usage
 
@@ -162,8 +162,8 @@ export const Form = ({ children }) => {
 
 Validation at FormContext level:
 
-- **touched=false**: errors messages will be showing on FormContext initialization and when any Field is edited.
-- **touched=true**: errors messages will be showing when any Field at any level of nesting is touched/visited.
+- **touched=false**: error messages will be shown on FormContext initialization and when any Field is edited.
+- **touched=true**: error messages will be shown when any Field at any level of nesting is touched/visited.
 
 ```javascript
   import { FormContext, Input, Collection, useValidation } from 'usetheform'
@@ -191,8 +191,8 @@ Validation at FormContext level:
 
 ## Validation - Async
 
-Async Validation for **FormContext** is triggered on Sumbit event. The form submission is prevented if the validation fails.
-It means that the onSubmit function passed as prop to the **FormContext** component will not be invoked.
+Async Validation for **FormContext** is triggered on the Submit event. The form submission is prevented if the validation fails.
+This means that the onSubmit function passed as a prop to the **FormContext** component will not be invoked.
 
 ```javascript
 import { FormContext, Collection, Input, useAsyncValidation } from 'usetheform';

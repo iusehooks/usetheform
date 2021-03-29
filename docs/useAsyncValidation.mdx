@@ -19,7 +19,7 @@ import { useAsyncValidation } from './../src';
 
 **`validator`**: function
 
-  - A function which receive the value of the field and return a promise.
+  - A function which receives the value of the field and returns a promise.
 
 ## Returns
 
@@ -29,19 +29,18 @@ An array that holds:
 
   - **`asyncStatus`**: object
 
-  A plain object that holds a prop named `status` and a prop named `value`.
-  
+    - A plain object that holds a prop named `status` and a prop named `value`.
     - **`status`** might be one of the following:
       - "undefined" : async validation did not start yet
       - "asyncStart" : async validation has started
       - "asyncSuccess" : the promise has been resolved with success
       - "asyncError" : the promise has been rejected
 
-    - **`value`** the value returned by the promise 
+    - **`value`** is the value returned by the promise 
  
   - **`validationAsyncAttr`**: object
 
-  A plain object which contains all the props that must be spreaded to the Field.
+      - A plain object which contains all the props that must be spreaded to the Field.
 
 ## Basic usage
 

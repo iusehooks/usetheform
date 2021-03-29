@@ -11,37 +11,36 @@ import { InputLabel as Input } from "./helpers/InputLabel";
 import { useValidation, useAsyncValidation } from './../src';
 
 # Input
-It renders all the inputs of type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) and accepts as props any html attribute listed at: [Html Input Attributes](https://www.w3schools.com/tags/tag_input.asp).
+Renders all the inputs of the types listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) and accepts as props any html attribute listed at: [Html Input Attributes](https://www.w3schools.com/tags/tag_input.asp).
 
 ## Props
 
 **`type`**: string
 
-Type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp).
+- Type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp).
 
 **`name`**: string
 
-A field's name in Usetheform state. <br />
-If your Input is rendered within a `<Collection array />`, **name** is not allowed as prop.
+- A field's name in Usetheform state. <br />
+- If the Input is rendered within a `<Collection array />`, **name** is not allowed as prop.
 
 **`index`**: string
 
-A field's index in array Collection. <br />
-**index** is only allowed If your Input is rendered within a `<Collection array /> `. 
+- A field's index in an array Collection. <br />
+- **index** is only allowed if your Input is rendered within a `<Collection array /> `. 
 
 **`value`**: string | number
 
-Specifies the initial value of an *input* element.
+- Specifies the initial value of an *input* element.
 
 **`checked`**: boolean
 
-Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
+- Specifies whether an *input* element should be pre-selected or not (for type="checkbox" or type="radio").
 
 **`touched`**: boolean
 
-A field that has been touched/visited. Default value *false*. 
-
-If *true* validation messages (sync and async) will be showing only when the event onBlur of the field is triggered by the user action.
+- A field that has been touched/visited. Default value of *false*. 
+- If *true*, validation messages (sync and async) will be shown but only when the event onBlur of the field is triggered by a user action.
 
 **`reducers`**: array | function
 
@@ -49,12 +48,12 @@ If *true* validation messages (sync and async) will be showing only when the eve
 (nextValue, prevValue, formState) => nextValue
 ```
  
-An array whose values correspond to different reducing functions.
-Reducers functions specify how the Input's value change.
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Input's value changes.
 
 **`innerRef`**: object (a mutable ref object)
 
-When you need to access the underlying DOM node created by Input (e.g. to call focus), you can use a ref to store a reference to the input dom node.
+- When you need to access the underlying DOM node created by an Input (e.g. to call focus), you can use a ref to store a reference to the input dom node.
 
 ```javascript
 const ref = useRef(null)

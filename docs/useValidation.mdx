@@ -19,7 +19,7 @@ import { useValidation } from './../src';
 
 **`functions`**: array
 
-  - A validation function is a pure function which receives the field value and checks if wheater the value is valid or not, returning `undefined or null` if it is valid or a string with some custom message if it is not valid.
+  - A validation function is a pure function which receives the field value and checks whether the value is valid or not, returning `undefined or null` if it is valid, or a string with some custom message if it is not valid.
 
 ## Returns
 
@@ -30,12 +30,11 @@ An array that holds:
   - **`status`**: object
 
   A plain object that holds a prop named `error`.
-  The value of the `error` might be "undefined" if all validation functions
-  have passed the validation with success or a "string" if one of the validation functions return an error message.
+  The value of `error` might be "undefined", if all validation functions have passed the validation with success, or a "string" if one of the validation functions returns an error message.
 
   - **`validationAttr`**: object
 
-  A plain object which contains all the props that must be spreaded to the Field.
+  A plain object which contains all the props that must be spread to the field.
 
 ## Basic usage
 

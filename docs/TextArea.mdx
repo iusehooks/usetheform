@@ -9,29 +9,29 @@ import { Submit } from "./helpers/Submit";
 import { TextArea, useValidation, useAsyncValidation } from './../src';
 
 # TextArea
-It renders a *textarea* element: [W3schools Textarea](https://www.w3schools.com/tags/tag_textarea.asp) and accepts as props any html attribute listed at: [Html Textarea Attributes](https://www.w3schools.com/tags/tag_textarea.asp).
+Renders a *textarea* element ([W3schools Textarea](https://www.w3schools.com/tags/tag_textarea.asp)) and accepts as props any html attribute listed at: [Html Textarea Attributes](https://www.w3schools.com/tags/tag_textarea.asp).
 
 ## Props
 
 **`name`**: string
 
-A field's name in Usetheform state. <br />
-If your TextArea is rendered within a `<Collection array />`, **name** is not allowed as prop.
+- A field's name in Usetheform state. <br />
+- If the TextArea is rendered within a `<Collection array />`, **name** is not allowed as a prop.
 
 **`index`**: string
 
-A field's index in array Collection. <br />
-**index** is only allowed If your TextArea is rendered within a `<Collection array /> `.
+- A field's index in array Collection. <br />
+- **index** is only allowed if your TextArea is rendered within a `<Collection array /> `.
 
 **`value`**: string
 
-Specifies the initial value of an *textarea* element.
+- Specifies the initial value of an *textarea* element.
 
 **`touched`**: boolean
 
-A field that has been touched/visited. Default value *false*. 
+- A field that has been touched/visited. Default value of *false*. 
 
-If *true* validation messages (sync and async) will be showing only when the event onBlur of the field is triggered by the user action.
+- If *true*, validation messages (sync and async) will be shown but only when the event onBlur of the field is triggered by a user action.
 
 **`reducers`**: array | function
 
@@ -39,12 +39,12 @@ If *true* validation messages (sync and async) will be showing only when the eve
 (nextValue, prevValue, formState) => nextValue
 ```
  
-An array whose values correspond to different reducing functions.
-Reducers functions specify how the TextArea's value change.
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the TextArea's value change.
 
 **`innerRef`**: object (a mutable ref object)
 
-When you need to access the underlying DOM node created by TextArea (e.g. to call focus), you can use a ref to store a reference to the textarea dom node.
+- When you need to access the underlying DOM node created by TextArea (e.g. to call focus), you can use a ref to store a reference to the textarea dom node.
 
 ```javascript
 const ref = useRef(null)

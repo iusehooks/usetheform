@@ -4,7 +4,7 @@ menu: Hooks
 ---
 
 # useField
-`useField(options: Object)` allows to build a custom input primitives.
+`useField(options: Object)` allows custom input primitives to be built.
 
 ```javascript
   const fieldInputProps = useField(options)
@@ -16,50 +16,52 @@ menu: Hooks
 
   - **`type`**: string
   
-  Strings accepted: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) - "select" - "custom"
+    - Strings accepted: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) - "select" - "custom"
 
   - **`name`**: string
 
-  A field's name in Usetheform state. <br />
-  If your Field is rendered within a `<Collection array />`, **name** is not allowed as prop.
+    - A field's name in Usetheform state. <br />
+    - If your Field is rendered within a `<Collection array />`, **name** is not allowed as a prop.
 
   - **`index`**: string
 
-  A field's index in array Collection. <br />
-  **index** is only allowed If your Field is rendered within a `<Collection array /> `.
+    - A field's index in an array Collection. <br />
+    - **index** is only allowed if your Field is rendered within a `<Collection array /> `.
 
   - **`value`**: string | number | object (only for type="custom")
 
-  Specifies the initial value of an *input* element.
+    - Specifies the initial value of an *input* element.
 
   - **`checked`**: boolean
 
-  Specifies that an *input* element should be pre-selected or not (for type="checkbox" or type="radio"). Default value *false*.
+    - Specifies whether an *input* element should be pre-selected or not (for type="checkbox" or type="radio"). 
+    - Default value of *false*.
 
   - **`multiple`**: boolean
 
-  Valid only for type="select", when present, it specifies that multiple options can be selected at once. Default value *false*.
+    - Valid only when type="select".
+    -  When present, it specifies that multiple options can be selected at once. 
+    -  Default value of *false*.
 
   - **`touched`**: boolean
 
-  A field that has been touched/visited. Default value *false*. 
-
-  If *true* validation messages (sync and async) will be showing only when the event onBlur of the field is triggered by the user action.
+    - A field that has been touched/visited. 
+    - Default value of *false*. 
+    - If *true*, validation messages (sync and async) will be shown only when the event onBlur of the field is triggered by a user action.
 
   - **`reducers`**: array | function
+    - An array whose values correspond to different reducing functions.
+    - Reducer functions specify how the Input's value changes.
 
   ```js
   (nextValue, prevValue, formState) => nextValue
   ```
- 
-  An array whose values correspond to different reducing functions.
-  Reducers functions specify how the Input's value change.
 
 ## Returns
 
 (**`FieldInputProps`**): object
 
-An object that holds all the attributes of your field.
+  - An object that holds all the attributes of a field.
 
 
 ## Basic usage

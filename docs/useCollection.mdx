@@ -4,7 +4,8 @@ menu: Hooks
 ---
 
 # useCollection
-`useCollection(options: Object)` allows to build a custom Collection.
+`useCollection(options: Object)` allows a custom Collection to be built.
+
 A Collection can be of type: *object* or *array*.
 
 ```javascript
@@ -17,33 +18,33 @@ A Collection can be of type: *object* or *array*.
 
   - **`object`**: boolean
 
-  It creates a collecion of type **object** if "true".
+    - It creates a collection of type **object** if "true".
 
   - **`array`**: boolean
 
-  It creates a collecion of type **array** if "true".
+    - It creates a collection of type **array** if "true".
 
   - **`name`**: string
 
-  A field's name in Usetheform state. <br />
-  If it is rendered within a `<Collection array />`, **name** is not allowed as prop.
+    - A field's name in Usetheform state. <br />
+    - If it is rendered within a `<Collection array />`, **name** is not allowed as a prop.
 
   - **`index`**: string
 
-  A field's index in array Collection. <br />
-  **index** is only allowed If it is rendered within a `<Collection array /> `.
+    - A field's index in an array Collection. <br />
+    - **index** is only allowed if it is rendered within a `<Collection array /> `.
 
   - **`value`**: array | object
 
-  Specifies the initial value of an *Collection* which can be either an array or an object.
+    - Specifies the initial value of a *Collection* which can be either an array or an object.
 
   - **`reducers`**: array | function
+    - An array whose values correspond to different reducer functions.
+    - Reducer functions specify how the Collection's value changes.
 
 ```js
 (nextValue, prevValue, formState) => nextValue
 ```
-  An array whose values correspond to different reducing functions.
-  Reducers functions specify how the Collection's value change.
 
 ## Returns
 

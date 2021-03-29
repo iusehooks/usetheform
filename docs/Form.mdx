@@ -12,13 +12,13 @@ import { Item, reduceTotalPrice, reduceTotalQuantity } from "./helpers/Item";
 import { useValidation, useAsyncValidation, Collection } from './../src';
 
 # Form
-The Form is the most important component in Usetheform. It renders all the Fields and keeps synchronized the entire form state.
+The Form is the most important component in usetheform. It renders all the Fields and keeps the entire form state synchronized.
 
 ## Props
 
 **`onInit`**: function
 
-A function invoked when the Form is initialized.
+- A function invoked when the Form is initialized.
 
 ```javascript
 const onInit = (formState, isFormValid) => { // some operation }
@@ -26,7 +26,7 @@ const onInit = (formState, isFormValid) => { // some operation }
 
 **`onChange`**: function
 
-A function invoked when any Form Field changes its value.
+- A function invoked when any Form Field changes its value.
 
 ```javascript
 const onChange = (formState, isFormValid) => { // some operation }
@@ -34,7 +34,7 @@ const onChange = (formState, isFormValid) => { // some operation }
 
 **`onReset`**: function
 
-A function invoked when the form has been resetted to its initial state.
+- A function invoked when the form has been reset to its initial state.
 
 ```javascript
 const onReset = (formState, isFormValid) => { // some operation }
@@ -42,30 +42,30 @@ const onReset = (formState, isFormValid) => { // some operation }
 
 **`onSubmit`**: function
 
-A function invoked when the submit button has been pressed. 
-The function may return either a Promise or a boolean value true/false.
+- A function invoked when the submit button has been pressed. 
+- The function may return either a Promise or a boolean value of true/false.
 
 ```js
 const onSubmit = (formState) => { // some operation };
 const onSubmit = (formState) => new Promise((resolve, reject) => { // some async operation  });
 ```
 
-Cases:
- - If the function returns a Promise which is resolved it will increment the value named **submitted**.
- - If the function returns a boolean value `true` or no return at all it will increment the value named **submitted**.
- - If the function returns a Promise which is rejected the value named **submitted** will not be incremented.
- - If the function returns a boolean value `false` the value named **submitted** will not be incremented.
+- Cases:
+  * If the function returns a Promise which is resolved, it will increment the value named **submitted**.
+  * If the function returns a boolean value `true` or no return at all, it will increment the value named **submitted**.
+  * If the function returns a Promise which is rejected, the value named **submitted** will not be incremented.
+  * If the function returns a boolean value `false`, the value named **submitted** will not be incremented.
 
 ```js
   const { submitted, submitAttempts } = useForm();
 ```
 
-It will be only invoked if your form passes all the validations added at any level (Collections or Fields).
-For each invokation the value **submitAttempts** will be incremented.
+- It will be only invoked if the form passes all the validations added at any level (Collections or Fields).
+- For each invocation, the value **submitAttempts** will be incremented.
 
 **`initialState`**: object
 
-It is a plain object that rappresent the initial state of the form.
+- It is a plain object that represents the initial state of the form.
 
 **`reducers`**: array | function
 
@@ -73,27 +73,26 @@ It is a plain object that rappresent the initial state of the form.
 (nextState, prevState) => nextState
 ```
 
-An array whose values correspond to different reducing functions.
-Reducers functions specify how the Form's state change.
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Form's state changes.
 
 **`touched`**: boolean
 
-Default value *false*. 
+- Default value of *false*. 
 
-If *true* sync validation messages will be showing only when the event onBlur of any forms's field is triggered by the user action at any level of nesting.
+- If *true*, sync validation messages will be shown only when the event onBlur of any forms's field is triggered by the user action at any level of nesting.
 
 **`action`**: string
 
-The action attribute specifies where to send the form-data when a form is submitted.
+- The action attribute specifies where to send the form-data when a form is submitted.
 
-Possible values:
-
- - An absolute URL - points to another web site (like action="http://www.example.com/example.html")
- - A relative URL - points to a file within a web site (like action="example.html")
+- Possible values:
+  * An absolute URL - points to another web site (like action="http://www.example.com/example.html")
+  * A relative URL - points to a file within a web site (like action="example.html")
 
 **`innerRef`**: object (a mutable ref object)
 
-When you need to access the underlying DOM node created by Form (e.g. to call focus), you can use a ref to store a reference to the form dom node.
+- When you need to access the underlying DOM node created by Form (e.g. to call focus), you can use a ref to store a reference to the form dom node.
 
 ```javascript
 const ref = useRef(null)
@@ -206,8 +205,8 @@ export const reduceTotalQuantity = (formState) => {
 
 Validation at Form level:
 
-- **touched=false**: errors messages will be showing on Form initialization and when any Field is edited.
-- **touched=true**: errors messages will be showing when any Field at any level of nesting is touched/visited.
+- **touched=false**: error messages will be shown on Form initialization and when any Field is edited.
+- **touched=true**: error messages will be shown when any Field at any level of nesting is touched/visited.
 
 ```javascript
   import { Form, Input, Collection, useValidation } from 'usetheform'
@@ -233,7 +232,7 @@ Validation at Form level:
 
 ## Validation - Async
 
-Async Validation for **Form** is triggered on Sumbit event. The form submission is prevented if the validation fails.
+Async Validation for **Form** is triggered on Submit event. The form submission is prevented if the validation fails.
 It means that the onSubmit function passed as prop to the **Form** component will not be invoked.
 
 ```javascript
