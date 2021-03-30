@@ -40,6 +40,39 @@ Welcome! 👋 Usetheform is a React library for composing declarative forms and 
 - Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
 - Typescript supported.
 	@@ -74,28 +74,30 @@ export default function App() {
+  
+
+## :zap: Quickstart
+
+```sh
+npm install --save usetheform
+```
+
+```jsx
+import React from "react";
+import { Form, Input, useValidation } from "usetheform";
+
+const preventNegativeNumber = (next, prev) => (next <= 0 ? 0 : next);
+const required = (value) =>
+    value && value.trim() !== "" ? undefined : "Required";
+
+export default function App() {
+  const onChange = (formState) => console.log("ON_CHANGE : ", formState);
+  const onSubmit = (formState) => console.log("ON_SUBMIT : ", formState);
+
+  const [status, validation] = useValidation([required]);
+
+  return (
+    <Form onSubmit={onSubmit} onChange={onChange}>
+      <Input name="firstname" type="text" touched {...validation} />
+      {status.error && <span>{status.error}</span>}
+      <Input name="lastname" type="text" />
+      <Input name="age" type="number" value={18} reducers={preventNegativeNumber} />
+      <button type="submit">Submit</button>
+    </Form>
+  );
+}
+```
 
 ## Motivation
 
