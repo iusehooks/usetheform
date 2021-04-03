@@ -39,9 +39,7 @@ Welcome! 👋 Usetheform is a React library for composing declarative forms and 
 - Easy to handle arrays, objects or nested collections. 👉🏻 [Play with nested collections](https://iusehooks.github.io/usetheform/docs-collection#nested-collections).
 - Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
 - Typescript supported.
-	@@ -74,28 +74,30 @@ export default function App() {
   
-
 ## :zap: Quickstart
 
 ```sh
