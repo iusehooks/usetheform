@@ -8,3 +8,6 @@ build
 dev
 coverage
 _config.yml
+cypress/videos
+cypress/screenshots
+cypress/integration/examples
