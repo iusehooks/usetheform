@@ -30,7 +30,8 @@ export function useField(props) {
     checked: initialChecked = false,
     touched = false,
     multiple = false,
-    reducers
+    reducers,
+    isPersistent
   } = props;
 
   const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
@@ -263,14 +264,16 @@ export function useField(props) {
         if (validators.length > 0) {
           context.removeValidators(nameProp.current, validationFN.current);
         }
-        context.removeProp(
-          nameProp.current,
-          {
-            removeCurrent: true,
-            removeInitial: true
-          },
-          true
-        );
+        if (!isPersistent) {
+          context.removeProp(
+            nameProp.current,
+            {
+              removeCurrent: true,
+              removeInitial: true
+            },
+            true
+          );
+        }
         context.unRegisterReset(nameProp.current);
         if (context.type === "array") {
           context.removeIndex(uniqueIDarrayContext);

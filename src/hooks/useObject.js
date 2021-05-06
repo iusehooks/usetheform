@@ -31,7 +31,8 @@ export function useObject(props) {
     resetAsyncErr = noop,
     asyncValidator,
     onAsyncValidation = noop,
-    touched = false
+    touched = false,
+    isPersistent = false
   } = props;
 
   const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
@@ -379,15 +380,16 @@ export function useObject(props) {
           );
         }
         // ----- remove validators inerithed by children ----- //
-
-        context.removeProp(
-          nameProp.current,
-          {
-            removeCurrent: true,
-            removeInitial: true
-          },
-          true
-        );
+        if (!isPersistent) {
+          context.removeProp(
+            nameProp.current,
+            {
+              removeCurrent: true,
+              removeInitial: true
+            },
+            true
+          );
+        }
 
         context.unRegisterReset(nameProp.current);
         if (context.type === "array") {

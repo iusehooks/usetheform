@@ -16,7 +16,8 @@ export const Collection = withIndex(function Collection({
   validators,
   asyncValidator,
   onAsyncValidation,
-  resetAsyncErr
+  resetAsyncErr,
+  isPersistent
 }) {
   const type = object ? "object" : "array";
   const props = useObject({
@@ -31,7 +32,8 @@ export const Collection = withIndex(function Collection({
     resetSyncErr,
     asyncValidator,
     onAsyncValidation,
-    resetAsyncErr
+    resetAsyncErr,
+    isPersistent
   });
 
   const ctx = useMemo(() => props, [props.state, props.formStatus]);
