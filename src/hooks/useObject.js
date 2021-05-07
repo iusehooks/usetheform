@@ -379,7 +379,6 @@ export function useObject(props) {
           );
         }
         // ----- remove validators inerithed by children ----- //
-
         context.removeProp(
           nameProp.current,
           {

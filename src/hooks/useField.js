@@ -271,6 +271,7 @@ export function useField(props) {
           },
           true
         );
+
         context.unRegisterReset(nameProp.current);
         if (context.type === "array") {
           context.removeIndex(uniqueIDarrayContext);
