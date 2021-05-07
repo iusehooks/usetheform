@@ -12,8 +12,7 @@ export function useCollection({
   validators,
   asyncValidator,
   onAsyncValidation,
-  resetAsyncErr,
-  isPersistent
+  resetAsyncErr
 }) {
   const { changeProp, state: value, formState: state } = useObject({
     name,
@@ -26,8 +25,7 @@ export function useCollection({
     resetSyncErr,
     asyncValidator,
     onAsyncValidation,
-    resetAsyncErr,
-    isPersistent
+    resetAsyncErr
   });
 
   const updateCollection = useCallback(
