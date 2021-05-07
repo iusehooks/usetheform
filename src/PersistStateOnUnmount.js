@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { ContextObject as Context, useOwnContext } from "./hooks/useOwnContext";
 
+// REMOVE code
 export const PersistStateOnUnmount = function PersistStateOnUnmount({
   children
 }) {
