@@ -246,6 +246,8 @@ export function useField(props) {
 
       const newValue = applyReducers(val, initialValue, formState.current);
       context.initProp(nameProp.current, newValue, val);
+    } else if (validators.length > 0 && context.stillMounted()) {
+      context.runSyncValidation();
     }
 
     return () => {

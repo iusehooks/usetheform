@@ -36,7 +36,6 @@ const asyncTest = value =>
   new Promise((resolve, reject) => {
     // it could be an API call or any async operation
 
-    console.log("asyncTest", value.mailList);
     setTimeout(() => {
       if (!value && !value.user && !value.user.mailList) {
         reject("Empty are not allowed");

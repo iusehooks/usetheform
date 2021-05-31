@@ -1,6 +1,7 @@
 import React from "react";
-import { cleanup, fireEvent, act } from "@testing-library/react";
+import { cleanup, fireEvent, act, render } from "@testing-library/react";
 
+import { FormWithValidationAfterMounted } from "./helpers/components/FormWithValidationAfterMounted";
 import Reset from "./helpers/components/Reset";
 import { mountForm } from "./helpers/utils/mountForm";
 
@@ -36,6 +37,18 @@ describe("Component => Form (sync validation)", () => {
 
     errorLabel = getByTestId("errorLabel");
     expect(errorLabel.innerHTML).toBe("Mail not Valid");
+  });
+
+  it("should synchronously validate a Form if Fields are added after Form is mounted", () => {
+    const { getByTestId } = render(<FormWithValidationAfterMounted />);
+    const addBtn = getByTestId("addBtn");
+
+    act(() => {
+      fireEvent.click(addBtn);
+    });
+
+    const isValid = getByTestId("isValid");
+    expect(isValid.innerHTML).toBe("false");
   });
 
   it("should synchronously validate a Form with touched prop true", () => {
