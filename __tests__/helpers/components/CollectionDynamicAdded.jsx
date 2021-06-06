@@ -18,7 +18,7 @@ export default function CollectionDynamicAdded() {
     onlyNumberCollection
   ]);
 
-  const [collections, setCollection] = useChildren([]);
+  const [collections, setCollection] = useChildren();
   const index = useRef(0);
   const addCollection = () => {
     index.current = index.current + 1;

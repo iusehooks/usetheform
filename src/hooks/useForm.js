@@ -327,6 +327,13 @@ export function useForm({
     }
   }, []);
 
+  const runSyncValidation = useCallback(() => {
+    const isValid = isFormValid(validators.current, stateRef.current.state);
+
+    stateRef.current.isValid !== isValid &&
+      dispatchFormState({ ...stateRef.current, isValid });
+  }, []);
+
   const runAsyncValidation = useCallback(({ start, end }) => {
     if (start) {
       const status = STATUS.ON_RUN_ASYNC;
@@ -457,6 +464,7 @@ export function useForm({
     updateRegisteredField,
     registerAsyncInitValidation,
     runAsyncValidation,
+    runSyncValidation,
     dispatchNewState,
     changeProp,
     initProp,

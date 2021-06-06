@@ -379,7 +379,6 @@ export function useObject(props) {
           );
         }
         // ----- remove validators inerithed by children ----- //
-
         context.removeProp(
           nameProp.current,
           {
@@ -422,6 +421,7 @@ export function useObject(props) {
     formState: context.formState, // pass the global form state down
     formStatus: context.formStatus, // pass the global form status down
     runAsyncValidation: context.runAsyncValidation,
+    runSyncValidation: context.runSyncValidation,
     unRegisterField,
     updateRegisteredField,
     registerAsyncInitValidation,
