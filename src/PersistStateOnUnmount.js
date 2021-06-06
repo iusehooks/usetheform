@@ -1,11 +1,11 @@
-import React, { useCallback, memo } from "react";
+import React, { memo } from "react";
 import { ContextObject as Context, useOwnContext } from "./hooks/useOwnContext";
 
+const preventRemoval = () => false;
 export const PersistStateOnUnmount = memo(function PersistStateOnUnmount({
   children
 }) {
   const context = useOwnContext();
-  const removeProp = useCallback(() => false, []);
-  context.removeProp = removeProp;
-  return <Context.Provider value={context}>{children}</Context.Provider>;
+  const newContext = { ...context, removeProp: preventRemoval };
+  return <Context.Provider value={newContext}>{children}</Context.Provider>;
 });

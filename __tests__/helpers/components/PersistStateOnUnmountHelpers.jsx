@@ -12,6 +12,7 @@ import TextField from "./TextField";
 import Reset from "./Reset";
 
 export const initialState = {
+  keepValue: "keepValue",
   user: {
     name: "foo",
     lastname: "micky",
@@ -27,6 +28,12 @@ export const PersistStateOnUnmountHelpers = props => {
   const [showShowNestedInput, setShowNestedInput] = useState(true);
   const [showShowRadio, setShowRadio] = useState(true);
   const [showShowSelect, setShowShowSelect] = useState(true);
+
+  const [showkeepValue, setkeepValue] = useState(true);
+
+  const togglekeepValue = () => {
+    setkeepValue(prev => !prev);
+  };
 
   const toggleSelect = () => {
     setShowShowSelect(prev => !prev);
@@ -47,6 +54,14 @@ export const PersistStateOnUnmountHelpers = props => {
   return (
     <>
       <Form initialState={initialState} {...props}>
+        {showkeepValue && (
+          <Input
+            type="text"
+            name="keepValue"
+            data-testid="keepValue"
+            value="keepValue"
+          />
+        )}
         {showCollection && (
           <PersistStateOnUnmount>
             <Collection object name="user">
@@ -109,6 +124,14 @@ export const PersistStateOnUnmountHelpers = props => {
       </button>
       <button type="button" onClick={toggleSelect} data-testid="toggleSelect">
         toggleSelect
+      </button>
+
+      <button
+        type="button"
+        onClick={togglekeepValue}
+        data-testid="togglekeepValue"
+      >
+        togglekeepValue
       </button>
     </>
   );

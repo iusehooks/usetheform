@@ -42,6 +42,14 @@ describe("Component => PersistStateOnUnmount", () => {
     });
 
     expect(onChange).toHaveBeenCalledWith(stateExpected, true);
+
+    const togglekeepValue = getByTestId("togglekeepValue");
+
+    act(() => {
+      fireEvent.click(togglekeepValue);
+    });
+
+    expect(onChange).toHaveBeenCalledWith(stateExpected, true);
   });
 
   it("should Checkbox state persist on unmonuted", () => {
