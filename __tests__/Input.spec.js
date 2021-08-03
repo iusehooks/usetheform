@@ -9,6 +9,8 @@ import {
 import userEvent from "@testing-library/user-event";
 import { Input } from "./../src";
 import InputAsync from "./helpers/components/InputAsync";
+import Radio from "./helpers/components/Radio";
+import CheckBox from "./helpers/components/CheckBox";
 import InputSyncValidation from "./helpers/components/InputSyncValidation";
 import Submit from "./helpers/components/Submit";
 import Reset from "./helpers/components/Reset";
@@ -396,7 +398,22 @@ describe("Component => Input", () => {
       input.blur();
     });
 
-    const errorLabel = getByTestId("errorLabel");
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      input.focus();
+      fireEvent.change(input, { target: { value: "1234" } });
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    act(() => {
+      input.focus();
+      fireEvent.change(input, { target: { value: "" } });
+    });
+
+    errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
 
     const reset = getByTestId("reset");
@@ -460,6 +477,84 @@ describe("Component => Input", () => {
     fireEvent.click(reset);
     expect(onReset).toHaveBeenCalledWith({ [name]: value }, true);
 
+    expect(() => getByTestId("errorLabel")).toThrow();
+  });
+
+  it("should use sync validator functions to validate a Radio input", () => {
+    const props = { onReset, onChange };
+    const children = [
+      <Radio name="radio" key="1" value="1" />,
+      <Reset key="2" />,
+      <Submit forceEnable={true} key="3" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+    const radio = getByTestId("radio");
+
+    act(() => {
+      fireEvent.click(submit);
+    });
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      radio.focus();
+      fireEvent.click(radio);
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    act(() => {
+      fireEvent.click(reset);
+    });
+    expect(onReset).toHaveBeenCalledWith({}, false);
+    expect(() => getByTestId("errorLabel")).toThrow();
+  });
+
+  it("should use sync validator functions to validate a Checkbox input", () => {
+    const props = { onReset, onChange };
+    const children = [
+      <CheckBox name="checkbox" key="1" value="1" />,
+      <Reset key="2" />,
+      <Submit forceEnable={true} key="3" />
+    ];
+
+    const { getByTestId } = mountForm({ children, props });
+
+    const submit = getByTestId("submit");
+    const reset = getByTestId("reset");
+    const checkBox = getByTestId("checkbox");
+
+    act(() => {
+      fireEvent.click(submit);
+    });
+
+    let errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      checkBox.focus();
+      fireEvent.click(checkBox);
+    });
+
+    expect(() => getByTestId("errorLabel")).toThrow();
+
+    act(() => {
+      checkBox.focus();
+      fireEvent.click(checkBox);
+    });
+
+    errorLabel = getByTestId("errorLabel");
+    expect(errorLabel).toBeDefined();
+
+    act(() => {
+      fireEvent.click(reset);
+    });
+    expect(onReset).toHaveBeenCalledWith({}, false);
     expect(() => getByTestId("errorLabel")).toThrow();
   });
 

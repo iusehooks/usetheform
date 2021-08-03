@@ -104,6 +104,7 @@ export function useField(props) {
   const reset = useCallback(formState => {
     valueFieldLastAsyncCheck.current = null;
     valueFieldLastSyncCheck.current = null;
+    onFirstBlur.current = false;
 
     switch (type) {
       case "number":
@@ -307,7 +308,8 @@ export function useField(props) {
       context.formStatus !== STATUS.ON_INIT_ASYNC
     ) {
       const firstTimeCheck = valueFieldLastSyncCheck.current === null;
-      const onlyShowOnSubmit = type === "radio" || type === "checkbox";
+      const isRadioOrCheckBox = type === "radio" || type === "checkbox";
+      const onlyShowOnSubmit = isRadioOrCheckBox;
       const isCustomCmp = type === "custom";
       const forceOnBlur = type === "select" && multiple;
 
@@ -318,14 +320,18 @@ export function useField(props) {
           (isCustomCmp && touched && onSyncBlurState) ||
           context.formStatus === STATUS.ON_SUBMIT ||
           (!onlyShowOnSubmit &&
-            ((touched && onSyncBlurState) ||
+            ((touched && onFirstBlur.current) ||
               (!touched &&
                 forceOnBlur &&
                 (onSyncBlurState || firstTimeCheck)) ||
               (!touched && !forceOnBlur))) ||
           (onlyShowOnSubmit && onSyncFocusState))
       ) {
-        valueFieldLastSyncCheck.current = valueField.current;
+        if (isRadioOrCheckBox) {
+          valueFieldLastSyncCheck.current = checkedField.current;
+        } else {
+          valueFieldLastSyncCheck.current = valueField.current;
+        }
 
         onValidation(
           validationObj.current.checks,
@@ -371,8 +377,10 @@ export function useField(props) {
     context.formStatus
   ]);
 
+  const onFirstBlur = useRef(false);
   const onBlur = useCallback(e => {
     e.persist();
+    onFirstBlur.current = true;
     setAsyncOnBlur(true);
     setSyncOnBlur(true);
     customBlur(e);
