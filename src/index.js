@@ -4,6 +4,7 @@ export { Input } from "./Input";
 export { Select } from "./Select";
 export { TextArea } from "./TextArea";
 export { Collection } from "./Collection";
+export { PersistStateOnUnmount } from "./PersistStateOnUnmount";
 export { FormContext } from "./FormContext";
 export { getValueByPath } from "./utils/formUtils";
 export { STATUS } from "./utils/constants";

@@ -5,6 +5,7 @@ declare module "usetheform" {
     export const Select: any;
     export const TextArea: any;
     export const Collection: any;
+    export const PersistStateOnUnmount: any;
     export const FormContext: any;
     export const getValueByPath: any;
     export const STATUS: any;
