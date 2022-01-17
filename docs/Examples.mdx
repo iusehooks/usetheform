@@ -1,0 +1,37 @@
+---
+name: Examples
+route: /Examples
+---
+
+import { Playground } from 'docz';
+import { Form } from "./helpers/Form";
+import { Submit } from "./helpers/Submit";
+import { asyncTestForm } from "./helpers/utils/index.js";
+import { InputLabel as Input } from "./helpers/InputLabel";
+import { Item, reduceTotalPrice, reduceTotalQuantity } from "./helpers/Item";
+import { useValidation, useAsyncValidation, Collection } from './../src';
+
+# Examples
+
+Here are some examples of usetheform
+
+## Form 
+
+The Form is the most important component in usetheform. It renders all the Fields and keeps the entire form state synchronized.
+
+<Playground>
+  <Form
+    initialState={{ name: "foo", gender: "M", option1: true }}
+    onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
+    onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
+    onSubmit={(state) => alert(JSON.stringify(state))}
+  >
+    <Input type="text" name="name" placeholder="Name" />
+    <Input type="radio" name="gender" value="M" placeholder="M" />
+    <Input type="radio" name="gender" value="F" placeholder="F" />
+    <Input type="radio" name="gender" value="Other" placeholder="Other" />
+    <Input type="checkbox" name="option1" placeholder="Option 1" />
+    <Input type="checkbox" name="option2" placeholder="Option 2" />
+    <button type="submit">Submit</button>
+  </Form>
+</Playground>
