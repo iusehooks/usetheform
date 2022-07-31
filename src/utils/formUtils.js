@@ -1,14 +1,17 @@
 import { STATUS, FORM_VALIDATION_LABEL } from "./constants";
 
-export const createForm = (state = {}) => ({
-  state,
-  isValid: true,
-  status: STATUS.READY,
-  pristine: true,
-  isSubmitting: false,
-  submitAttempts: 0,
-  submitted: 0
-});
+export const createForm = (state = {}, formStore) => {
+  formStore({ state, mapFields: {} });
+  return {
+    state,
+    isValid: true,
+    status: STATUS.READY,
+    pristine: true,
+    isSubmitting: false,
+    submitAttempts: 0,
+    submitted: 0
+  };
+};
 
 export const getValueByPath = (path, obj, separator = "/") => {
   if (path === FORM_VALIDATION_LABEL) {

@@ -18,4 +18,5 @@ declare module "usetheform" {
     export const useCollection: any;
     export const useMultipleForm: any;
     export const withIndex: any;
+    export const createFormStore: any;
   }

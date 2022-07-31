@@ -136,7 +136,7 @@ import { Form, Input, Collection } from "usetheform";
 <br />
 Array Collection of Input fields with indexes handled automatically for custom Inputs.
 
-```javascript
+```jsx
 import React from "react";
 import { withIndex, useField, Collection } from "usetheform";
 
@@ -232,7 +232,7 @@ Validation at Collection level starts only on form submission if the prop **`tou
 Async Validation for Collections is triggered on Submit event. The form submission is prevented if the validation fails.
 This means that the onSubmit function passed as prop to the **Form** component will not be invoked.
 
-```javascript
+```jsx
 import { useAsyncValidation, useForm } from 'usetheform'
 
 const Submit = () => {

@@ -6,7 +6,8 @@ const {
   useValidation,
   useField,
   Collection,
-  useAsyncValidation
+  useAsyncValidation,
+  createFormStore
 } = UseTheForm;
 
 const { useState } = React;
@@ -35,10 +36,10 @@ const CustomField = ({ name, value = { a: "2" } }) => {
 const asyncTest = value =>
   new Promise((resolve, reject) => {
     // it could be an API call or any async operation
-
     setTimeout(() => {
-      if (!value && !value.user && !value.user.mailList) {
+      if (!value || !value.user || !value.user.mailList) {
         reject("Empty are not allowed");
+        return;
       }
 
       if (!value.user.mailList[0]) {
@@ -49,40 +50,76 @@ const asyncTest = value =>
     }, 1000);
   });
 
+const [formStore, useSelector] = createFormStore();
+const CustomFieldInputFooBefore = () => {
+  const [value, setFieldValue] = useSelector(state => state.foo, { foo: 789 });
+  const onChange = () => setFieldValue("123");
+
+  return (
+    <div>
+      <pre>
+        <span>FIELD 4 BEFORE FORM MOUNT:</span>{" "}
+        <code>{JSON.stringify(value)}</code>
+      </pre>
+      <button type="button" onClick={onChange}>
+        Change CustomFieldInputFooBefore
+      </button>
+    </div>
+  );
+};
+
+const CustomFieldInputFooAfter = () => {
+  const [value, setFormState] = useSelector(state => state.foo, { foo: 789 });
+  const onChange = () => setFormState("999");
+
+  return (
+    <div>
+      <pre>
+        <span>FIELD 5 AFTER FORM MOUNT:</span>{" "}
+        <code>{JSON.stringify(value)}</code>
+      </pre>
+      <button type="button" onClick={onChange}>
+        Change CustomFieldInputFooAfter
+      </button>
+    </div>
+  );
+};
+
 window.SimpleForm = () => {
   const [input, validationInput] = useValidation([
-    val => {
-      return val && val.length > 3 ? undefined : "error";
-    }
+    val => (!val || (val && val.length <= 0) ? undefined : "error")
   ]);
 
   const [remove, setRemove] = useState(false);
-
-  const [statusForm, validationFormProp] = useValidation([isArrayOfMailValid]);
 
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
 
   return (
     <div>
+      {!remove && <CustomFieldInputFooBefore />}
+
       <Form
+        formStore={formStore}
         onSubmit={state => console.log("onSubmit => ", state)}
         {...asyncValidation}
       >
-        {statusForm.error && <label>{statusForm.error}</label>}
         {asyncStatus.status === "asyncError" && (
           <label>{asyncStatus.value}</label>
         )}
+        <Input type="text" value="789" name="foo" {...validationInput} />
 
         <Collection object name="user">
           <Collection array name="mailList">
-            <Input data-testid="email1" type="text" />
-            <Input data-testid="email2" type="text" />
+            <Input type="text" />
+            <Input type="text" />
           </Collection>
         </Collection>
         <Submit />
-        <button type="submit">Press to see results</button>
+        <button type="submit">Subimt Form</button>
+
         <Reset />
       </Form>
+      {!remove && <CustomFieldInputFooAfter />}
 
       <button onClick={() => setRemove(true)} type="button">
         Remove

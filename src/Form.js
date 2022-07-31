@@ -22,6 +22,7 @@ function Form({
   _onMultipleForm_, // Private API
   name,
   action,
+  formStore,
   innerRef,
   ...rest
 }) {
@@ -42,7 +43,8 @@ function Form({
     _getInitilaStateForm_,
     _onMultipleForm_,
     name,
-    action
+    action,
+    formStore
   });
 
   const ctx = useMemo(() => props, [

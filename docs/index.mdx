@@ -68,6 +68,65 @@ npm install --save usetheform
 
 🔎 [**Check out the Reset Button**](https://iusehooks.github.io/usetheform/docs-use-form#basic-usage)
 
+## 📖 Recipes
+
+### Need to read or manipulate Form's Fields anywhere outside Form context?
+
+#### 🙈 First: create a form store
+
+```jsx
+import { createFormStore } from 'usetheform';
+
+const [formStore, useFormSelector] = createFormStore({ counter: 0 });
+
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+#### 🙉 Next: create your awesome Form
+
+```jsx
+import { Form } from 'usetheform';
+import { awesomeFormStore } from './awesomeFormStore';
+
+export default function AwesomeForm() {
+  return (
+    <>
+      <Form formStore={awesomeFormStore}>
+        <Input type="number" name="counter" value="0" placeholder="Counter" />
+      </Form>
+      <Counter />
+    </>
+  );
+}
+```
+
+#### 🙊 Finally: bind your components, and that's it!
+
+Use the `useAwesomeFormSelector` hook anywhere, no providers needed. Select your state and the component will re-render on changes.
+
+```jsx
+import { useAwesomeFormSelector } from './awesomeFormStore'
+
+export const Counter = () => {
+  const [counter, setCounterValue] = useAwesomeFormSelector((state) => state.counter);
+  return (
+    <div>
+      <span>{counter}</span>
+      <button type="button" onClick={() => setCounterValue((prev) => ++prev)}>
+        Increase Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue((prev) => --prev)}>
+        Decrease Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue(0)}>
+        Reset Counter
+      </button>
+    </div>
+  );
+}
+```
+
 ## CodeSandbox Examples
 
 - Twitter 'What's Happening' Form Bar: [Sandbox](https://codesandbox.io/s/twitter-bar-form-czx3o)

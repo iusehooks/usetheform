@@ -51,7 +51,7 @@ It accepts, as props, any html attribute listed at: [Html Select Attributes](htt
 
 - When you need to access the underlying DOM node created by Select (e.g. to call focus), you can use a ref to store a reference to the select dom node.
 
-```javascript
+```jsx
 const ref = useRef(null)
 <Select innerRef={ref} name="test">...options...</Select>
 ```
@@ -145,7 +145,7 @@ const ref = useRef(null)
 
 ## Validation - Async
 
-```javascript
+```jsx
 import { useAsyncValidation, useForm } from 'usetheform'
 
 const Submit = () => {

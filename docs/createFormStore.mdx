@@ -1,0 +1,88 @@
+---
+name: createFormStore
+menu: API Reference
+---
+
+# createFormStore
+`createFormStore(initialFormState: Object)` creates a read-only form store that holds the state tree of your Form and the hook function to select a "Field" from the Form state.
+
+## Arguments
+
+**`initialFormState`**: object 
+
+## Returns
+
+**`helpers`** : array
+
+An array that holds the form store and the hook function to select a "Field" from the Form state.
+
+## Basic usage
+
+### 🙈 First: create a form store
+
+```javascript
+import { createFormStore } from 'usetheform';
+
+const [formStore, useFormSelector] = createFormStore({ counter: 0 });
+
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+### 🙉 Next: create your awesome Form
+
+```jsx
+import { Form } from 'usetheform';
+import { awesomeFormStore } from './formStore';
+
+export default function AwesomeForm() {
+  return (
+    <>
+      <Form formStore={awesomeFormStore}>
+        <Input type="number" name="counter" value="0" placeholder="Counter" />
+      </Form>
+      <Counter />
+    </>
+  );
+}
+```
+
+### 🙊 Finally: bind your components, and that's it!
+
+Use the `useAwesomeFormSelector` hook anywhere, no providers needed. Select your state and the component will re-render on changes.
+
+```jsx
+import { useAwesomeFormSelector } from './formStore'
+
+export const Counter = () => {
+  const [counter, setCounterValue] = useAwesomeFormSelector((state) => state.counter);
+  return (
+    <div>
+      <span>{counter}</span>
+      <button type="button" onClick={() => setCounterValue((prev) => ++prev)}>
+        Increase Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue((prev) => --prev)}>
+        Decrease Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue(0)}>
+        Reset Counter
+      </button>
+    </div>
+  );
+}
+```
+
+The `<Counter />` component will re-render on changes.
+
+**IMPORTANT**: Multiple field-selections within the same selector function are not allowed.
+
+```javascript
+// BAD 👎 ❌
+const [counter, setCounter] = useFormSelector(state => ({ counter1 : state.counter1, counter2 : state.counter2 }));
+```
+```javascript
+// OK 👍 ✅  
+const [counter1, setCounter1] = useFormSelector(state => state.counter1);
+const [counter2, setCounter2] = useFormSelector(state => state.counter2);
+```

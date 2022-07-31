@@ -24,6 +24,7 @@ Welcome! 👋 Usetheform is a React library for composing declarative forms and 
 - [Documentation](https://iusehooks.github.io/usetheform/)
 - [Features](#fire-features)
 - [Quickstart](#zap-quickstart)
+- [Recipes](#book-recipes)
 - [Motivation](#motivation)
 - [Code Sandboxe Examples](#code-sandboxes)
 - [How to Contribute](#how-to-contribute)
@@ -68,6 +69,64 @@ export default function App() {
       <Input name="age" type="number" value={18} reducers={preventNegativeNumber} />
       <button type="submit">Submit</button>
     </Form>
+  );
+}
+```
+## :book: Recipes
+
+### Need to read or manipulate Form's Fields anywhere outside Form context?
+
+#### :see_no_evil: First: create a form store
+
+```javascript
+import { createFormStore } from 'usetheform';
+
+const [formStore, useFormSelector] = createFormStore({ counter: 0 });
+
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+#### :hear_no_evil: Next: create your awesome Form
+
+```javascript
+import { Form } from 'usetheform';
+import { awesomeFormStore } from './awesomeFormStore';
+
+export default function AwesomeForm() {
+  return (
+    <>
+      <Form formStore={awesomeFormStore}>
+        <Input type="number" name="counter" value="0" placeholder="Counter" />
+      </Form>
+      <Counter />
+    </>
+  );
+}
+```
+
+#### :speak_no_evil: Finally: bind your components, and that's it!
+
+Use the `useAwesomeFormSelector` hook anywhere, no providers needed. Select your state and the component will re-render on changes.
+
+```javascript
+import { useAwesomeFormSelector } from './awesomeFormStore'
+
+export const Counter = () => {
+  const [counter, setCounterValue] = useAwesomeFormSelector((state) => state.counter);
+  return (
+    <div>
+      <span>{counter}</span>
+      <button type="button" onClick={() => setCounterValue((prev) => ++prev)}>
+        Increase Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue((prev) => --prev)}>
+        Decrease Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue(0)}>
+        Reset Counter
+      </button>
+    </div>
   );
 }
 ```

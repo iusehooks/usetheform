@@ -1,7 +1,7 @@
 export default {
   base: "/usetheform",
   ignore: ["README.md", "LICENSE.md", "CONTRIBUTING.md"],
-  menu: ["Introduction", "Components", "Hooks"],
+  menu: ["Introduction", "Components", "Hooks", "API Reference"],
   themesDir: "./docs",
   themeConfig: {
     showDarkModeSwitch: false

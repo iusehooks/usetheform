@@ -17,3 +17,4 @@ export { useField } from "./hooks/useField";
 export { useCollection } from "./hooks/useCollection";
 export { useMultipleForm } from "./hooks/useMultipleForm";
 export { withIndex } from "./hoc/withIndex";
+export { createFormStore } from "./api/createFormStore";

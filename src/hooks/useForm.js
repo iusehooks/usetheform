@@ -6,7 +6,12 @@ import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
 import { noop } from "./../utils/noop";
-import { STATUS, FORM_VALIDATION_LABEL } from "./../utils/constants";
+
+import {
+  STATUS,
+  FORM_VALIDATION_LABEL,
+  DISPATCHER_LABEL
+} from "./../utils/constants";
 import {
   createForm,
   isFormValid,
@@ -36,9 +41,12 @@ export function useForm({
   _getInitilaStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
-  action
+  action,
+  formStore = noop
 }) {
-  const [formState, dispatch] = useState(() => createForm(initialState));
+  const [formState, dispatch] = useState(() =>
+    createForm(initialState, formStore)
+  );
   const stateRef = useRef(formState);
 
   const { current: isMultipleForm } = useRef(
@@ -59,7 +67,9 @@ export function useForm({
         : applyReducers(state, prevState, prevState);
 
     stateRef.current = { ...rest, status, state: newState };
+
     dispatch(stateRef.current);
+    formStore({ ...stateRef.current, mapFields: mapFields.current });
   }, []);
 
   const memoInitialState = useRef({ ...formState });
@@ -350,7 +360,6 @@ export function useForm({
   // change status form to READY after being reset
   useEffect(() => {
     const { status, state, isValid } = stateRef.current;
-
     if (status === STATUS.ON_RESET) {
       onReset(state, isValid);
       dispatchFormState({ ...stateRef.current, status: STATUS.RESETTED });
@@ -429,6 +438,8 @@ export function useForm({
       pristine,
       status: STATUS.ON_INIT
     };
+
+    mapFields.current[DISPATCHER_LABEL] = dispatchNewState;
 
     dispatchFormState(stateRef.current);
   }, []);

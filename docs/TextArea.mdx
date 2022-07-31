@@ -46,7 +46,7 @@ Renders a *textarea* element ([W3schools Textarea](https://www.w3schools.com/tag
 
 - When you need to access the underlying DOM node created by TextArea (e.g. to call focus), you can use a ref to store a reference to the textarea dom node.
 
-```javascript
+```jsx
 const ref = useRef(null)
 <TextArea innerRef={ref} name="textarea" value="test" />
 ```
@@ -108,7 +108,7 @@ const ref = useRef(null)
 
 ## Validation - Async
 
-```javascript
+```jsx
 import { useAsyncValidation, useForm } from 'usetheform'
 
 const Submit = () => {
