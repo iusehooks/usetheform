@@ -1,8 +1,8 @@
 import { STATUS, FORM_VALIDATION_LABEL } from "./constants";
 
+// eslint-disable-next-line no-unused-vars
 export const createForm = (state = {}, formStore) => {
-  formStore({ state, mapFields: {} });
-  return {
+  const formState = {
     state,
     isValid: true,
     status: STATUS.READY,
@@ -11,6 +11,8 @@ export const createForm = (state = {}, formStore) => {
     submitAttempts: 0,
     submitted: 0
   };
+  formStore.update(formState, false);
+  return formState;
 };
 
 export const getValueByPath = (path, obj, separator = "/") => {

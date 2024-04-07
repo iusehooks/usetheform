@@ -2,12 +2,17 @@ import { useState, useEffect } from "react";
 import { DISPATCHER_LABEL } from "../utils/constants";
 import { noop } from "../utils/noop";
 
-export function createFormStore() {
+export function createFormStore(initialFormState) {
   const { subscribe, notify } = createListener();
-  const stateRef = { current: {} };
-  const store = formState => {
-    stateRef.current = { ...stateRef.current, ...formState };
-    notify(stateRef);
+  const stateRef = { current: { state: { ...initialFormState } } };
+  const store = {
+    update(formState, shouldNotify = true) {
+      stateRef.current = { ...stateRef.current, ...formState };
+      shouldNotify && notify(stateRef);
+    },
+    getState() {
+      return stateRef.current.state;
+    }
   };
   return [store, useFieldSelector(subscribe, stateRef)];
 }

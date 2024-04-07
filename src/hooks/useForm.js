@@ -23,6 +23,7 @@ import {
 
 const emptyStateValue = {};
 const validatorsDefault = [];
+const emptyFormStore = { getState: noop, update: noop };
 
 export function useForm({
   initialState,
@@ -42,7 +43,7 @@ export function useForm({
   _onMultipleForm_, // Private API
   name,
   action,
-  formStore = noop
+  formStore = emptyFormStore
 }) {
   const [formState, dispatch] = useState(() =>
     createForm(initialState, formStore)
@@ -69,7 +70,7 @@ export function useForm({
     stateRef.current = { ...rest, status, state: newState };
 
     dispatch(stateRef.current);
-    formStore({ ...stateRef.current, mapFields: mapFields.current });
+    formStore.update({ ...stateRef.current, mapFields: mapFields.current });
   }, []);
 
   const memoInitialState = useRef({ ...formState });
