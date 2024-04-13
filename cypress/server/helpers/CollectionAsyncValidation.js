@@ -2,7 +2,7 @@
 
 const { Input, Collection, useAsyncValidation, useChildren } = UseTheForm;
 
-const asyncTest = value =>
+const asyncTest = (value) =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
       if (value.length <= 1) {
@@ -13,32 +13,45 @@ const asyncTest = value =>
 
 let index = 0;
 
-window.CollectionAsyncValidation = function () {
+window.CollectionAsyncValidation = function ({ uniqueId = "" }) {
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
   const [inputs, setInputs] = useChildren([]);
   const addInput = () => {
     ++index;
-    setInputs(prev => [...prev, { index, value: index }]);
+    setInputs((prev) => [...prev, { index, value: index }]);
   };
 
   const removeInput = () => {
-    setInputs(prev => prev.slice(0, prev.length - 1));
+    setInputs((prev) => prev.slice(0, prev.length - 1));
   };
 
   return (
     <div>
       <label>Inputs: (Async Validation) </label>
       <br />
-      <button type="button" onClick={addInput}>
+      <button
+        data-testid={`add-input-${uniqueId}`}
+        type="button"
+        onClick={addInput}
+      >
         Add an Input
       </button>
-      <button type="button" onClick={removeInput}>
+      <button
+        data-testid={`remove-input-${uniqueId}`}
+        type="button"
+        onClick={removeInput}
+      >
         Remove an Input
       </button>
       <br />
       <Collection array name="asyncValCollection" {...asyncValidation}>
-        {inputs.map(input => (
-          <Input type="text" key={input.index} value={input.value} />
+        {inputs.map((input) => (
+          <Input
+            data-testid={`input-${input.index}-${uniqueId}`}
+            type="text"
+            key={input.index}
+            value={input.value}
+          />
         ))}
       </Collection>
       {asyncStatus.status === "asyncStart" && (

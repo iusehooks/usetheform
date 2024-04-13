@@ -11,13 +11,18 @@ for (var i = 0; i < foo.length; i++) {
 window.BigForm = () => {
   const [inputs] = useState(() =>
     foo.map((item, index) => (
-      <Input type="text" key={index} name={`c${index}`} />
+      <Input
+        type="text"
+        key={index}
+        data-testid={`bigForm-input-${index}`}
+        name={`c${index}`}
+      />
     ))
   );
 
   return (
     <div>
-      <Form>{inputs}</Form>
+      <Form data-testid="bigForm-form">{inputs}</Form>
     </div>
   );
 };

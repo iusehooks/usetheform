@@ -1,11 +1,11 @@
 /* eslint-disable react/react-in-jsx-scope */
 const { useForm, STATUS } = UseTheForm;
 
-window.Reset = () => {
+window.Reset = ({ data_prefix = "" }) => {
   const { reset, pristine, formStatus } = useForm();
   return (
     <button
-      data-testid="reset"
+      data-testid={`${data_prefix}reset`}
       disabled={
         pristine ||
         formStatus === STATUS.ON_INIT_ASYNC ||
