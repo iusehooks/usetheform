@@ -25,16 +25,22 @@ window.InputAsync = ({ name, dataTestid = "asyncinput", value, index }) => {
         data-testid={dataTestid}
       />
       {asyncStatus.status === undefined && (
-        <label data-testid={`asyncNotStartedYet-${dataTestid}`}>asyncNotStartedYet</label>
+        <label data-testid={`asyncNotStartedYet-${dataTestid}`}>
+          asyncNotStartedYet
+        </label>
       )}
       {asyncStatus.status === "asyncStart" && (
         <label data-testid={`asyncStart-${dataTestid}`}>Checking...</label>
       )}
       {asyncStatus.status === "asyncError" && (
-        <label data-testid={`asyncError-${dataTestid}`}>{asyncStatus.value}</label>
+        <label data-testid={`asyncError-${dataTestid}`}>
+          {asyncStatus.value}
+        </label>
       )}
       {asyncStatus.status === "asyncSuccess" && (
-        <label data-testid={`asyncSuccess-${dataTestid}`}>{asyncStatus.value}</label>
+        <label data-testid={`asyncSuccess-${dataTestid}`}>
+          {asyncStatus.value}
+        </label>
       )}
     </div>
   );

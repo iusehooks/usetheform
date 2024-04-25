@@ -4,10 +4,10 @@ const { default: Form, Collection } = UseTheForm;
 const { Reset, Submit, InputAsync, CollectionAsyncValidation, Email } = window;
 
 const initialState = {
-  username: "Antonio",
+  username: "Antonio"
 };
 
-window.SimpleFormWithAsync = (props) => (
+window.SimpleFormWithAsync = props => (
   <Form data-testid="form" initialState={initialState} {...props}>
     <CollectionAsyncValidation uniqueId="simpleFormWithAsync" />
     <Email />

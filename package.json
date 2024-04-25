@@ -11,7 +11,7 @@
     "build": "npm run clean && node ./build_config/build.js",
     "clean": "rimraf build coverage",
     "prepare": "npm run clean && npm run lint && npm run test && npm run build",
-    "lint": "eslint --ext .jsx --ext .js src __tests__ examples --fix",
+    "lint": "eslint --ext .jsx --ext .js src __tests__ examples cypress --fix",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test jest -u",
     "test:watch": "npm run test -- --watch",

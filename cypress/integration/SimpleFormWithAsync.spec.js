@@ -5,12 +5,8 @@ describe("Tests for SimpleFormWithAsync", () => {
 
   it("test for resetting form", () => {
     cy.simpleFormWithAsyncSetup();
-    cy.getByDataTestId("input", "input-1-simpleFormWithAsync").should(
-      "exist"
-    );
-    cy.getByDataTestId("input", "input-2-simpleFormWithAsync").should(
-      "exist"
-    );
+    cy.getByDataTestId("input", "input-1-simpleFormWithAsync").should("exist");
+    cy.getByDataTestId("input", "input-2-simpleFormWithAsync").should("exist");
     cy.getByDataTestId("button", "simpleFormWithAsync-reset").first().click();
     cy.getByDataTestId("input", "input-1-simpleFormWithAsync").should(
       "not.exist"
@@ -60,7 +56,9 @@ describe("Tests for SimpleFormWithAsync", () => {
     cy.getByDataTestId("button", "simpleFormWithAsync-submit").should(
       "not.be.disabled"
     );
-    cy.getByDataTestId("button", "add-input-simpleFormWithAsync").first().click();
+    cy.getByDataTestId("button", "add-input-simpleFormWithAsync")
+      .first()
+      .click();
     cy.getByDataTestId("button", "simpleFormWithAsync-submit").click();
   });
 });

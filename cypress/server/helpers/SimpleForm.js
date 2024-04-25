@@ -6,7 +6,7 @@ const {
   useValidation,
   useField,
   Collection,
-  useAsyncValidation,
+  useAsyncValidation
 } = UseTheForm;
 
 const { useState } = React;
@@ -14,7 +14,7 @@ const {
   CollectionArrayNested,
   Reset,
   Submit,
-  CollectionValidationTouched,
+  CollectionValidationTouched
 } = window;
 
 const CustomField = ({ name, value = { a: "2" } }) => {
@@ -32,7 +32,7 @@ const CustomField = ({ name, value = { a: "2" } }) => {
   );
 };
 
-const asyncTest = (value) =>
+const asyncTest = value =>
   new Promise((resolve, reject) => {
     // it could be an API call or any async operation
 
@@ -51,9 +51,9 @@ const asyncTest = (value) =>
 
 window.SimpleForm = () => {
   const [input, validationInput] = useValidation([
-    (val) => {
+    val => {
       return val && val.length > 3 ? undefined : "error";
-    },
+    }
   ]);
 
   const [remove, setRemove] = useState(false);
@@ -65,7 +65,7 @@ window.SimpleForm = () => {
   return (
     <div>
       <Form
-        onSubmit={(state) => console.log("onSubmit => ", state)}
+        onSubmit={state => console.log("onSubmit => ", state)}
         {...asyncValidation}
         {...validationFormProp}
       >
@@ -99,7 +99,7 @@ function isArrayOfMailValid({ user }) {
     return "Mail list empty";
   }
 
-  return user.mailList.every((email) =>
+  return user.mailList.every(email =>
     /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)
   )
     ? undefined
