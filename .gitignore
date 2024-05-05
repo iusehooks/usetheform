@@ -8,3 +8,4 @@ build
 dev
 coverage
 _config.yml
+cypress/videos
