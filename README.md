@@ -163,4 +163,4 @@ It's easy to start using it in your existing project and gives you full control 
 We would like to encourage everyone to help and support this library by contributing. See the [CONTRIBUTING file](https://github.com/iusehooks/usetheform/blob/master/CONTRIBUTING.md).
 ## License
 This software is free to use under the MIT license.
-See the [LICENSE file](/LICENSE.md) for license text and copyright information.
+See the [LICENSE](/LICENSE.md) file for license text and copyright information.

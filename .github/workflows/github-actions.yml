@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
 
       - name: Run tests 🧪
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '14.x'
+          node-version: '16.13.0'
       - run: npm ci
       - run: npm run test:cov
 
@@ -29,15 +29,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
 
       - name: Build 🔨
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '14.x'
+          node-version: '16.13.0'
       - run: npm ci
       - run: npm run build --if-present
+
+  publish-alpha:
+    name: Build and Publish Alpha Version
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.13.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Extract current version
+        id: version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Update version for alpha release
+        run: npm version $VERSION-alpha.${{ github.run_number }} --no-git-tag-version
+
+      - name: Publish to npm as alpha
+        run: npm publish --tag alpha
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   deploy_docs:
     name: Deploy Docs
@@ -52,7 +82,7 @@ jobs:
       - name: Build Docs 🔨
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: '16.13.0'
       - run: npm ci
       - run: npm run docz:build --if-present
       - run: rm .gitignore
