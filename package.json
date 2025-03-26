@@ -73,7 +73,7 @@
     "gatsby-react-router-scroll": "^3.4.0",
     "husky": "^4.3.6",
     "jest": "^26.6.3",
-    "node-sass": "^5.0.0",
+    "node-sass": "^9.0.0",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
