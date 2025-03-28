@@ -23,7 +23,6 @@ const asyncValidatorFunc = ({ test = "" }) =>
 window.FormContextWithValidation = function ({ ...restProp }) {
   const [status, formValidationProp] = useValidation(validators);
   const [asyncStatus, asyncValidation] = useAsyncValidation(asyncValidatorFunc);
-
   return (
     <div>
       <FormContext
@@ -33,10 +32,10 @@ window.FormContextWithValidation = function ({ ...restProp }) {
         {...formValidationProp}
         {...asyncValidation}
       >
-        <Form>
+        <FormWithContext>
           <Input type="text" name="test" data-testid="test" />
           <Submit />
-        </Form>
+        </FormWithContext>
       </FormContext>
       {status.error && <label data-testid="errorLabel">{status.error}</label>}
       {asyncStatus.status === "asyncStart" && (
@@ -52,7 +51,7 @@ window.FormContextWithValidation = function ({ ...restProp }) {
   );
 };
 
-function Form({ children }) {
+function FormWithContext({ children }) {
   const { onSubmitForm } = useForm();
   return <form onSubmit={onSubmitForm}>{children}</form>;
 }

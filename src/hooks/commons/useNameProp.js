@@ -1,8 +1,10 @@
-import { useRef, useContext, useCallback } from "react";
+import { useRef, useContext, useCallback, useEffect } from "react";
 import { IndexContext } from "./../../hoc/withIndex";
 
 export const useNameProp = (context, name, index) => {
   const nameProp = useRef(name);
+  const namePropSave = useRef(name);
+
   const uniqueIDFromContext = useContext(IndexContext);
   let uniqueIDarrayContext =
     uniqueIDFromContext !== undefined ? uniqueIDFromContext.id : 1;
@@ -18,6 +20,13 @@ export const useNameProp = (context, name, index) => {
       nameProp.current = context.getIndex(uniqueIDarrayContext);
     }
   }
+
+  useEffect(() => {
+    namePropSave.current = nameProp.current;
+    return () => {
+      nameProp.current = namePropSave.current;
+    };
+  }, []);
 
   return { nameProp, uniqueIDarrayContext, setNameProp };
 };

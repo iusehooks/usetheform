@@ -9,3 +9,5 @@ dev
 coverage
 _config.yml
 cypress/videos
+cypress/screenshots
+cypress/fixtures/example.json

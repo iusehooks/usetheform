@@ -65,6 +65,7 @@ export function useObject(props) {
   const memoInitialState = useRef(init);
   const prevState = useRef(isArray ? initArray : initObject);
   const valueFieldLastSyncCheck = useRef(null);
+  const memoState = useRef(null);
 
   // getValue from parent context
   if (!isMounted.current) {
@@ -344,11 +345,13 @@ export function useObject(props) {
     );
 
     context.initProp(nameProp.current, newState, memoInitialState.current);
-
+    memoState.current = state.current;
     return () => {
       resetSyncErr();
       resetAsyncErr();
       isMounted.current = false;
+      state.current = memoState.current;
+
       if (context.stillMounted()) {
         context.unRegisterField(nameProp.current);
 

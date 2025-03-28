@@ -1,0 +1,134 @@
+name: Usetheform CI
+
+on: 
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_publish:
+        description: 'Run publish-alpha job manually?'
+        required: false
+        default: 'false'
+
+jobs:
+
+  tests:
+    name: Unit Tests 🧪
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Run tests 🧪
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.13.0'
+      - run: npm ci --ignore-scripts
+      - run: npm run test:cov
+
+      - name: Coveralls 📈
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  cypress-test:
+    name: Cypress Tests 🌐
+    runs-on: ubuntu-latest
+    env:
+      TERM: xterm
+      CI: true
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node 📦
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.13.0'
+
+      - name: Install dependencies 📥
+        run:  npm ci --ignore-scripts
+
+      - name: Start server 🚀
+        run: npm run cy:server &
+
+      - name: Run Cypress Test 🧪
+        uses: cypress-io/github-action@v6
+        env:
+          CI: true
+        with:
+          wait-on: 'http://localhost:3000'
+
+  build:
+    name: Build 🛠️
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Build 🔨
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.13.0'
+      - run: npm ci --ignore-scripts
+      - run: npm run build --if-present
+
+  publish-alpha:
+    name: Build and Publish Alpha Version 🚀
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      github.event.inputs.run_publish == 'true' && 
+      (github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop')
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node 📦
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.13.0'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies 📥
+        run: npm ci --ignore-scripts
+      
+      - name: Extract current version
+        id: version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Update version for alpha release 📦
+        run: npm version $VERSION-alpha.${{ github.run_number }} --no-git-tag-version
+
+      - name: Publish to npm as alpha 🚀
+        run: npm publish --tag alpha
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  deploy_docs:
+    name: Deploy Docs 📚
+    runs-on: ubuntu-latest
+    needs: [tests, build]
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Build Docs 🔨
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.13.0'
+      - run: npm ci --ignore-scripts
+      - run: npm run docz:build --if-present
+      - run: rm .gitignore
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        with:
+          folder: .docz/dist # The folder the action should deploy.
+     

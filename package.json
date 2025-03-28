@@ -1,6 +1,6 @@
 {
   "name": "usetheform",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npm run clean && node ./build_config/build.js",
     "clean": "rimraf build coverage",
-    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
+    "prepare": "node -e \"if (process.env.CI !== 'true') require('child_process').execSync('npm run clean && npm run lint && npm run test && npm run build', { stdio: 'inherit' })\"",
     "lint": "eslint --ext .jsx --ext .js src __tests__ examples cypress --fix",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test jest -u",
@@ -19,11 +19,12 @@
     "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls",
     "docz:dev": "rimraf .docz && docz dev",
     "docz:build": "docz build",
-    "docz:serve": "docz build && docz serve",
+    "docz:serve": "rimraf .docz && docz build && docz serve",
     "dev": "rimraf dev coverage && concurrently \"node ./build_config/dev.js\" \"browser-sync start --server examples --ss dev --files dev --files examples\"",
     "cy:open": "npx cypress open",
-    "cy:run": "npx cypress run",
-    "cy:server": "rimraf dev coverage && concurrently \"node ./build_config/dev.js\" \"browser-sync start --server cypress/server --ss dev --files dev --files cypress/server\""
+    "cy:run": "npx cypress run --headless",
+    "cy:server:dev": "rimraf dev coverage && concurrently \"node ./build_config/dev.js\" \"browser-sync start --no-ui --server cypress/server --ss dev --files dev --files cypress/server\"",
+    "cy:server": "rimraf dev coverage && node ./build_config/dev.js --no-watch && browser-sync start --no-ui --no-open --server cypress/server --ss dev"
   },
   "author": "Antonio Pangallo (https://github.com/antoniopangallo)",
   "files": [
@@ -79,7 +80,7 @@
     "gatsby-react-router-scroll": "^3.4.0",
     "husky": "^4.3.6",
     "jest": "^26.6.3",
-    "node-sass": "^5.0.0",
+    "node-sass": "^9.0.0",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

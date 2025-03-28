@@ -1,27 +1,35 @@
 // Note : CollectionAsyncValidation is used in SimpleFormWithAsync
-describe("Tests for CollectionAsyncValidation", () => {
-  beforeEach(() => {
-    cy.visit("");
-  });
+const reactVersions = ["16.13.0", "17.0.2", "18.3.1", "19.0.0"];
 
-  it("test for adding and removing new input", () => {
-    cy.getByDataTestId("button", "add-input-simpleFormWithAsync")
-      .first()
-      .click();
+reactVersions.forEach(version => {
+  describe(`Tests for CollectionAsyncValidation - React ${version}`, () => {
+    beforeEach(() => {
+      cy.visit(`/index_react_${version}.html`);
+    });
 
-    cy.getByDataTestId("input", "input-1-simpleFormWithAsync")
-      .should("exist")
-      .should("have.value", "1")
-      .clear()
-      .type("Hello World")
-      .should("have.value", "Hello World");
+    it("test for adding and removing new input", () => {
+      cy.getByDataTestId("button", "add-input-simpleFormWithAsync")
+        .first()
+        .should("exist")
+        .should("be.visible")
+        .should("not.be.disabled")
+        .click();
 
-    cy.getByDataTestId("button", "remove-input-simpleFormWithAsync")
-      .first()
-      .click();
+      cy.getByDataTestId("input", "input-1-simpleFormWithAsync")
+        .should("exist")
+        .should("be.visible")
+        .should("have.value", "1")
+        .clear()
+        .type("Hello World")
+        .should("have.value", "Hello World");
 
-    cy.getByDataTestId("input", "input-1-simpleFormWithAsync").should(
-      "not.exist"
-    );
+      cy.getByDataTestId("button", "remove-input-simpleFormWithAsync")
+        .first()
+        .click();
+
+      cy.getByDataTestId("input", "input-1-simpleFormWithAsync").should(
+        "not.exist"
+      );
+    });
   });
 });
