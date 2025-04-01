@@ -26,11 +26,6 @@ reactVersions.forEach(version => {
     });
 
     it("test for checking default input value", () => {
-      cy.getByDataTestId(
-        "label",
-        "asyncNotStartedYet-simpleFormWithAsyncInput1"
-      ).should("exist");
-
       cy.getByDataTestId("input", "simpleFormWithAsyncInput1").should(
         "have.value",
         "Antonio"

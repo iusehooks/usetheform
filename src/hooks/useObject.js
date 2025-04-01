@@ -34,11 +34,12 @@ export function useObject(props) {
     touched = false
   } = props;
 
-  const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
-    context,
-    name,
-    index
-  );
+  const {
+    nameProp,
+    uniqueIDarrayContext,
+    setNameProp,
+    unMountIndex
+  } = useNameProp(context, name, index);
 
   if (process.env.NODE_ENV !== "production") {
     validateProps(
@@ -395,6 +396,7 @@ export function useObject(props) {
         if (context.type === "array") {
           context.removeIndex(uniqueIDarrayContext);
         }
+        unMountIndex();
       }
     };
   }, []);
@@ -405,7 +407,7 @@ export function useObject(props) {
     if (childrenIndexes.current[idCpm] === undefined) {
       childrenIndexes.current[idCpm] = null;
     }
-    return Object.keys(childrenIndexes.current).length - 1;
+    return Object.keys(childrenIndexes.current).findIndex(v => v == idCpm);
   }, []);
 
   const removeIndex = useCallback(idCpm => {

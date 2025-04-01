@@ -1,17 +1,16 @@
 name: Usetheform CI
 
-on: 
+on:
   push:
   pull_request:
   workflow_dispatch:
     inputs:
       run_publish:
-        description: 'Run publish-alpha job manually?'
+        description: "Run publish-alpha job manually?"
         required: false
-        default: 'false'
+        default: "false"
 
 jobs:
-
   tests:
     name: Unit Tests 🧪
     runs-on: ubuntu-latest
@@ -23,7 +22,7 @@ jobs:
       - name: Run tests 🧪
         uses: actions/setup-node@v4
         with:
-          node-version: '16.13.0'
+          node-version: "16.13.0"
       - run: npm ci --ignore-scripts
       - run: npm run test:cov
 
@@ -46,10 +45,10 @@ jobs:
       - name: Setup Node 📦
         uses: actions/setup-node@v4
         with:
-          node-version: '16.13.0'
+          node-version: "16.13.0"
 
       - name: Install dependencies 📥
-        run:  npm ci --ignore-scripts
+        run: npm ci --ignore-scripts
 
       - name: Start server 🚀
         run: npm run cy:server &
@@ -59,7 +58,8 @@ jobs:
         env:
           CI: true
         with:
-          wait-on: 'http://localhost:3000'
+          wait-on: "http://localhost:3000"
+          command: npm run cy:run
 
   build:
     name: Build 🛠️
@@ -72,7 +72,7 @@ jobs:
       - name: Build 🔨
         uses: actions/setup-node@v4
         with:
-          node-version: '16.13.0'
+          node-version: "16.13.0"
       - run: npm ci --ignore-scripts
       - run: npm run build --if-present
 
@@ -91,12 +91,12 @@ jobs:
       - name: Setup Node 📦
         uses: actions/setup-node@v4
         with:
-          node-version: '16.13.0'
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: "16.13.0"
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies 📥
         run: npm ci --ignore-scripts
-      
+
       - name: Extract current version
         id: version
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
@@ -122,7 +122,7 @@ jobs:
       - name: Build Docs 🔨
         uses: actions/setup-node@v4
         with:
-          node-version: '16.13.0'
+          node-version: "16.13.0"
       - run: npm ci --ignore-scripts
       - run: npm run docz:build --if-present
       - run: rm .gitignore
@@ -131,4 +131,3 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.4.0
         with:
           folder: .docz/dist # The folder the action should deploy.
-     

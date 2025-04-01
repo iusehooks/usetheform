@@ -3,14 +3,14 @@ const { default: Form, Collection, Input } = UseTheForm;
 
 const { useState } = React;
 
-var foo = new Array(100); // create an empty array with length 45
-for (var i = 0; i < foo.length; i++) {
-  foo[i] = i;
+let fooBigFormCollection = new Array(100); // create an empty array with length 45
+for (let i = 0; i < fooBigFormCollection.length; i++) {
+  fooBigFormCollection[i] = i;
 }
 
 window.BigFormCollection = () => {
   const [inputs] = useState(() =>
-    foo.map((item, index) => (
+    fooBigFormCollection.map((item, index) => (
       <Collection array key={index} name={`c${index}`}>
         <Input type="text" />
       </Collection>

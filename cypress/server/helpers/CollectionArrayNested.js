@@ -2,7 +2,7 @@
 
 const { Input, Collection } = UseTheForm;
 
-const initialValue = [
+const initialValueCollectionArrayNested = [
   "input1",
   "input2",
   [
@@ -14,7 +14,11 @@ const initialValue = [
 
 window.CollectionArrayNested = function CollectionArrayNested() {
   return (
-    <Collection array name="arrayNested1" value={initialValue}>
+    <Collection
+      array
+      name="arrayNested1"
+      value={initialValueCollectionArrayNested}
+    >
       <Input type="text" data-testid="1" />
       <Input type="text" data-testid="2" />
       <Collection array>

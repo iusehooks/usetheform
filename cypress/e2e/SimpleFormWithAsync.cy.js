@@ -60,6 +60,7 @@ reactVersions.forEach(version => {
 
       cy.getByDataTestId("label", "asyncError")
         .should("exist")
+        .should("be.visible")
         .contains("Add at least two Inputs");
 
       cy.getByDataTestId("input", "simpleFormWithAsyncInput3")
