@@ -3,14 +3,14 @@ const { default: Form, Input } = UseTheForm;
 
 const { useState } = React;
 
-var foo = new Array(100); // create an empty array with length 45
-for (var i = 0; i < foo.length; i++) {
-  foo[i] = i;
+let fooBigForm = new Array(100); // create an empty array with length 45
+for (let i = 0; i < fooBigForm.length; i++) {
+  fooBigForm[i] = i;
 }
 
 window.BigForm = () => {
   const [inputs] = useState(() =>
-    foo.map((item, index) => (
+    fooBigForm.map((item, index) => (
       <Input
         type="text"
         key={index}

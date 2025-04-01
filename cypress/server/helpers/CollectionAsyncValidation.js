@@ -2,7 +2,7 @@
 
 const { Input, Collection, useAsyncValidation, useChildren } = UseTheForm;
 
-const asyncTest = value =>
+const asyncTestCollectionAsyncValidation = value =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
       if (value.length <= 1) {
@@ -11,14 +11,22 @@ const asyncTest = value =>
     }, 1000);
   });
 
-let index = 0;
+let indexCollectionAsyncValidation = 0;
 
 window.CollectionAsyncValidation = function ({ uniqueId = "" }) {
-  const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+  const [asyncStatus, asyncValidation] = useAsyncValidation(
+    asyncTestCollectionAsyncValidation
+  );
   const [inputs, setInputs] = useChildren([]);
   const addInput = () => {
-    ++index;
-    setInputs(prev => [...prev, { index, value: index }]);
+    ++indexCollectionAsyncValidation;
+    setInputs(prev => [
+      ...prev,
+      {
+        index: indexCollectionAsyncValidation,
+        value: indexCollectionAsyncValidation
+      }
+    ]);
   };
 
   const removeInput = () => {

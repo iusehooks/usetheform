@@ -2,13 +2,13 @@
 const { Collection, useValidation, useChildren } = UseTheForm;
 const { User } = window;
 
-const minLengthTwoMembers = state => {
+const minLengthTwoMembersCollectionValidationTouched = state => {
   return state && Object.keys(state).length >= 2
     ? undefined
     : "Required at least two Member";
 };
 
-const maxLengthFourMembers = state => {
+const maxLengthFourMembersCollectionValidationTouched = state => {
   return state === undefined || (state && Object.keys(state).length <= 4)
     ? undefined
     : "Less Than 4 Members";
@@ -18,8 +18,8 @@ let index = 0;
 
 window.CollectionValidationTouched = function CollectionValidationTouched() {
   const [status, validation] = useValidation([
-    maxLengthFourMembers,
-    minLengthTwoMembers
+    maxLengthFourMembersCollectionValidationTouched,
+    minLengthTwoMembersCollectionValidationTouched
   ]);
 
   const [members, setMembers] = useChildren([]);

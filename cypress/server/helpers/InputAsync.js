@@ -1,17 +1,21 @@
 /* eslint-disable react/react-in-jsx-scope */
 const { useAsyncValidation, Input } = UseTheForm;
 
-const asyncTest = value =>
+const asyncTestInputAsync = value =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
       if (value.length <= 3) {
         reject("Error");
-      } else resolve("Success");
+      } else {
+        resolve("Success");
+      }
     }, 2000);
   });
 
 window.InputAsync = ({ name, dataTestid = "asyncinput", value, index }) => {
-  const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+  const [asyncStatus, asyncValidation] = useAsyncValidation(
+    asyncTestInputAsync
+  );
   return (
     <div data-testid="asyncinput_wrapper">
       <label>InputAsync: </label>

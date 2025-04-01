@@ -3,7 +3,7 @@ import { IndexContext } from "./../../hoc/withIndex";
 
 export const useNameProp = (context, name, index) => {
   const nameProp = useRef(name);
-  const namePropSave = useRef(name);
+  const namePropSaved = useRef(name);
 
   const uniqueIDFromContext = useContext(IndexContext);
   let uniqueIDarrayContext =
@@ -20,13 +20,16 @@ export const useNameProp = (context, name, index) => {
       nameProp.current = context.getIndex(uniqueIDarrayContext);
     }
   }
-
+  const unMountIndex = () => {
+    if (context && context.type === "array") {
+      nameProp.current = index !== undefined ? index : namePropSaved.current;
+    } else {
+      nameProp.current = name;
+    }
+  };
   useEffect(() => {
-    namePropSave.current = nameProp.current;
-    return () => {
-      nameProp.current = namePropSave.current;
-    };
+    namePropSaved.current = nameProp.current;
   }, []);
 
-  return { nameProp, uniqueIDarrayContext, setNameProp };
+  return { nameProp, uniqueIDarrayContext, setNameProp, unMountIndex };
 };
