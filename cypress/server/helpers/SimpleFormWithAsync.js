@@ -8,7 +8,11 @@ const initialState = {
 };
 
 window.SimpleFormWithAsync = props => (
-  <Form data-testid="form" initialState={initialState} {...props}>
+  <Form
+    data-testid="SimpleFormWithAsync-Form"
+    initialState={initialState}
+    {...props}
+  >
     <CollectionAsyncValidation uniqueId="simpleFormWithAsync" />
     <Email />
     <InputAsync dataTestid="simpleFormWithAsyncInput1" name="username" />

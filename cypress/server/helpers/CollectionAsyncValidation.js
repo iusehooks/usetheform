@@ -63,13 +63,19 @@ window.CollectionAsyncValidation = function ({ uniqueId = "" }) {
         ))}
       </Collection>
       {asyncStatus.status === "asyncStart" && (
-        <label data-testid="asyncStart">Checking...</label>
+        <label data-testid="CollectionAsyncValidation-asyncStart">
+          Checking...
+        </label>
       )}
       {asyncStatus.status === "asyncSuccess" && (
-        <label data-testid="asyncSuccess">{asyncStatus.value}</label>
+        <label data-testid="CollectionAsyncValidation-asyncSuccess">
+          {asyncStatus.value}
+        </label>
       )}
       {asyncStatus.status === "asyncError" && (
-        <label data-testid="asyncError">{asyncStatus.value}</label>
+        <label data-testid="CollectionAsyncValidation-asyncError">
+          {asyncStatus.value}
+        </label>
       )}
     </div>
   );

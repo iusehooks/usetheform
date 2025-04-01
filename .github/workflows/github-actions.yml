@@ -32,7 +32,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   cypress-test:
-    name: Cypress Tests 🌐
+    name: Automation Tests 🌐
     runs-on: ubuntu-latest
     env:
       TERM: xterm
@@ -48,18 +48,29 @@ jobs:
           node-version: "16.13.0"
 
       - name: Install dependencies 📥
-        run: npm ci --ignore-scripts
+        run: npm ci
 
       - name: Start server 🚀
         run: npm run cy:server &
+
+      - name: Wait for server ⏳
+        run: npx wait-on http://localhost:3000/index_react_16.13.0.html --timeout 120000
 
       - name: Run Cypress Test 🧪
         uses: cypress-io/github-action@v6
         env:
           CI: true
         with:
-          wait-on: "http://localhost:3000"
           command: npm run cy:run
+
+      - name: Upload Cypress Artifacts 📂
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: |
+            cypress/videos
+            cypress/screenshots
 
   build:
     name: Build 🛠️
@@ -77,7 +88,7 @@ jobs:
       - run: npm run build --if-present
 
   publish-alpha:
-    name: Build and Publish Alpha Version 🚀
+    name: NPM Publish Alpha Version 🔥
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'workflow_dispatch' && 
@@ -97,7 +108,7 @@ jobs:
       - name: Install dependencies 📥
         run: npm ci --ignore-scripts
 
-      - name: Extract current version
+      - name: Extract current version 🏷️
         id: version
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
@@ -109,10 +120,85 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  publish-stable:
+    name: NPM Publish Stable Version ⭐
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      github.event.inputs.run_publish == 'true' && 
+      github.ref == 'refs/heads/master'
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node 📦
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16.13.0"
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Extract current version
+        id: version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Assets source code 📦
+        run: |
+          zip -r "source-${{ env.VERSION }}.zip" ./*
+          tar -czf "source-${{ env.VERSION }}.tar.gz" ./*
+
+      - name: Install dependencies 📥
+        run: npm ci --ignore-scripts
+
+      - name: Create tag version 📦
+        run: npm version ${{ env.VERSION }}
+
+      - name: Publish to npm 🚀
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish new Tag 🚀
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push --follow-tags
+
+      - name: Extract Changelog for current version 📝
+        run: |
+          CHANGELOG_ENTRY=$(awk -v ver="${{ env.VERSION }}" '
+            /^## \[v?'${{ env.VERSION }}'\]/ {p=1;print;next}
+            p&&/^## \[/{p=0}
+            p{print}
+          ' CHANGELOG.md)
+
+          if [ -z "$CHANGELOG_ENTRY" ]; then
+            echo "Error: Changelog entry not found for version ${{ env.VERSION }}"
+            exit 1
+          fi
+
+          echo "$CHANGELOG_ENTRY" > release-notes.txt
+
+      - name: Create GitHub Release 🎉
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: v${{ env.VERSION }}
+          body_path: release-notes.txt
+          generate_release_notes: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            source-${{ env.VERSION }}.zip
+            source-${{ env.VERSION }}.tar.gz
+
   deploy_docs:
     name: Deploy Docs 📚
     runs-on: ubuntu-latest
-    needs: [tests, build]
+    needs: [tests, build, cypress-test]
     if: github.ref == 'refs/heads/master'
 
     steps:

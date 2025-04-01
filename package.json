@@ -23,8 +23,8 @@
     "dev": "rimraf dev coverage && concurrently \"node ./build_config/dev.js\" \"browser-sync start --server examples --ss dev --files dev --files examples\"",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run --headless",
-    "cy:server:dev": "rimraf dev coverage && concurrently \"node ./build_config/dev.js\" \"browser-sync start --no-ui --server cypress/server --ss dev --files dev --files cypress/server\"",
-    "cy:server": "rimraf dev coverage && node ./build_config/build.js --no-watch && browser-sync start --no-ui --no-open --server cypress/server --ss build/umd"
+    "cy:server:dev": "rimraf dev build coverage && concurrently \"node ./build_config/dev.js\" \"browser-sync start --no-ui --no-ghost-mode --no-open --port 3000 --server cypress/server --ss dev --files dev --files cypress/server\"",
+    "cy:server": "rimraf dev build coverage && node ./build_config/build.js && browser-sync start --no-ui --no-open --no-ghost-mode --port 3000 --server cypress/server --ss build/umd"
   },
   "author": "Antonio Pangallo (https://github.com/antoniopangallo)",
   "files": [
@@ -67,6 +67,7 @@
     "coveralls": "^3.1.0",
     "cross-env": "^7.0.3",
     "cypress": "^11.2.0",
+    "cypress-file-upload": "5.0.8",
     "docz": "^2.3.1",
     "eslint": "^7.15.0",
     "eslint-config-prettier": "^7.0.0",

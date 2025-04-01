@@ -11,11 +11,11 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
     <title>Usetheform</title>
     <!-- React & ReactDOM -->
     <script type="module">
-        import React from "https://esm.sh/react@19.0.0/?dev";
-        import ReactDOMClient from "https://esm.sh/react-dom@19.0.0/client/?dev";
-        
-        window.React = React; // Make React available globally for Babel
-        window.ReactDOMClient = ReactDOMClient;
+      import React from "https://esm.sh/react@19.0.0/?dev";
+      import ReactDOMClient from "https://esm.sh/react-dom@19.0.0/client/?dev";
+
+      window.React = React; // Make React available globally for Babel
+      window.ReactDOMClient = ReactDOMClient;
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.9/babel.min.js"></script>
     <script type="module" src="./index.js"></script>
@@ -25,25 +25,60 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
     <script type="text/babel" src="./helpers/InputAsync.js"></script>
     <script type="text/babel" src="./helpers/Email.js"></script>
     <script type="text/babel" src="./helpers/CollectionArrayNested.js"></script>
-    <script type="text/babel" src="./helpers/CollectionSyncValidation.js"></script>
-    <script type="text/babel" src="./helpers/CollectionNestedDynamicField.js"></script>
-    <script type="text/babel" src="./helpers/CollectionAsyncValidation.js"></script>
-    <script type="text/babel" src="./helpers/CollectionNestedDynamicFieldIndex.js"></script>
-    <script type="text/babel" src="./helpers/FormContextWithValidation.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionSyncValidation.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionNestedDynamicField.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionAsyncValidation.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionNestedDynamicFieldIndex.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/FormContextWithValidation.js"
+    ></script>
     <script type="text/babel" src="./helpers/SimpleForm.js"></script>
     <script type="text/babel" src="./helpers/BigForm.js"></script>
     <script type="text/babel" src="./helpers/SimpleFormWithAsync.js"></script>
+    <script type="text/babel" src="./helpers/FormSyncValidation.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/BigFormCollectionArray.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/BigFormCollectionArrayDeepNested.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/BigFormCollectionObjectDeepNested.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/FormWithCustomInputAndSelector.js"
+    ></script>
+    <script type="text/babel" src="./helpers/FormWithAction.js"></script>
+    <script type="text/babel" src="./helpers/WizardForm.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/FormPersistStateOnUnmount.js"
+    ></script>
+    <script type="text/babel" src="./helpers/Index.js"></script>
   </head>
   <body>
-    <div id="main" /> 
+    <div id="main" />
     <script type="text/babel">
       const rootElement = document.getElementById("main");
       const root = ReactDOMClient.createRoot(rootElement);
-      root.render(<React.StrictMode> <FormContextWithValidation /> <br /> <SimpleFormWithAsync />  <br /> <SimpleForm /> <br /> <BigForm /> </React.StrictMode>);
+      root.render(<_FormSuites_ />);
     </script>
-      
   </body>
 </html>
-
-
- 

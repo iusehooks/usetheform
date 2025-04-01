@@ -226,11 +226,11 @@ export function useField(props) {
     }
 
     if (type === "radio" && initialCheckedRef.current === true) {
-      context.registerReset(nameProp.current, reset);
+      context.registerReset(nameProp.current, reset, uniqueIDarrayContext);
     }
 
     if (type !== "radio") {
-      context.registerReset(nameProp.current, reset);
+      context.registerReset(nameProp.current, reset, uniqueIDarrayContext);
     }
 
     /* if a initialValue or initialChecked is passed as prop */
@@ -275,8 +275,7 @@ export function useField(props) {
           },
           true
         );
-
-        context.unRegisterReset(nameProp.current);
+        context.unRegisterReset(nameProp.current, uniqueIDarrayContext);
         if (context.type === "array") {
           context.removeIndex(uniqueIDarrayContext);
         }
