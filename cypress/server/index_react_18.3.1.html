@@ -1,0 +1,87 @@
+<!--
+The MIT License (MIT) Copyright © 2018-present Antonio Pangallo
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Usetheform</title>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.3/es6-sham.min.js"></script>
+    <script type="module" src="./index.js"></script>
+    <script type="text/babel" src="./helpers/User.js"></script>
+    <script type="text/babel" src="./helpers/Reset.js"></script>
+    <script type="text/babel" src="./helpers/Submit.js"></script>
+    <script type="text/babel" src="./helpers/InputAsync.js"></script>
+    <script type="text/babel" src="./helpers/Email.js"></script>
+    <script type="text/babel" src="./helpers/CollectionArrayNested.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionSyncValidation.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionNestedDynamicField.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionAsyncValidation.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/CollectionNestedDynamicFieldIndex.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/FormContextWithValidation.js"
+    ></script>
+    <script type="text/babel" src="./helpers/SimpleForm.js"></script>
+    <script type="text/babel" src="./helpers/BigForm.js"></script>
+    <script type="text/babel" src="./helpers/SimpleFormWithAsync.js"></script>
+    <script type="text/babel" src="./helpers/FormSyncValidation.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/BigFormCollectionArray.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/BigFormCollectionArrayDeepNested.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/BigFormCollectionObjectDeepNested.js"
+    ></script>
+    <script
+      type="text/babel"
+      src="./helpers/FormWithCustomInputAndSelector.js"
+    ></script>
+    <script type="text/babel" src="./helpers/FormWithAction.js"></script>
+    <script type="text/babel" src="./helpers/WizardForm.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/FormPersistStateOnUnmount.js"
+    ></script>
+    <script type="text/babel" src="./helpers/Index.js"></script>
+  </head>
+
+  <body>
+    <div id="main" />
+    <script type="text/babel">
+      const { SimpleForm, SimpleFormWithAsync, BigForm } = window;
+      const rootElement = document.getElementById("main");
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(<_FormSuites_ />);
+    </script>
+  </body>
+</html>

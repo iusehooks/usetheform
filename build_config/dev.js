@@ -1,5 +1,8 @@
 const execSync = require("child_process").execSync;
 
+const args = process.argv.slice(2);
+const watch = !args.includes("--no-watch");
+
 const exec = (command, extraEnv) =>
   execSync(command, {
     stdio: "inherit",
@@ -8,7 +11,14 @@ const exec = (command, extraEnv) =>
 
 console.log("\nBuilding UMD index.js ...");
 
-exec("rollup -c -f umd -m inline -w src -o dev/index.js", {
-  BABEL_ENV: "umd",
-  NODE_ENV: "development"
-});
+if (watch) {
+  exec("rollup -c -f umd -m inline -w src -o dev/index.js", {
+    BABEL_ENV: "umd",
+    NODE_ENV: "development"
+  });
+} else {
+  exec("rollup -c -f umd -m inline -o dev/index.js", {
+    BABEL_ENV: "umd",
+    NODE_ENV: "development"
+  });
+}

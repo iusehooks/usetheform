@@ -40,6 +40,7 @@ export function useForm({
 }) {
   const [formState, dispatch] = useState(() => createForm(initialState));
   const stateRef = useRef(formState);
+  const memoStateRef = useRef(formState);
 
   const { current: isMultipleForm } = useRef(
     isUsingMultipleForm(_getInitilaStateForm_, _onMultipleForm_, name)
@@ -394,6 +395,8 @@ export function useForm({
   useEffect(() => {
     isMounted.current = true;
 
+    memoStateRef.current = stateRef.current;
+
     // Add its own validators
     if (validatorsFuncs.length > 0) {
       addValidators(FORM_VALIDATION_LABEL, validationFN.current);
@@ -431,6 +434,11 @@ export function useForm({
     };
 
     dispatchFormState(stateRef.current);
+
+    return () => {
+      isMounted.current = false;
+      stateRef.current = memoStateRef.current;
+    };
   }, []);
 
   useEffect(() => {

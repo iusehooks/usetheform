@@ -39,7 +39,7 @@ Welcome! 👋 Usetheform is a React library for composing declarative forms and 
 - Easy to handle arrays, objects or nested collections. 👉🏻 [Play with nested collections](https://iusehooks.github.io/usetheform/docs-collection#nested-collections).
 - Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
 - Typescript supported.
-  
+
 ## :zap: Quickstart
 
 ```sh
@@ -52,7 +52,7 @@ import { Form, Input, useValidation } from "usetheform";
 
 const preventNegativeNumber = (next, prev) => (next <= 0 ? 0 : next);
 const required = (value) =>
-    value && value.trim() !== "" ? undefined : "Required";
+  value && value.trim() !== "" ? undefined : "Required";
 
 export default function App() {
   const onChange = (formState) => console.log("ON_CHANGE : ", formState);
@@ -65,7 +65,12 @@ export default function App() {
       <Input name="firstname" type="text" touched {...validation} />
       {status.error && <span>{status.error}</span>}
       <Input name="lastname" type="text" />
-      <Input name="age" type="number" value={18} reducers={preventNegativeNumber} />
+      <Input
+        name="age"
+        type="number"
+        value={18}
+        reducers={preventNegativeNumber}
+      />
       <button type="submit">Submit</button>
     </Form>
   );
@@ -83,6 +88,7 @@ It's easy to start using it in your existing project and gives you full control 
 - Antonio Pangallo [@antonio_pangall](https://twitter.com/antonio_pangall)
 
 ### &#8627; Stargazers
+
 [![Stargazers repo roster for @iusehooks/usetheform](https://reporoster.com/stars/iusehooks/usetheform)](https://github.com/iusehooks/usetheform/stargazers)
 
 ## Code Sandboxes
@@ -102,6 +108,8 @@ It's easy to start using it in your existing project and gives you full control 
 🎉 First off, thanks for taking the time to contribute! 🎉
 
 We would like to encourage everyone to help and support this library by contributing. See the [CONTRIBUTING file](https://github.com/iusehooks/usetheform/blob/master/CONTRIBUTING.md).
+
 ## License
+
 This software is free to use under the MIT license.
 See the [LICENSE](/LICENSE.md) file for license text and copyright information.

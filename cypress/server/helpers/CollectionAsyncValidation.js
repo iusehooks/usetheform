@@ -2,7 +2,7 @@
 
 const { Input, Collection, useAsyncValidation, useChildren } = UseTheForm;
 
-const asyncTest = value =>
+const asyncTestCollectionAsyncValidation = value =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
       if (value.length <= 1) {
@@ -11,14 +11,22 @@ const asyncTest = value =>
     }, 1000);
   });
 
-let index = 0;
+let indexCollectionAsyncValidation = 0;
 
 window.CollectionAsyncValidation = function ({ uniqueId = "" }) {
-  const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+  const [asyncStatus, asyncValidation] = useAsyncValidation(
+    asyncTestCollectionAsyncValidation
+  );
   const [inputs, setInputs] = useChildren([]);
   const addInput = () => {
-    ++index;
-    setInputs(prev => [...prev, { index, value: index }]);
+    ++indexCollectionAsyncValidation;
+    setInputs(prev => [
+      ...prev,
+      {
+        index: indexCollectionAsyncValidation,
+        value: indexCollectionAsyncValidation
+      }
+    ]);
   };
 
   const removeInput = () => {
@@ -55,13 +63,19 @@ window.CollectionAsyncValidation = function ({ uniqueId = "" }) {
         ))}
       </Collection>
       {asyncStatus.status === "asyncStart" && (
-        <label data-testid="asyncStart">Checking...</label>
+        <label data-testid="CollectionAsyncValidation-asyncStart">
+          Checking...
+        </label>
       )}
       {asyncStatus.status === "asyncSuccess" && (
-        <label data-testid="asyncSuccess">{asyncStatus.value}</label>
+        <label data-testid="CollectionAsyncValidation-asyncSuccess">
+          {asyncStatus.value}
+        </label>
       )}
       {asyncStatus.status === "asyncError" && (
-        <label data-testid="asyncError">{asyncStatus.value}</label>
+        <label data-testid="CollectionAsyncValidation-asyncError">
+          {asyncStatus.value}
+        </label>
       )}
     </div>
   );

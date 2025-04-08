@@ -34,11 +34,12 @@ export function useObject(props) {
     touched = false
   } = props;
 
-  const { nameProp, uniqueIDarrayContext, setNameProp } = useNameProp(
-    context,
-    name,
-    index
-  );
+  const {
+    nameProp,
+    uniqueIDarrayContext,
+    setNameProp,
+    unMountIndex
+  } = useNameProp(context, name, index);
 
   if (process.env.NODE_ENV !== "production") {
     validateProps(
@@ -65,6 +66,7 @@ export function useObject(props) {
   const memoInitialState = useRef(init);
   const prevState = useRef(isArray ? initArray : initObject);
   const valueFieldLastSyncCheck = useRef(null);
+  const memoState = useRef(null);
 
   // getValue from parent context
   if (!isMounted.current) {
@@ -78,19 +80,32 @@ export function useObject(props) {
   formState.current = context.formState;
 
   const resetObj = useRef(isArray ? [] : {});
-  const registerReset = useCallback((namePropExt, fnReset) => {
-    resetObj.current = isArray
-      ? [...resetObj.current]
-      : { ...resetObj.current };
+  const resetObjKey = useRef({});
 
-    if (isArray && typeof resetObj.current[namePropExt] !== "undefined") {
-      resetObj.current.splice(Number(namePropExt), 0, fnReset);
-    } else {
-      resetObj.current[namePropExt] = fnReset;
-    }
-  }, []);
+  const registerReset = useCallback(
+    (namePropExt, fnReset, uniqueIDarrayContext) => {
+      resetObj.current = isArray
+        ? [...resetObj.current]
+        : { ...resetObj.current };
 
-  const unRegisterReset = useCallback(namePropExt => {
+      if (isArray && typeof resetObj.current[namePropExt] !== "undefined") {
+        if (typeof resetObjKey.current[uniqueIDarrayContext] !== "undefined") {
+          resetObj.current[namePropExt] = fnReset;
+        } else {
+          resetObj.current.splice(Number(namePropExt), 0, fnReset);
+        }
+      } else {
+        resetObj.current[namePropExt] = fnReset;
+      }
+
+      if (typeof uniqueIDarrayContext !== "undefined")
+        resetObjKey.current[uniqueIDarrayContext] = namePropExt;
+    },
+    []
+  );
+
+  const unRegisterReset = useCallback((namePropExt, uniqueIDarrayContext) => {
+    delete resetObjKey.current[uniqueIDarrayContext];
     if (resetObj.current.constructor === Array) {
       resetObj.current.splice(namePropExt, 1);
     } else {
@@ -335,7 +350,7 @@ export function useObject(props) {
       );
     }
     // --- Add the its children validators --- //
-    context.registerReset(nameProp.current, reset);
+    context.registerReset(nameProp.current, reset, uniqueIDarrayContext);
 
     const newState = applyReducers(
       state.current,
@@ -344,11 +359,13 @@ export function useObject(props) {
     );
 
     context.initProp(nameProp.current, newState, memoInitialState.current);
-
+    memoState.current = state.current;
     return () => {
       resetSyncErr();
       resetAsyncErr();
       isMounted.current = false;
+      state.current = memoState.current;
+
       if (context.stillMounted()) {
         context.unRegisterField(nameProp.current);
 
@@ -388,10 +405,11 @@ export function useObject(props) {
           true
         );
 
-        context.unRegisterReset(nameProp.current);
+        context.unRegisterReset(nameProp.current, uniqueIDarrayContext);
         if (context.type === "array") {
           context.removeIndex(uniqueIDarrayContext);
         }
+        unMountIndex();
       }
     };
   }, []);
@@ -402,7 +420,7 @@ export function useObject(props) {
     if (childrenIndexes.current[idCpm] === undefined) {
       childrenIndexes.current[idCpm] = null;
     }
-    return Object.keys(childrenIndexes.current).length - 1;
+    return Object.keys(childrenIndexes.current).findIndex(v => v == idCpm);
   }, []);
 
   const removeIndex = useCallback(idCpm => {

@@ -14,49 +14,34 @@ const {
   CollectionArrayNested,
   Reset,
   Submit,
-  CollectionValidationTouched
+  CollectionValidationTouched,
+  CollectionNestedDynamicField
 } = window;
 
-const CustomField = ({ name, value = { a: "2" } }) => {
-  const props = useField({ type: "custom", name, value });
-  const onChange = () => props.onChange({ target: { value: { a: "1" } } });
-  return (
-    <div>
-      <pre>
-        <code>{JSON.stringify(props.value)}</code>
-      </pre>
-      <button type="button" onClick={onChange}>
-        Change Value
-      </button>
-    </div>
-  );
-};
-
-const asyncTest = value =>
-  new Promise((resolve, reject) => {
-    // it could be an API call or any async operation
-
-    setTimeout(() => {
-      if (!value && !value.user && !value.user.mailList) {
-        reject("Empty are not allowed");
-      }
-
-      if (!value.user.mailList[0]) {
-        reject("Error values not allowed");
-      } else {
-        resolve("Success");
-      }
-    }, 1000);
-  });
-
 window.SimpleForm = () => {
-  const [input, validationInput] = useValidation([
-    val => {
-      return val && val.length > 3 ? undefined : "error";
-    }
-  ]);
+  const asyncTest = value =>
+    new Promise((resolve, reject) => {
+      // it could be an API call or any async operation
 
-  const [remove, setRemove] = useState(false);
+      setTimeout(() => {
+        if (!value && !value.userInfo && !value.userInfo.mailList) {
+          reject("Empty are not allowed");
+        }
+        if (
+          value.userInfo &&
+          value.userInfo.mailList &&
+          !value.userInfo.mailList[0]
+        ) {
+          reject("Error values not allowed");
+        } else {
+          resolve("Success");
+        }
+      }, 1000);
+    });
+
+  const [input] = useValidation([
+    val => (val && val.length > 3 ? undefined : "error")
+  ]);
 
   const [statusForm, validationFormProp] = useValidation([isArrayOfMailValid]);
 
@@ -65,18 +50,59 @@ window.SimpleForm = () => {
   return (
     <div>
       <Form
-        onSubmit={state => console.log("onSubmit => ", state)}
+        data-testid="SimpleForm-Form"
+        onSubmit={state => {
+          console.log("onSubmit,consoleLogSimpleForm", state);
+        }}
+        onChange={state => console.log("onChange,consoleLogSimpleForm", state)}
+        onReset={state => console.log("onReset,consoleLogSimpleForm", state)}
+        onInit={(state, isValid) => {
+          console.log("onInit,consoleLogSimpleForm", state, isValid);
+        }}
+        initialState={{
+          jobTitle: "none",
+          address: { city: "Milan", cap: "20093", info: ["via 1", "via 2"] }
+        }}
         {...asyncValidation}
         {...validationFormProp}
       >
         {statusForm.error && (
-          <label data-testid="status-error">{statusForm.error}</label>
+          <label data-testid="SimpleForm-status-error">
+            {statusForm.error}
+          </label>
         )}
         {asyncStatus.status === "asyncError" && (
-          <label data-testid="async-test-error">{asyncStatus.value}</label>
+          <label data-testid="SimpleForm-async-test-error">
+            {asyncStatus.value}
+          </label>
         )}
-
-        <Collection object name="user">
+        <br />
+        <CollectionNestedDynamicField />
+        <br /> <br />
+        <CollectionArrayNested dataTestid="collectionArrayNested" />
+        <br /> <br />
+        <Input data-testid="jobTitle" name="jobTitle" type="text" />
+        <Collection object name="address">
+          <Input data-testid="city" name="city" type="text" />
+          <Input data-testid="cap" name="cap" type="text" />
+          <Collection array name="info">
+            <Input data-testid="line1" type="text" />
+            <Input data-testid="line2" type="text" />
+          </Collection>
+        </Collection>
+        <Collection
+          object
+          name="user"
+          value={{ name: "Antonio", surname: "Pangallo", info: ["Male", "40"] }}
+        >
+          <Input data-testid="name" name="name" type="text" />
+          <Input data-testid="surname" name="surname" type="text" />
+          <Collection array name="info">
+            <Input data-testid="gender" type="text" />
+            <Input data-testid="age" type="text" />
+          </Collection>
+        </Collection>
+        <Collection object name="userInfo">
           <Collection array name="mailList">
             <Input data-testid="email1" type="text" />
             <Input data-testid="email2" type="text" />
@@ -86,20 +112,16 @@ window.SimpleForm = () => {
         <button type="submit">Press to see results</button>
         <Reset data_prefix="simpleForm-" />
       </Form>
-
-      <button onClick={() => setRemove(true)} type="button">
-        Remove
-      </button>
       {input.error && <label>{input.error}</label>}
     </div>
   );
 };
-function isArrayOfMailValid({ user }) {
-  if (!user || !user.mailList || user.mailList.length <= 0) {
+function isArrayOfMailValid({ userInfo }) {
+  if (!userInfo || !userInfo.mailList || userInfo.mailList.length <= 0) {
     return "Mail list empty";
   }
 
-  return user.mailList.every(email =>
+  return userInfo.mailList.every(email =>
     /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)
   )
     ? undefined
