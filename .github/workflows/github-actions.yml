@@ -199,7 +199,15 @@ jobs:
     name: Deploy Docs 📚
     runs-on: ubuntu-latest
     needs: [tests, build, cypress-test]
-    if: github.ref == 'refs/heads/master'
+    if: |
+      github.event_name == 'workflow_dispatch' && 
+      github.event.inputs.run_publish == 'true' && 
+      github.ref == 'refs/heads/master'
+
+    permissions:
+      contents: write # This is essential
+      pages: write # This is essential
+      id-token: write # This is essential
 
     steps:
       - name: Checkout 🛎️
@@ -214,6 +222,6 @@ jobs:
       - run: rm .gitignore
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           folder: .docz/dist # The folder the action should deploy.
