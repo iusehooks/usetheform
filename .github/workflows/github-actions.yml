@@ -165,9 +165,6 @@ jobs:
       - name: Install dependencies 📥
         run: npm ci --ignore-scripts
 
-      - name: Create tag version 📦
-        run: npm version --force ${{ env.VERSION }}
-
       - name: Publish to npm 🚀
         run: npm publish
         env:
@@ -178,7 +175,8 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git push --follow-tags
+          git tag -a v${{ env.VERSION }} -m "Release version v${{ env.VERSION }}"
+          git push origin v${{ env.VERSION }}
 
       - name: Extract Changelog for current version 📝
         run: |
