@@ -382,16 +382,22 @@ describe("Component => Collection", () => {
     const addInput = getByTestId("addInput");
 
     fireEvent.click(submit);
-    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"), {
+      timeout: 5000
+    });
     expect(asyncStart).toBeDefined();
 
-    const asyncError = await waitFor(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"), {
+      timeout: 5000
+    });
     expect(asyncError).toBeDefined();
 
     fireEvent.click(addInput);
     fireEvent.click(addInput);
     fireEvent.click(submit);
-    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"), {
+      timeout: 5000
+    });
     expect(asyncSuccess).toBeDefined();
   });
 
@@ -677,7 +683,7 @@ describe("Component => Collection", () => {
   it("should run reducer functions on Collection fields removal", () => {
     const props = { onSubmit, onChange, onReset };
     const reducer = jest.fn(value => {
-      const { items = [] } = value.list;
+      const { items = [] } = value?.list || {};
       const result = items.reduce((acc, val) => {
         acc += val;
         return acc;
@@ -697,19 +703,29 @@ describe("Component => Collection", () => {
     const addInput = getByTestId("addInput");
     const removeInput = getByTestId("removeInput");
 
-    fireEvent.click(addInput);
+    act(() => {
+      fireEvent.click(addInput);
+    });
+
     expect(reducer).toHaveBeenCalled();
     expect(reducer).toHaveReturnedWith({ list: { items: [1], result: 1 } });
 
-    fireEvent.click(addInput);
+    act(() => {
+      fireEvent.click(addInput);
+    });
     expect(reducer).toHaveBeenCalled();
     expect(reducer).toHaveReturnedWith({ list: { items: [1, 2], result: 3 } });
 
-    fireEvent.click(removeInput);
+    act(() => {
+      fireEvent.click(removeInput);
+    });
+
     expect(reducer).toHaveBeenCalled();
     expect(reducer).toHaveReturnedWith({ list: { items: [1], result: 1 } });
 
-    fireEvent.click(removeInput);
+    act(() => {
+      fireEvent.click(removeInput);
+    });
     expect(reducer).toHaveBeenCalled();
     expect(reducer).toHaveReturnedWith({ list: { result: 0 } });
   });

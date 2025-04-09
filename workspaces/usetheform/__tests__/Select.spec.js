@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, cleanup, act } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 
 import Reset from "./helpers/components/Reset";
 import SelectSyncValidation from "./helpers/components/SelectSyncValidation";
@@ -19,10 +19,13 @@ const onReset = jest.fn();
 afterEach(cleanup);
 
 describe("Component => Select", () => {
+  let userAction;
+
   beforeEach(() => {
     onInit.mockClear();
     onChange.mockClear();
     onReset.mockClear();
+    userAction = userEvent.setup();
   });
 
   it("should render a Select with an intial value", () => {
@@ -79,7 +82,7 @@ describe("Component => Select", () => {
     expect(select.value).toBe(value);
   });
 
-  it("should render a multiple Select and changing its value", () => {
+  it("should render a multiple Select and changing its value", async () => {
     const props = { onChange };
     const children = [
       <Select key="1" multiple data-testid={dataTestid} name={name}>
@@ -92,13 +95,17 @@ describe("Component => Select", () => {
     const { getByTestId } = mountForm({ props, children });
 
     const select = getByTestId(dataTestid);
-    userEvent.selectOptions(select, ["1", "3"]);
+
+    await act(async () => {
+      await userAction.selectOptions(select, ["1", "3"]);
+    });
+
     expect(onChange).toHaveBeenCalledWith({ [name]: ["1", "3"] }, true);
     expect(select.selectedOptions[0].value).toBe("1");
     expect(select.selectedOptions[1].value).toBe("3");
   });
 
-  it("should render a multiple Select with a inital value", () => {
+  it("should render a multiple Select with a inital value", async () => {
     const initialState = { [name]: ["1", "2"] };
     const props = { onChange, onInit, initialState, onReset };
     const children = [
@@ -115,7 +122,11 @@ describe("Component => Select", () => {
     expect(onInit).toHaveReturnedWith({ [name]: ["1", "2"] });
 
     const select = getByTestId(dataTestid);
-    userEvent.selectOptions(select, ["1", "2", "3", "4"]);
+
+    await act(async () => {
+      await userAction.selectOptions(select, ["1", "2", "3", "4"]);
+    });
+
     expect(onChange).toHaveBeenCalledWith(
       { [name]: ["1", "2", "3", "4"] },
       true
@@ -167,7 +178,7 @@ describe("Component => Select", () => {
     expect(onInit).toHaveReturnedWith({ [name]: 3 });
   });
 
-  it("should run sync validation on the single Select with touched prop true", () => {
+  it("should run sync validation on the single Select with touched prop true", async () => {
     const children = [
       <SelectSyncValidation touched={true} key="1" />,
       <Reset key="2" />
@@ -185,8 +196,8 @@ describe("Component => Select", () => {
     let errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
 
-    act(() => {
-      userEvent.selectOptions(select, ["1"]);
+    await act(async () => {
+      await userAction.selectOptions(select, ["1"]);
       select.blur();
     });
 
@@ -197,7 +208,7 @@ describe("Component => Select", () => {
     expect(() => getByTestId("errorLabel")).toThrow();
   });
 
-  it("should run sync validation on the multiple Select with touched prop true", () => {
+  it("should run sync validation on the multiple Select with touched prop true", async () => {
     const children = [
       <SelectSyncValidation multiple touched={true} key="1" />,
       <Reset key="2" />
@@ -216,8 +227,8 @@ describe("Component => Select", () => {
     let errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
 
-    act(() => {
-      userEvent.selectOptions(select, ["1"]);
+    await act(async () => {
+      await userEvent.selectOptions(select, ["1"]);
       select.blur();
     });
 
@@ -241,7 +252,7 @@ describe("Component => Select", () => {
     expect(() => getByTestId("errorLabel")).toThrow();
   });
 
-  it("should run sync validation on the single Select with touched prop false", () => {
+  it("should run sync validation on the single Select with touched prop false", async () => {
     const children = [
       <SelectSyncValidation touched={false} key="1" />,
       <Reset key="2" />
@@ -252,15 +263,17 @@ describe("Component => Select", () => {
     let errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
 
-    act(() => {
-      userEvent.selectOptions(select, ["1"]);
+    await act(async () => {
+      await userAction.selectOptions(select, ["1"]);
       select.blur();
     });
 
     expect(() => getByTestId("errorLabel")).toThrow();
 
     const reset = getByTestId("reset");
-    fireEvent.click(reset);
+    act(() => {
+      fireEvent.click(reset);
+    });
 
     errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
@@ -272,7 +285,7 @@ describe("Component => Select", () => {
     expect(() => getByTestId("errorLabel")).toThrow();
   });
 
-  it("should run sync validation on the multiple Select with touched prop false", () => {
+  it("should run sync validation on the multiple Select with touched prop false", async () => {
     const children = [
       <SelectSyncValidation multiple={true} touched={false} key="1" />,
       <Reset key="2" />
@@ -283,15 +296,17 @@ describe("Component => Select", () => {
     let errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();
 
-    act(() => {
-      userEvent.selectOptions(select, ["1"]);
+    await act(async () => {
+      await userEvent.selectOptions(select, ["1"]);
       select.blur();
     });
 
     expect(() => getByTestId("errorLabel")).toThrow();
 
     const reset = getByTestId("reset");
-    fireEvent.click(reset);
+    act(() => {
+      fireEvent.click(reset);
+    });
 
     errorLabel = getByTestId("errorLabel");
     expect(errorLabel).toBeDefined();

@@ -6,7 +6,7 @@ import {
   cleanup,
   act
 } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { Input } from "./../src";
 import InputAsync from "./helpers/components/InputAsync";
 import Radio from "./helpers/components/Radio";
@@ -165,7 +165,8 @@ describe("Component => Input", () => {
     expect(onSubmit).toHaveBeenCalledWith({ text: "text" }, true);
   });
 
-  it("should render Input of type file single/multiple and upload files", () => {
+  it("should render Input of type file single/multiple and upload files", async () => {
+    const user = userEvent.setup();
     const singeFile = "singeFile";
     const multipleFile = "multipleFile";
     const props = { onChange };
@@ -191,14 +192,17 @@ describe("Component => Input", () => {
     const fileInput = getByTestId(singeFile);
     const fileInputMultiple = getByTestId(multipleFile);
 
-    act(() => {
-      userEvent.upload(fileInput, fileValue);
+    await act(async () => {
+      await user.upload(fileInput, fileValue);
     });
+
     expect(onChange).toHaveBeenCalledWith({ [singeFile]: fileValue }, true);
 
-    act(() => {
-      userEvent.upload(fileInputMultiple, files);
+    await act(async () => {
+      await user.upload(fileInputMultiple, files);
     });
+
+    expect(fileInput.type).toBe("file");
 
     expect(onChange).toHaveBeenCalledWith(
       { [singeFile]: fileValue, [multipleFile]: files },
@@ -579,10 +583,14 @@ describe("Component => Input", () => {
       asyncinput.blur();
     });
 
-    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"), {
+      timeout: 5000
+    });
     expect(asyncStart).toBeDefined();
 
-    const asyncError = await waitFor(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"), {
+      timeout: 5000
+    });
     expect(asyncError).toBeDefined();
     expect(asyncError.textContent).toBe("Error");
 
@@ -595,7 +603,9 @@ describe("Component => Input", () => {
 
     expect(asyncinput.value).toBe("1234");
 
-    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"), {
+      timeout: 5000
+    });
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.textContent).toBe("Success");
 

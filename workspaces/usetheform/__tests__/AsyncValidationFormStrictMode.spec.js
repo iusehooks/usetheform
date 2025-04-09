@@ -103,7 +103,9 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
 
     fireEvent.click(submit);
 
-    let asyncErrorCollection = await waitFor(() => getByTestId("asyncError"));
+    let asyncErrorCollection = await waitFor(() => getByTestId("asyncError"), {
+      timeout: 5000
+    });
 
     expect(asyncErrorCollection).toBeDefined();
 

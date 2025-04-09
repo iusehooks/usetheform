@@ -96,8 +96,10 @@ export const reducerArrayNested = (value, prevValue) => {
   if (!prevValue[0] && newValue[0]) {
     newValue[0] = `${newValue[0]}_1`;
   }
+
   if (prevValue[1] === undefined && newValue[1])
     newValue[1] = `${newValue[1]}_1`;
+
   if (prevValue[2] === undefined && newValue[2] && newValue[2][0]) {
     newValue[2][0] = `${newValue[2][0]}_1`;
   }
@@ -105,27 +107,35 @@ export const reducerArrayNested = (value, prevValue) => {
     newValue[2][1] = `${newValue[2][1]}_1`;
   }
 
-  if (prevValue[2] !== undefined && newValue[2][2] && newValue[2][2][0]) {
+  if (
+    prevValue[2] !== undefined &&
+    newValue?.[2]?.[2] &&
+    newValue?.[2]?.[2]?.[0]
+  ) {
     newValue[2][2][0] = `${newValue[2][2][0]}_1`;
   }
 
-  if (prevValue[2] !== undefined && newValue[2][2] && newValue[2][2][1]) {
+  if (
+    prevValue[2] !== undefined &&
+    newValue?.[2]?.[2] &&
+    newValue?.[2]?.[2]?.[1]
+  ) {
     newValue[2][2][1] = `${newValue[2][2][1]}_1`;
   }
 
   if (
     prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    newValue[2][2][2] &&
-    newValue[2][2][2][0]
+    prevValue?.[2]?.[2] !== undefined &&
+    newValue?.[2]?.[2]?.[2] &&
+    newValue?.[2]?.[2]?.[2]?.[0]
   ) {
     newValue[2][2][2][0] = `${newValue[2][2][2][0]}_1`;
   }
 
   if (
     prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    newValue[2][2][2][1]
+    prevValue?.[2]?.[2] !== undefined &&
+    newValue?.[2]?.[2]?.[2]?.[1]
   ) {
     newValue[2][2][2][1] = `${newValue[2][2][2][1]}_1`;
   }
@@ -133,17 +143,17 @@ export const reducerArrayNested = (value, prevValue) => {
   if (
     prevValue[2] !== undefined &&
     prevValue[2][2] !== undefined &&
-    prevValue[2][2][2] !== undefined &&
-    newValue[2][2][2][2][0]
+    prevValue?.[2]?.[2]?.[2] !== undefined &&
+    newValue?.[2]?.[2][2][2][0]
   ) {
     newValue[2][2][2][2][0] = `${newValue[2][2][2][2][0]}_1`;
   }
 
   if (
     prevValue[2] !== undefined &&
-    prevValue[2][2] !== undefined &&
-    prevValue[2][2][2] !== undefined &&
-    newValue[2][2][2][2][1]
+    prevValue?.[2]?.[2] !== undefined &&
+    prevValue?.[2]?.[2][2] !== undefined &&
+    newValue?.[2]?.[2]?.[2]?.[2][1]
   ) {
     newValue[2][2][2][2][1] = `${newValue[2][2][2][2][1]}_1`;
   }

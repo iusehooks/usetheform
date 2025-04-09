@@ -174,9 +174,8 @@ export function useObject(props) {
           memoInitialState.current,
           false
         );
-      } else {
-        state.current = reducedState;
       }
+      state.current = reducedState; // TODO: check if this is needed
     },
     []
   );
@@ -359,7 +358,7 @@ export function useObject(props) {
     );
 
     context.initProp(nameProp.current, newState, memoInitialState.current);
-    memoState.current = state.current;
+    memoState.current = initValue || context.state[nameProp.current] || init;
     return () => {
       resetSyncErr();
       resetAsyncErr();

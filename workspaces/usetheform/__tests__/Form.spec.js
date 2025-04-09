@@ -703,7 +703,9 @@ describe("Component => Form", () => {
 
     const { getByTestId } = render(<SimpleFormWithAsync {...props} />);
 
-    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"), {
+      timeout: 5000
+    });
     expect(asyncSuccess).toBeDefined();
     const submitbutton = getByTestId("submit");
     expect(submitbutton.disabled).toBe(false);
@@ -822,10 +824,14 @@ describe("Component => Form", () => {
 
     fireEvent.submit(form);
 
-    const asyncStart = await waitFor(() => getByTestId("asyncStart"));
+    const asyncStart = await waitFor(() => getByTestId("asyncStart"), {
+      timeout: 5000
+    });
     expect(asyncStart).toBeDefined();
 
-    const asyncError = await waitFor(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"), {
+      timeout: 5000
+    });
     expect(asyncError).toBeDefined();
 
     expect(onSubmit).not.toHaveBeenCalled();

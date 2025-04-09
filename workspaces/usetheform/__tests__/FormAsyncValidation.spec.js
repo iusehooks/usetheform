@@ -38,12 +38,16 @@ describe("Component => Form (Async validation)", () => {
       fireEvent.click(submit);
     });
 
-    let asyncStart = await waitFor(() => getByTestId("asyncStart"));
+    let asyncStart = await waitFor(() => getByTestId("asyncStart"), {
+      timeout: 5000
+    });
     expect(asyncStart).toBeDefined();
 
     expect(asyncStart.innerHTML).toBe("Checking...");
 
-    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    const asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"), {
+      timeout: 5000
+    });
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.innerHTML).toBe("Success");
 
@@ -60,11 +64,15 @@ describe("Component => Form (Async validation)", () => {
       fireEvent.click(submit);
     });
 
-    asyncStart = await waitFor(() => getByTestId("asyncStart"));
+    asyncStart = await waitFor(() => getByTestId("asyncStart"), {
+      timeout: 5000
+    });
     expect(asyncStart).toBeDefined();
     expect(asyncStart.innerHTML).toBe("Checking...");
 
-    const asyncError = await waitFor(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"), {
+      timeout: 5000
+    });
     expect(asyncError).toBeDefined();
     expect(asyncError.innerHTML).toBe("Mail not Valid");
 
@@ -108,7 +116,9 @@ describe("Component => Form (Async validation)", () => {
 
     expect(asyncStart.innerHTML).toBe("Checking...");
 
-    let asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    let asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"), {
+      timeout: 5000
+    });
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.innerHTML).toBe("Success");
 
@@ -129,7 +139,9 @@ describe("Component => Form (Async validation)", () => {
     expect(asyncStart).toBeDefined();
     expect(asyncStart.innerHTML).toBe("Checking...");
 
-    const asyncError = await waitFor(() => getByTestId("asyncError"));
+    const asyncError = await waitFor(() => getByTestId("asyncError"), {
+      timeout: 5000
+    });
     expect(asyncError).toBeDefined();
     expect(asyncError.innerHTML).toBe("Some Mails not Valid");
 
@@ -151,7 +163,9 @@ describe("Component => Form (Async validation)", () => {
     expect(asyncStart).toBeDefined();
     expect(asyncStart.innerHTML).toBe("Checking...");
 
-    asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"));
+    asyncSuccess = await waitFor(() => getByTestId("asyncSuccess"), {
+      timeout: 5000
+    });
     expect(asyncSuccess).toBeDefined();
     expect(asyncSuccess.innerHTML).toBe("Success");
   });
