@@ -1,0 +1,198 @@
+---
+name: Select
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Form } from "./../helpers/Form";
+import { Submit } from "./../helpers/Submit";
+import { Select, useValidation, useAsyncValidation } from './../../usetheform/src';
+
+# Select
+
+The _select_ element is used to create a drop-down list. <br />
+It accepts, as props, any html attribute listed at: [Html Select Attributes](https://www.w3schools.com/tags/tag_select.asp).
+
+## Props
+
+**`name`**: string
+
+- A field's name in Usetheform state. <br />
+- If your Select is rendered within a `<Collection array />`, **name** is not allowed as a prop.
+
+**`index`**: string
+
+- A field's index in an array Collection. <br />
+- **index** is only allowed if your Select is rendered within a `<Collection array /> `.
+
+**`value`**: string
+
+- Specifies the initial value of a _select_ element.
+
+**`touched`**: boolean
+
+- A field that has been touched/visited. Default value of _false_.
+
+- If _true_, validation messages (sync and async) will be shown but only when the event onBlur of the field is triggered by a user action.
+
+**`multiple`**: boolean
+
+- When present, it specifies that multiple options can be selected at once. Default value of _false_.
+
+**`reducers`**: array | function
+
+```javascript
+(nextValue, prevValue, formState) => nextValue;
+```
+
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Select's value changes.
+
+**`innerRef`**: object (a mutable ref object)
+
+- When you need to access the underlying DOM node created by Select (e.g. to call focus), you can use a ref to store a reference to the select dom node.
+
+```javascript
+const ref = useRef(null)
+<Select innerRef={ref} name="test">...options...</Select>
+```
+
+## Basic usage
+
+### Single options
+
+```javascript
+import { Form, Select } from "usetheform";
+```
+
+<Playground>
+  <Form>
+    <Select name="select">
+      <option value="">Select an option</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </Select>
+  </Form>
+</Playground>
+
+### Multiple options
+
+<Playground>
+  <Form>
+    <Select name="select" multiple>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </Select>
+  </Form>
+</Playground>
+
+## Reducers
+
+```javascript
+import { Form, Select } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const tenIfEven = (nextValue, prevValue) =>
+      nextValue !== "" && Number(nextValue) % 2 === 0 ? "10" : nextValue;
+    const elevenIfOdd = (nextValue, prevValue) =>
+      nextValue !== "" && Number(nextValue) % 2 !== 0 ? "11" : nextValue;
+    return (
+      <Form>
+        <Select name="select" reducers={[tenIfEven, elevenIfOdd]}>
+          <option value="">Select an option</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+        </Select>
+      </Form>
+    );
+  }}
+</Playground>
+
+## Validation - Sync
+
+```javascript
+import { useValidation } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const required = (value) =>
+      value && value.trim() !== "" ? undefined : "Required";
+    const [status, validation] = useValidation([required]);
+    return (
+      <Form>
+        <Select name="selectRequired" touched {...validation}>
+          <option value="">Select an option</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </Select>
+        {status.error && <label>{status.error}</label>}
+      </Form>
+    );
+  }}
+</Playground>
+
+## Validation - Async
+
+```javascript
+import { useAsyncValidation, useForm } from "usetheform";
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+```
+
+<Playground>
+  {() => {
+    const asyncTest = (value) =>
+      new Promise((resolve, reject) => {
+        // it could be an API call or any async operation
+        setTimeout(() => {
+          if (value !== "3") {
+            reject("Selection not valid");
+          } else {
+            resolve("Success");
+          }
+        }, 1000);
+      });
+    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTest);
+    return (
+      <Form>
+        <Select name="selectRequired" touched {...asyncValidation}>
+          <option value="">Select an option</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </Select>
+        {asyncStatus.status === undefined && (
+          <label>Async Check Not Started Yet</label>
+        )}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+        {asyncStatus.status === "asyncError" && (
+          <label>{asyncStatus.value}</label>
+        )}
+        {asyncStatus.status === "asyncSuccess" && (
+          <label>{asyncStatus.value}</label>
+        )}
+        <Submit />
+      </Form>
+    );
+  }}
+</Playground>

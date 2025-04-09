@@ -1,0 +1,43 @@
+---
+name: PersistStateOnUnmount
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { useState } from "react";
+import { Form } from "./../helpers/Form";
+import { InputLabel as Input } from "./../helpers/InputLabel";
+import { PersistStateOnUnmount, Collection } from './../../usetheform/src';
+
+# PersistStateOnUnmount
+
+In `usetheform` if a Field gets unmounted its value within the Form state gets cleared.
+Wrap your Field elements between the `<PersistStateOnUnmount />` component to preserve the Fields values.
+
+## Basic usage
+
+```javascript
+import { Form, PersistStateOnUnmount, Input } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const [visible, toggle] = useState(false);
+    return (
+      <Form>
+        <PersistStateOnUnmount>
+          {!visible && (
+            <Collection object name="user">
+              <Input type="text" name="name" value="abc" />
+              <Input type="text" name="lastname" value="foo" />
+            </Collection>
+          )}
+          <Input type="text" name="other" />
+        </PersistStateOnUnmount>
+        <button type="button" onClick={() => toggle((prev) => !prev)}>
+          Toggle Collection
+        </button>
+      </Form>
+    );
+  }}
+</Playground>

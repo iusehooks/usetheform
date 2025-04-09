@@ -1,0 +1,199 @@
+---
+name: Input
+menu: Components
+---
+
+import { Playground } from "docz";
+import { Form } from "./../helpers/Form";
+import { Submit } from "./../helpers/Submit";
+import { asyncTestInput } from "./../helpers/utils/index.js";
+import { InputLabel as Input } from "./../helpers/InputLabel";
+import { useValidation, useAsyncValidation } from "./../../usetheform/src";
+
+# Input
+
+Renders all the inputs of the types listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp) and accepts as props any html attribute listed at: [Html Input Attributes](https://www.w3schools.com/tags/tag_input.asp).
+
+## Props
+
+**`type`**: string
+
+- Type listed at: [W3schools Input Types](https://www.w3schools.com/html/html_form_input_types.asp).
+
+**`name`**: string
+
+- A field's name in Usetheform state. <br />
+- If the Input is rendered within a `<Collection array />`, **name** is not allowed as prop.
+
+**`index`**: string
+
+- A field's index in an array Collection. <br />
+- **index** is only allowed if your Input is rendered within a `<Collection array /> `.
+
+**`value`**: string | number
+
+- Specifies the initial value of an _input_ element.
+
+**`checked`**: boolean
+
+- Specifies whether an _input_ element should be pre-selected or not (for type="checkbox" or type="radio").
+
+**`touched`**: boolean
+
+- A field that has been touched/visited. Default value of _false_.
+- If _true_, validation messages (sync and async) will be shown but only when the event onBlur of the field is triggered by a user action.
+
+**`reducers`**: array | function
+
+```javascript
+(nextValue, prevValue, formState) => nextValue;
+```
+
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Input's value changes.
+
+**`innerRef`**: object (a mutable ref object)
+
+- When you need to access the underlying DOM node created by an Input (e.g. to call focus), you can use a ref to store a reference to the input dom node.
+
+```javascript
+const ref = useRef(null)
+<Input innerRef={ref} type="text" name="test" />
+```
+
+## Basic usage
+
+```javascript
+import { Form, Input, Collection } from "usetheform";
+```
+
+<Playground>
+  <Form>
+    <Input type="text" name="name" value="foo" placeholder="Name" />
+    <Input type="radio" name="gender" value="M" placeholder="M" />
+    <Input type="radio" name="gender" value="F" placeholder="F" />
+    <Input type="radio" name="gender" value="Other" placeholder="Other" />
+    <Input type="checkbox" name="option1" checked placeholder="Option 1" />
+    <Input type="checkbox" name="option2" placeholder="Option 2" />
+    <Input type="file" name="file" />
+  </Form>
+</Playground>
+
+## Reducers
+
+```javascript
+import { Form, Input } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const prevNumberGreater10 = (nextValue, prevValue) =>
+      nextValue > 10 ? prevValue : nextValue;
+    const prevNumberLessThan1 = (nextValue, prevValue) =>
+      nextValue <= 0 ? prevValue : nextValue;
+    return (
+      <Form>
+        <Input
+          type="number"
+          name="numberWithReducer"
+          reducers={[prevNumberLessThan1, prevNumberGreater10]}
+          placeholder="Number"
+          value="1"
+        />
+      </Form>
+    );
+  }}
+</Playground>
+
+## Validation - Sync
+
+```javascript
+import { useValidation } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const isValidEmail = (value) =>
+      !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
+        ? undefined
+        : "Mail not Valid";
+    const required = (value) =>
+      value && value.trim() !== "" ? undefined : "Required";
+    const [status, validation] = useValidation([required, isValidEmail]);
+    return (
+      <Form>
+        <Input
+          type="text"
+          name="email"
+          touched
+          placeholder="Email"
+          {...validation}
+        />
+        {status.error && <label>{status.error}</label>}
+        <Submit />
+      </Form>
+    );
+  }}
+</Playground>
+
+## Validation - Async
+
+```javascript
+import { Form, Input } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const [asyncStatus, asyncValidation] = useAsyncValidation(asyncTestInput);
+    return (
+      <Form>
+        <Input
+          type="text"
+          name="username"
+          touched
+          placeholder="Username"
+          {...asyncValidation}
+        />
+        {asyncStatus.status === undefined && (
+          <label>Async Check Not Started Yet</label>
+        )}
+        {asyncStatus.status === "asyncStart" && <label>Checking...</label>}
+        {asyncStatus.status === "asyncError" && (
+          <label>{asyncStatus.value}</label>
+        )}
+        {asyncStatus.status === "asyncSuccess" && (
+          <label>{asyncStatus.value}</label>
+        )}
+        <br />
+        <Submit />
+      </Form>
+    );
+  }}
+</Playground>
+
+#### Detailed Explanation:
+
+```javascript
+import { useForm } from "usetheform";
+
+export const asyncTestInput = (value) =>
+  new Promise((resolve, reject) => {
+    // it could be an API call or any async operation
+    setTimeout(() => {
+      if (value === "foo") {
+        reject("username already in use");
+      } else {
+        resolve("Success");
+      }
+    }, 1000);
+  });
+
+export const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+```

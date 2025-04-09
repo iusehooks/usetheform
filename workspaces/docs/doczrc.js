@@ -2,10 +2,10 @@ export default {
   base: "/usetheform",
   ignore: ["README.md", "LICENSE.md", "CONTRIBUTING.md"],
   menu: ["Introduction", "Components", "Hooks"],
-  themesDir: "./docs",
+  themesDir: "./",
   themeConfig: {
     showDarkModeSwitch: false
   },
   title: "Usetheform - An easy way for building forms in React",
-  public: "./docs/gatsby-theme-docz/assets"
+  public: "./gatsby-theme-docz/assets"
 };

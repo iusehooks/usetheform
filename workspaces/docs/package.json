@@ -1,5 +1,5 @@
 {
-  "name": "usetheform",
+  "name": "docs",
   "version": "3.5.0",
   "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
@@ -7,12 +7,8 @@
   "types": "./build/index.d.ts",
   "repository": "github:iusehooks/usetheform",
   "homepage": "https://iusehooks.github.io/usetheform",
-  "workspaces": [
-    "workspaces/*"
-  ],
-  "private": true,
   "scripts": {
-    "start": "npm start --workspaces --if-present",
+    "start": "rimraf .docz && docz dev",
     "build": "npm run clean && node ./build_config/build.js",
     "clean": "rimraf build coverage",
     "prepare": "node -e \"if (process.env.CI !== 'true') require('child_process').execSync('npm run clean && npm run lint && npm run test && npm run build', { stdio: 'inherit' })\"",

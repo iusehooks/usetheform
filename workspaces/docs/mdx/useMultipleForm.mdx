@@ -1,0 +1,55 @@
+---
+name: useMultipleForm
+menu: Hooks
+---
+
+import { useState } from "react";
+import { Playground } from "docz";
+import { Form } from "./../helpers/Form";
+import { Input, useMultipleForm } from "./../../usetheform/src";
+
+# useMultipleForm
+
+`useMultipleForm(callback: Function)` provides the logic to handle the implementation of wizards.
+
+```javascript
+const [getWizardStatus, wizardApi] = useMultipleForm(callback);
+```
+
+## Returns
+
+(**`helpers`**): array
+
+- An array that holds:
+
+  - **`getWizardStatus`**: a function that returns the actual state of the wizard.
+  - **`wizardApi`**: an object which holds the props that must be spread in each form.
+
+## Basic usage
+
+```javascript
+import { Form, Input, useMultipleForm } from "usetheform";
+```
+
+<Playground>
+  {() => {
+    const [getWizardStatus, wizardApi] = useMultipleForm();
+    const [stateWizard, setStateWizard] = useState({});
+    return (
+      <div>
+        <Form {...wizardApi} name="form1" initialState={{ name: "foo" }}>
+          <Input type="text" name="name" />
+        </Form>
+        <Form {...wizardApi} name="form2" initialState={{ lastname: "mouse" }}>
+          <Input type="text" name="lastname" />
+        </Form>
+        <button onClick={() => setStateWizard(getWizardStatus())}>
+          Submit Wizard
+        </button>
+        <div>
+          <code>{JSON.stringify(stateWizard)}</code>
+        </div>
+      </div>
+    );
+  }}
+</Playground>
