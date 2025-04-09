@@ -34,12 +34,8 @@ export function useObject(props) {
     touched = false
   } = props;
 
-  const {
-    nameProp,
-    uniqueIDarrayContext,
-    setNameProp,
-    unMountIndex
-  } = useNameProp(context, name, index);
+  const { nameProp, uniqueIDarrayContext, setNameProp, unMountIndex } =
+    useNameProp(context, name, index);
 
   if (process.env.NODE_ENV !== "production") {
     validateProps(
@@ -174,9 +170,8 @@ export function useObject(props) {
           memoInitialState.current,
           false
         );
-      } else {
-        state.current = reducedState;
       }
+      state.current = reducedState;
     },
     []
   );
@@ -253,9 +248,8 @@ export function useObject(props) {
     updateValidatorsMap
   ] = useValidators(context, nameProp, isMounted, true);
 
-  const { validationMsg, validationObj, validationFN } = useValidationFunction(
-    validatorsFuncs
-  );
+  const { validationMsg, validationObj, validationFN } =
+    useValidationFunction(validatorsFuncs);
 
   const [validationFNAsync] = useValidationFunctionAsync(
     asyncValidator,
@@ -359,7 +353,7 @@ export function useObject(props) {
     );
 
     context.initProp(nameProp.current, newState, memoInitialState.current);
-    memoState.current = state.current;
+    memoState.current = initValue || context.state[nameProp.current] || init;
     return () => {
       resetSyncErr();
       resetAsyncErr();

@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+.FormContext button,
+.FormCustom button {
+  @apply bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out;
+}
+.FormCustom select,
+.FormCustom textarea{
+  @apply block w-full rounded-md border border-gray-300 bg-white px-4 py-2 pr-10 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500
+}
+
+.FormCustom .vl {
+  @apply inline-block bg-red-400 text-white py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2 cursor-pointer hover:bg-blue-600 transition duration-200 ease-in-out
+}
+
+.FormCustom code{
+  @apply mt-4 bg-gray-100 rounded-md p-2 overflow-x-auto text-sm text-gray-800 font-mono shadow-inner;
+}
+
+ul {
+  @apply list-disc pl-5;
+}
+
+.playgroundPreview_wiye[data-colorMode="dark"] {
+  @apply bg-gray-100 text-gray-800 p-4;
+}

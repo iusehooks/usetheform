@@ -6,30 +6,70 @@ on:
   workflow_dispatch:
     inputs:
       run_publish:
-        description: "Run publish-alpha job manually?"
+        description: "Publish on NPM?"
         required: false
         default: "false"
 
+env:
+  NODE_VERSION: 18.20.8
+
 jobs:
   tests:
-    name: Unit Tests 🧪
+    name: Unit Tests + Lint 🧪 - React Version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        react-version: ['18.2.0', '19.0.0']  # Specify the React versions here
+
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js and Yarn 📦
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install dependencies with Yarn 📥
+        run: yarn install --immutable
+
+      - name: Install react@${{ matrix.react-version }} 📦
+        run: yarn add react@${{ matrix.react-version }} react-dom@${{ matrix.react-version }} -D
+        working-directory: workspaces/usetheform
+
+      - name: Run Lint 🔍
+        run: yarn lint
+
+      - name: Run tests 🧪
+        run: yarn test
+
+  coveralls:
+    needs: [tests]
+    name: Coveralls 📈
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository 🛎️
         uses: actions/checkout@v4
 
-      - name: Run tests 🧪
+      - name: Set up Node.js and Yarn 📦
         uses: actions/setup-node@v4
         with:
-          node-version: "16.13.0"
-      - run: npm ci --ignore-scripts
-      - run: npm run test:cov
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install dependencies with Yarn 📥
+        run: yarn install --immutable
+
+      - name: Run tests 🧪
+        run: yarn test:cov
 
       - name: Coveralls 📈
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2.3.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: workspaces/usetheform
 
   cypress-test:
     name: Automation Tests 🌐
@@ -42,91 +82,106 @@ jobs:
       - name: Checkout repository 🛎️
         uses: actions/checkout@v4
 
-      - name: Setup Node 📦
+      - name: Setup Node.js and Yarn 📦
         uses: actions/setup-node@v4
         with:
-          node-version: "16.13.0"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
 
-      - name: Install dependencies 📥
-        run: npm ci
+      - name: Install dependencies with Yarn 📥
+        run: yarn install --immutable
 
       - name: Start server 🚀
-        run: npm run cy:server &
+        run: yarn cy:server &
 
       - name: Wait for server ⏳
         run: npx wait-on http://localhost:3000/index_react_16.13.0.html --timeout 120000
 
-      - name: Run Cypress Test 🧪
+      - name: Run Cypress Tests 🧪
         uses: cypress-io/github-action@v6
         env:
           CI: true
         with:
-          command: npm run cy:run
+          command: yarn cy:run
 
       - name: Upload Cypress Artifacts 📂
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-artifacts
+          name: cypress-artifacts-${{ github.run_number }}-${{ github.sha }}
           path: |
             cypress/videos
             cypress/screenshots
 
   build:
     name: Build 🛠️
+    needs: [tests, cypress-test]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository 🛎️
         uses: actions/checkout@v4
 
-      - name: Build 🔨
+      - name: Set up Node.js and Yarn 📦
         uses: actions/setup-node@v4
         with:
-          node-version: "16.13.0"
-      - run: npm ci --ignore-scripts
-      - run: npm run build --if-present
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install dependencies with Yarn 📥
+        run: yarn install --immutable
+
+      - name: Build 🔨
+        run: yarn build
 
   publish-alpha:
     name: NPM Publish Alpha Version 🔥
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'workflow_dispatch' && 
-      github.event.inputs.run_publish == 'true' && 
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.run_publish == 'true' &&
       (github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop')
 
     steps:
       - name: Checkout repository 🛎️
         uses: actions/checkout@v4
 
-      - name: Setup Node 📦
+      - name: Setup Node.js and Yarn 📦
         uses: actions/setup-node@v4
         with:
-          node-version: "16.13.0"
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: "https://registry.npmjs.org/"
 
-      - name: Install dependencies 📥
-        run: npm ci --ignore-scripts
+      - name: Install dependencies with Yarn 📥
+        run: yarn install --immutable
+
+      - name: Build  🔨
+        run: |
+          yarn build
+          cp README.md workspaces/usetheform/README.md
+          cp LICENSE.md workspaces/usetheform/LICENSE.md
 
       - name: Extract current version 🏷️
-        id: version
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        working-directory: workspaces/usetheform
 
       - name: Update version for alpha release 📦
         run: npm version $VERSION-alpha.${{ github.run_number }} --no-git-tag-version
+        working-directory: workspaces/usetheform
 
       - name: Publish to npm as alpha 🚀
         run: npm publish --tag alpha
+        working-directory: workspaces/usetheform
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-stable:
     name: NPM Publish Stable Version ⭐
     runs-on: ubuntu-latest
-    needs: [tests, build, cypress-test]
+    needs: [tests, cypress-test]
     if: |
-      github.event_name == 'workflow_dispatch' && 
-      github.event.inputs.run_publish == 'true' && 
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.run_publish == 'true' &&
       github.ref == 'refs/heads/master'
 
     permissions:
@@ -136,10 +191,10 @@ jobs:
       - name: Checkout repository 🛎️
         uses: actions/checkout@v4
 
-      - name: Setup Node 📦
+      - name: Setup Node.js and Yarn 📦
         uses: actions/setup-node@v4
         with:
-          node-version: "16.13.0"
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: "https://registry.npmjs.org/"
 
       - name: Extract current version
@@ -149,24 +204,24 @@ jobs:
       - name: 🏷️ Check if tag already exists
         run: |
           TAG="v${{ env.VERSION }}"
-
           echo "Checking if tag $TAG already exists..."
-
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "⚠️ Tag $TAG already exists. Skipping release."
             exit 0
           fi
 
-      - name: Assets source code 📦
-        run: |
-          zip -r "source-${{ env.VERSION }}.zip" ./*
-          tar -czf "source-${{ env.VERSION }}.tar.gz" ./*
+      - name: Install dependencies with Yarn 📥
+        run: yarn install --immutable
 
-      - name: Install dependencies 📥
-        run: npm ci --ignore-scripts
+      - name: Build 🔨
+        run: |
+          yarn build
+          cp README.md workspaces/usetheform/README.md
+          cp LICENSE.md workspaces/usetheform/LICENSE.md
 
       - name: Publish to npm 🚀
         run: npm publish
+        working-directory: workspaces/usetheform
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -201,23 +256,13 @@ jobs:
           body_path: release-notes.txt
           generate_release_notes: false
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            source-${{ env.VERSION }}.zip
-            source-${{ env.VERSION }}.tar.gz
 
   deploy_docs:
     name: Deploy Docs 📚
     runs-on: ubuntu-latest
-    needs: [tests, build, cypress-test]
+    needs: [tests, cypress-test]
     if: |
-      github.event_name == 'workflow_dispatch' && 
-      github.event.inputs.run_publish == 'true' && 
       github.ref == 'refs/heads/master'
-
-    permissions:
-      contents: write # This is essential
-      pages: write # This is essential
-      id-token: write # This is essential
 
     steps:
       - name: Checkout 🛎️
@@ -226,12 +271,12 @@ jobs:
       - name: Build Docs 🔨
         uses: actions/setup-node@v4
         with:
-          node-version: "16.13.0"
-      - run: npm ci --ignore-scripts
-      - run: npm run docz:build --if-present
+          node-version: ${{ env.NODE_VERSION }}
+      - run: yarn install --immutable
+      - run: yarn docs:build
       - run: rm .gitignore
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
-          folder: .docz/dist # The folder the action should deploy.
+          folder: workspaces/docs/build

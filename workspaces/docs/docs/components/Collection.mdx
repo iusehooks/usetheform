@@ -1,0 +1,266 @@
+---
+name: Collection
+---
+
+import Playground from '@site/src/theme/ReactLiveScope';
+
+# Collection
+
+Creates a nested piece of state within a Form. <br />
+A Collection can be of type: **object** or **array**.
+
+## Props
+
+**`object`**: boolean
+
+- Creates a collection of type **object** if "true".
+
+**`array`**: boolean
+
+- Creates a collection of type **array** if "true".
+
+**`name`**: string
+
+- A field's name in Usetheform state. <br />
+- If your Collection is rendered within a `<Collection array />`, **name** is not allowed as a prop.
+
+**`index`**: string
+
+- A field's index in an array Collection. <br />
+- **index** is only allowed if your Collection is rendered within a `<Collection array /> `.
+
+**`touched`**: boolean
+
+- Default value is *false*.
+
+  * **true**: sync validation messages will be showing only when the event onBlur of any collection's field is triggered by the user action at any level of nesting.
+The async validation messages will be showing only at form submission.
+  * **false**: validation messages (sync and async) will be showing only at form submission.
+
+```jsx
+const [status, validation] = useValidation([anyValidationFunc])
+<Collection touched object name="myObject" {...validation}>
+  <Input type="text" name="name" value="BeBo" />
+</Collection>
+{status.error && <label>{status.error}</label>}
+```
+
+**`value`**: array | object
+
+- Specifies the initial value of a *Collection*.
+
+**`reducers`**: array | function
+
+```jsx
+(nextValue, prevValue, formState) => nextValue
+```
+
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Collection's value changes.
+
+## Basic usage
+
+```jsx
+  import { Form, Input, Collection } from 'usetheform'
+```
+
+<Playground>{`<Form>
+    <Collection object name="myObject">
+      <Input type="text" name="name" placeholder="First Name" value="Foo" />
+      <Input type="text" name="lastname" placeholder="Last Name" />
+      <div className="flex space-x-4">
+        <Input type="radio" name="gender" placeholder="M" value="M" />
+        <Input type="radio" name="gender" placeholder="F" value="F" />
+        <Input type="radio" name="gender" placeholder="Other" value="Other" />
+        <Input type="checkbox" name="one" value="one" placeholder="Opt 1" />
+        <Input type="checkbox" name="two" value="two" placeholder="Opt 2" />
+      </div>
+    </Collection>
+    <Collection array name="myArray" as="div" className="flex space-x-4">
+      <Input type="number" placeholder="Enter value: 1" value="1" />
+      <Input type="number" placeholder="Enter value: 2" />
+      <Input type="number" placeholder="Enter value: 3" />
+    </Collection>
+    <Input type="file" name="file" />
+  </Form>`}
+</Playground>
+
+
+### Nested Collections
+
+```jsx
+import { Form, Input, Collection } from 'usetheform'
+```
+
+<Playground>{`<Form>
+    <Collection object name="myObject">
+      <Collection object name="user">
+        <Input type="text" name="name" placeholder="First Name" />
+        <Input type="text" name="lastname" placeholder="Last Name" />
+        <Collection object name="info">
+          <Input type="tel" name="tel" placeholder="Telephone" />
+          <Input type="text" name="website" placeholder="Personal Website" />
+        </Collection>
+      </Collection>
+      <Collection array name="checkboxes" as="div" className="flex space-x-4">
+        <Input type="checkbox" value="one" placeholder="Opt 1" />
+        <Input type="checkbox" value="two" placeholder="Opt 2" />
+      </Collection>
+    </Collection>
+  </Form>`}
+</Playground>
+
+## Array Collection
+
+Array Collection of Input fields with indexes handled automatically.
+
+```jsx
+import React from "react";
+import { Form, Input, Collection } from "usetheform";
+```
+
+<Playground>{`
+  <Form>
+    <Collection array name="numberList">
+      <Input label="One" type="number" placeholder="Number 1" value="1" />
+      <Input label="Two" type="number" placeholder="Number 2" value="2" />
+    </Collection>
+  </Form>`}
+</Playground>
+
+<br />
+Array Collection of Input fields with indexes handled automatically for custom Inputs.
+
+```jsx title="CustomInput.ts"
+import React from "react";
+import { withIndex, useField, Collection } from "usetheform";
+
+const CustomInput = withIndex(({ type, name, value, index, ...restAttr }) => {
+  const props = useField({ type, name, value, index });
+  return <input {...restAttr} {...props}></input>;
+});
+```
+
+<Playground>{`<Form>
+    <Collection array name="numberList">
+      <CustomInput label="One" type="number" value="1" />
+      <CustomInput label="Two" type="number" value="2" />
+    </Collection>
+  </Form>`}
+</Playground>
+
+<br />
+Array Collection of Input fields with indexes handled maunally.
+
+```jsx
+import { Form, Input, Collection } from 'usetheform'
+```
+
+<Playground>{`<Form>
+    <Collection array name="numberList"  >
+      <Input type="number" index="0" value="1" placeholder="Number 1" />
+      <Input type="number" index="1" value="2" placeholder="Number 2" />
+    </Collection>
+  </Form>`}
+</Playground>
+
+## Reducers
+
+```jsx
+import { Form, Input, Collection } from 'usetheform'
+```
+
+<Playground>{`function FormWithReducers(){
+    const fullNameFN = nextValue => {
+      const fullName = [nextValue["name"], nextValue["lastname"]]
+        .filter(Boolean)
+        .join(" ");
+      const newValue = { ...nextValue, fullName };
+      return newValue;
+    };
+    return (
+      <Form>
+        <Collection object name="person" reducers={fullNameFN} as="div" className="flex space-x-4">
+          <Input type="text" name="name" value="foo" placeholder="First Name" />
+          <Input type="text" name="lastname" value="pluto" placeholder="Last Name" />
+          <Input type="text" name="fullName" readOnly placeholder="Full Name" />
+        </Collection>
+      </Form>
+    )
+  }`}
+</Playground>
+
+## Validation - Sync
+
+Validation at Collection level starts only on form submission if the prop **`touched`** is false.
+
+```jsx
+import { Form, Input, Collection, useValidation } from 'usetheform'
+```
+
+<Playground>{`function FormWihSyncValidation(){
+    const graterThan10 = value => ((value && (value["A"] + value["B"] > 10)) ? undefined : "A+B must be > 10");
+    const [status, validation] = useValidation([graterThan10]);
+    const onSubmit = (state) => alert(JSON.stringify(state));
+
+    return (
+      <Form onSubmit={onSubmit}>
+        <Collection object name="sum" {...validation} as="div" className="flex space-x-4">
+          <Input type="number" name="A" value="1" placeholder="Number A" />
+          <Input type="number" name="B" value="2" placeholder="Number B" />
+        </Collection>
+        {status.error && <label className="vl">{status.error}</label>}
+        <button type="submit">Press to see results</button>
+      </Form>
+    )
+  }`}
+</Playground>
+
+## Validation - Async
+
+Async Validation for Collections is triggered on Submit event. The form submission is prevented if the validation fails.
+This means that the onSubmit function passed as prop to the **Form** component will not be invoked.
+
+```jsx title="Submit.ts"
+import { useAsyncValidation, useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+
+```
+
+<Playground>{`function FormWihAsyncValidation() {
+     const asyncTest = value =>
+      new Promise((resolve, reject) => {
+        // it could be an API call or any async operation
+        setTimeout(() => {
+          if (value.a + value.b !== 5) {
+            reject("Error values not allowed");
+          } else {
+            resolve("Success");
+          }
+        }, 1000);
+    });
+    const [asyncStatus, validationProps] = useAsyncValidation(asyncTest);
+    const onSubmit = (state) => alert(JSON.stringify(state));
+    return (
+      <Form onSubmit={onSubmit}>
+        <Collection object name="sum" {...validationProps} as="div" className="flex space-x-4">
+          <Input type="number" name="a" value="1" placeholder="Number A" />
+          <Input type="number" name="b" value="2" placeholder="Number B" />
+        </Collection>
+        {asyncStatus.status === undefined && <label className="vl">Async Check Not Started Yet</label>}
+        {asyncStatus.status === "asyncStart" && <label className="vl">Checking...</label>}
+        {asyncStatus.status === "asyncError" && <label className="vl">{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label className="vl">{asyncStatus.value}</label>}
+        <Submit />
+      </Form>
+    )
+  }`}
+</Playground>

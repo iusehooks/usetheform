@@ -14,7 +14,11 @@ export function useCollection({
   onAsyncValidation,
   resetAsyncErr
 }) {
-  const { changeProp, state: value, formState: state } = useObject({
+  const {
+    changeProp,
+    state: value,
+    formState: state
+  } = useObject({
     name,
     index,
     type,

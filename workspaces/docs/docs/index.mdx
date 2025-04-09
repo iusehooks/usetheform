@@ -1,0 +1,101 @@
+---
+title: Introduction
+sidebar_position: 1
+---
+
+# Getting Started
+
+Welcome! 👋 Usetheform is a React library for composing declarative forms and managing their state. It does not depend on any external library, such as Redux, or MobX, which makes it easy to adopt due to the lack of dependencies.
+
+## Features
+
+- Easy integration with other libraries. 👉🏻 [Play with React Select/Material UI](https://codesandbox.io/s/materialuireactselect-6ufc2) - [React Dropzone/MaterialUI Dropzone](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w).
+- Supports Sync and Async validation at [Form](https://iusehooks.github.io/usetheform/docs-form#validation---sync), [Field](https://iusehooks.github.io/usetheform/docs-input#validation---sync) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#validation---sync) level. 👉🏻 [Play with Sync and Async validation](https://iusehooks.github.io/usetheform/docs-input#validation---sync).
+- Supports [Yup](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormYUP.jsx), [Zod](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormZOD.jsx), [Superstruct](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormSuperStruct.jsx), [Joi](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormJOI.jsx) or custom schema validations. 👉🏻 [Play with YUP - ZOD - Superstruct - Joi validations](https://codesandbox.io/s/schema-validations-uc1m6).
+- Follows the HTML standard for validation. 👉🏻 [Play with HTML built-in form validation](https://codesandbox.io/s/built-informvalidation-lp672?file=/src/Info.jsx).
+- Supports reducer functions at [Form](https://iusehooks.github.io/usetheform/docs-form#reducers), [Field](https://iusehooks.github.io/usetheform/docs-input#reducers) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#reducers) level. 👉🏻 [Play with Reducers](https://iusehooks.github.io/usetheform/docs-form#reducers).
+- Easy to handle arrays, objects or nested collections. 👉🏻 [Play with nested collections](https://iusehooks.github.io/usetheform/docs-collection#nested-collections).
+- Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
+
+## Motivation
+
+**usetheform** has been built with the necessity of developing a lightweight library in mind, which is able to provide an easy API and allows you to build complex forms, composed by nested levels (e.g. arrays, objects, custom inputs, etc.), with a declarative approach and without the need to include external libraries within your React projects.
+
+It's easy to start using it in your existing project and gives you full control over Field and Collection at any level of nesting, which makes it easy to manipulate the form state based on your needs. Synchronous and asynchronous validations are also simple and error messages are easy to customize and display. If you find it useful please leave a star 🙏🏻.
+
+## 🚀 Installation
+
+Install `usetheform` using your preferred package manager:
+
+```bash
+npm install usetheform --save
+```
+
+```bash
+yarn add usetheform
+```
+
+## ⚡ Quickstart
+
+import ReactLiveScopeWrapper from '@site/src/theme/ReactLiveScope';
+
+<ReactLiveScopeWrapper>
+  {`<Form onSubmit={state => alert(JSON.stringify(state))}>
+      <Collection object name="user" as="div" className="mt-10 flex space-x-4">
+        <Input type="text" name="name" placeholder="Enter your name" />
+        <Input type="text" name="surname" placeholder="Enter your surname" />
+      </Collection>
+      <Collection as="div" className="flex space-x-4 justify-between" object name="nested">
+        <Input type="text" name="name" placeholder="Enter nested name" />
+        <Input type="text" name="surname" placeholder="Enter nested surname" />
+      </Collection>
+      <div className="mt-6 flex space-x-4">
+        <Input type="radio" name="gender" placeholder="M" value="M" />
+        <Input type="radio" name="gender" placeholder="F" value="F" />
+        <Input type="radio" name="gender" placeholder="Other" value="Other" />
+      </div>
+      <Collection object name="options" as="div" className="flex space-x-4">
+          <Input type="checkbox" name="one" placeholder="Opt 1" checked />
+          <Input type="checkbox" name="second" placeholder="Opt 2" />
+      </Collection>
+    <Collection as="div" array name="media" className="mt-6 flex justify-center space-x-4">
+        <Input type="file" />
+        <Input type="file" />
+        <Input type="file" />
+    </Collection>
+    <div className="mt-6 flex justify-center space-x-4">
+      <Submit />
+      <Reset />
+    </div>
+</Form>
+`}
+</ReactLiveScopeWrapper>
+
+## CodeSandbox Examples
+
+- Twitter 'What's Happening' Form Bar: [Sandbox](https://codesandbox.io/s/twitter-bar-form-czx3o)
+- Shopping Cart: [Sandbox](https://codesandbox.io/s/shopping-cart-97y5k)
+- Examples: Slider, Select, Collections etc..: [Sandbox](https://codesandbox.io/s/formexample2-mmcjs)
+- Various Implementations: [Sandbox](https://codesandbox.io/s/035l4l75ln)
+- Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)
+- FormContext: [Sandbox](https://codesandbox.io/s/formcontext-ukvc5)
+- Material UI - React Select: [Sandbox](https://codesandbox.io/s/materialuireactselect-6ufc2)
+- Validation using Yup, ZOD, JOI, Superstruct: [Sandbox](https://codesandbox.io/s/schema-validations-uc1m6)
+- React Dropzone - Material UI Dropzone: [Sandbox](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w)
+
+## Author
+
+Antonio Pangallo [@antonio_pangall](https://twitter.com/antonio_pangall)
+### &#8627; Stargazers
+[![Stargazers repo roster for @iusehooks/usetheform](https://reporoster.com/stars/iusehooks/usetheform)](https://github.com/iusehooks/usetheform/stargazers)
+
+## Contributing
+
+🎉 First off, thanks for taking the time to contribute! 🎉
+
+We would like to encourage everyone to help and support this library by contributing. See the [CONTRIBUTING file](https://github.com/iusehooks/usetheform/blob/master/CONTRIBUTING.md).
+
+## License
+
+This software is free to use under the MIT license.
+See the [LICENSE file](https://github.com/iusehooks/usetheform/blob/master/LICENSE.md) for license text and copyright information.

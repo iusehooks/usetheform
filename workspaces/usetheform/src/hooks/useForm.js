@@ -73,9 +73,8 @@ export function useForm({
     isMounted
   );
 
-  const { validationMsg, validationObj, validationFN } = useValidationFunction(
-    validatorsFuncs
-  );
+  const { validationMsg, validationObj, validationFN } =
+    useValidationFunction(validatorsFuncs);
 
   const [validationFNAsync] = useValidationFunctionAsync(
     asyncValidator,

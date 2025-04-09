@@ -1,0 +1,288 @@
+---
+name: Form
+---
+
+import Playground from '@site/src/theme/ReactLiveScope';
+
+# Form
+The Form is the most important component in usetheform. It renders all the Fields and keeps the entire form state synchronized.
+
+## Props
+
+**`onInit`**: function
+
+- A function invoked when the Form is initialized.
+
+```javascript
+const onInit = (formState, isFormValid) => { // some operation }
+```
+
+**`onChange`**: function
+
+- A function invoked when any Form Field changes its value.
+
+```javascript
+const onChange = (formState, isFormValid) => { // some operation }
+```
+
+**`onReset`**: function
+
+- A function invoked when the form has been reset to its initial state.
+
+```javascript
+const onReset = (formState, isFormValid) => { // some operation }
+```
+
+**`onSubmit`**: function
+
+- A function invoked when the submit button has been pressed.
+- The function may return either a Promise or a boolean value of true/false.
+
+```js
+const onSubmit = (formState) => { // some operation };
+const onSubmit = (formState) => new Promise((resolve, reject) => { // some async operation  });
+```
+
+- Cases:
+  * If the function returns a Promise which is resolved, it will increment the value named **submitted**.
+  * If the function returns a boolean value `true` or no return at all, it will increment the value named **submitted**.
+  * If the function returns a Promise which is rejected, the value named **submitted** will not be incremented.
+  * If the function returns a boolean value `false`, the value named **submitted** will not be incremented.
+
+```js
+  const { submitted, submitAttempts } = useForm();
+```
+
+- It will be only invoked if the form passes all the validations added at any level (Collections or Fields).
+- For each invocation, the value **submitAttempts** will be incremented.
+
+**`initialState`**: object
+
+- It is a plain object that represents the initial state of the form.
+
+**`reducers`**: array | function
+
+```js
+(nextState, prevState) => nextState
+```
+
+- An array whose values correspond to different reducing functions.
+- Reducer functions specify how the Form's state changes.
+
+**`touched`**: boolean
+
+- Default value of *false*.
+
+- If *true*, sync validation messages will be shown only when the event onBlur of any forms's field is triggered by the user action at any level of nesting.
+
+**`action`**: string
+
+- The action attribute specifies where to send the form-data when a form is submitted.
+
+- Possible values:
+  * An absolute URL - points to another web site (like action="http://www.example.com/example.html")
+  * A relative URL - points to a file within a web site (like action="example.html")
+
+**`innerRef`**: object (a mutable ref object)
+
+- When you need to access the underlying DOM node created by Form (e.g. to call focus), you can use a ref to store a reference to the form dom node.
+
+```jsx
+const ref = useRef(null)
+<Form innerRef={ref} name="form">...fields...</Form>
+```
+
+## Basic usage
+
+### Example 1
+
+A simple form with the initial state passed as Form prop.
+
+```jsx
+  import { Form, Input } from 'usetheform'
+```
+
+<Playground>{`<Form
+    initialState={{ name: "foo", gender: "M", option1: true }}
+    onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
+    onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
+    onSubmit={(state) => alert(JSON.stringify(state))}
+  >
+    <Input type="text" name="name" placeholder="Name" />
+    <div className="flex space-x-2">
+      <Input type="radio" name="gender" value="M" placeholder="M" />
+      <Input type="radio" name="gender" value="F" placeholder="F" />
+      <Input type="radio" name="gender" value="Other" placeholder="Other" />
+    </div>
+    <div className="flex space-x-2">
+      <Input type="checkbox" name="option1" placeholder="Option 1" />
+      <Input type="checkbox" name="option2" placeholder="Option 2" />
+    </div>
+    <button type="submit">Submit</button>
+  </Form>`}
+</Playground>
+
+### Example 2
+
+A simple form with the initial state passed straight to the Form's Field.
+
+```jsx
+  import { Form, Input } from 'usetheform'
+```
+<Playground>{`<Form
+    onInit={(state, isFormValid) => console.log("INIT", state, isFormValid)}
+    onChange={(state, isFormValid) => console.log("CHANGE", state, isFormValid)}
+    onSubmit={(state) => alert(JSON.stringify(state))}
+  >
+    <Input type="text" name="name" value="foo" placeholder="Name" />
+    <div className="flex space-x-2">
+      <Input type="radio" name="gender" value="M" checked placeholder="M" />
+      <Input type="radio" name="gender" value="F" placeholder="F" />
+      <Input type="radio" name="gender" value="Other" placeholder="Other" />
+    </div>
+    <div className="flex space-x-2">
+      <Input type="checkbox" name="option1" checked placeholder="Option 1" />
+      <Input type="checkbox" name="option2" placeholder="Option 2" />
+    </div>
+    <button type="submit">Submit</button>
+  </Form>`}
+</Playground>
+
+## Reducers
+
+```jsx
+import { Form, Collection } from 'usetheform';
+import { Item } from './components/Item';
+import { reduceTotalPrice,reduceTotalQuantity } from './components/Item/utils';
+```
+
+<Playground>{`<Form reducers={[reduceTotalPrice, reduceTotalQuantity]}>
+    <Collection array name="items">
+      <Item price={5} desc="White Shoes" />
+      <Item price={3} desc="Red Bag" />
+      <Item price={6} desc="Blue Trouser" />
+      { /* try to copy and paste a new item within the items Collection */ }
+    </Collection>
+    <Input type="number" name="totalPrice" readOnly placeholder="Total Price $" />
+    <Input type="number" name="totalQuantity" readOnly placeholder="Total Quantity" />
+  </Form>`}
+</Playground>
+
+#### Detailed Explanation:
+
+```jsx title="Item.ts"
+export const Item = ({ price, qty, desc }) => {
+  return (
+    <Collection object>
+      <Input type="number" name="price" placeholder="Price" min={1} value={price} />
+      <Input type="number" name="qty" placeholder="Quantity" min={1} value={qty} />
+      <Input type="text" name="description" placeholder="Description" value={desc} />
+    </Collection>
+  );
+}
+
+export const reduceTotalPrice = formState => {
+  const { items = [] } = formState;
+  const totalPrice = items.reduce((total, { price = 0, qty = 0 }) => {
+    total += price * qty;
+    return total;
+  }, 0);
+  return { ...formState, totalPrice };
+};
+
+export const reduceTotalQuantity = (formState) => {
+  const { items = [] } = formState;
+  const totalQuantity = items.reduce((total, { qty = 0 }) => {
+    total += qty;
+    return total;
+  }, 0);
+  return { ...formState, totalQuantity };
+};
+```
+
+## Validation - Sync
+
+Validation at Form level:
+
+- **touched=false**: error messages will be shown on Form initialization and when any Field is edited.
+- **touched=true**: error messages will be shown when any Field at any level of nesting is touched/visited.
+
+```js
+  import { Form, Input, Collection, useValidation } from 'usetheform'
+```
+
+<Playground>{`function FormSyncValidation() {
+    const graterThan10 = ({ values }) => ((values && (values["A"] + values["B"] > 10)) ? undefined : "A+B must be > 10");
+    const [status, validationProps] = useValidation([graterThan10]);
+    return (
+      <Form touched {...validationProps}>
+        <Collection object name="values" >
+          <Input type="number" name="A" placeholder="Number A" value="1" />
+          <Input type="number" name="B" placeholder="Number B" value="2" />
+        </Collection>
+        {status.error && <label className="vl">{status.error}</label>}
+        <button type="submit">Press to see results</button>
+      </Form>
+    )
+}`}
+</Playground>
+
+## Validation - Async
+
+Async Validation for **Form** is triggered on Submit event. The form submission is prevented if the validation fails.
+It means that the onSubmit function passed as prop to the **Form** component will not be invoked.
+
+```jsx
+import { Form, Collection, Input, useAsyncValidation } from 'usetheform';
+```
+
+<Playground>{`function FormAsyncValidation() {
+    const [asyncStatus, validationProps] = useAsyncValidation(asyncTestForm);
+    const onSubmit = (state) => alert(JSON.stringify(state));
+    return (
+      <Form onSubmit={onSubmit} {...validationProps}>
+        <Collection object name="values">
+          <Input type="number" name="a" placeholder="Number A" value="1" />
+          <Input type="number" name="b" placeholder="Number B" value="2" />
+        </Collection>
+        {asyncStatus.status === undefined && <label className="vl">Async Check Not Started Yet</label>}
+        {asyncStatus.status === "asyncStart" && <label className="vl">Checking...</label>}
+        {asyncStatus.status === "asyncError" && <label className="vl">{asyncStatus.value}</label>}
+        {asyncStatus.status === "asyncSuccess" && <label className="vl">{asyncStatus.value}</label>}
+        <Submit />
+      </Form>
+    )
+}`}
+</Playground>
+
+#### Detailed Explanation:
+
+```jsx title="Submit.ts"
+import { useForm } from 'usetheform'
+
+const Submit = () => {
+  const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+};
+```
+
+```jsx title="AsyncValidators.ts"
+export const asyncTestForm = ({ values }) =>
+  new Promise((resolve, reject) => {
+    // it could be an API call or any async operation
+    setTimeout(() => {
+      if (!values || !values.a || !values.b) {
+        reject("Emtpy values are not allowed ");
+      }
+      if (values.a + values.b >= 5) {
+        reject("The sum must be less than '5'");
+      } else {
+        resolve("Success");
+      }
+    }, 1000);
+  });
+```

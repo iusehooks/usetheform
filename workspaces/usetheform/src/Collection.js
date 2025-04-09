@@ -8,6 +8,7 @@ export const Collection = withIndex(function Collection({
   name,
   index,
   object,
+  array,
   touched,
   value,
   reducers,
@@ -16,9 +17,12 @@ export const Collection = withIndex(function Collection({
   validators,
   asyncValidator,
   onAsyncValidation,
-  resetAsyncErr
+  resetAsyncErr,
+  as,
+  ...propsHtml
 }) {
-  const type = object ? "object" : "array";
+  const type = object ? "object" : array ? "array" : "object";
+
   const props = useObject({
     name,
     index,
@@ -36,5 +40,11 @@ export const Collection = withIndex(function Collection({
 
   const ctx = useMemo(() => props, [props.state, props.formStatus]);
 
-  return <Context.Provider value={ctx}>{children}</Context.Provider>;
+  const Wrapper = as || React.Fragment;
+
+  return (
+    <Context.Provider value={ctx}>
+      <Wrapper {...propsHtml}>{children}</Wrapper>
+    </Context.Provider>
+  );
 });

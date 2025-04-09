@@ -1,14 +1,16 @@
 {
+  "parser": "@typescript-eslint/parser",
   "extends": [
-    "plugin:flowtype/recommended",
     "plugin:react/recommended",
-    "prettier/react",
-    "prettier/standard",
-    "prettier/flowtype"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended"
   ],
-  "plugins": ["prettier", "react", "flowtype"],
+  "plugins": ["prettier", "react", "@typescript-eslint", "import"],
   "parserOptions": {
-    "ecmaVersion": 2017,
+    "ecmaVersion": 2020,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -35,7 +37,12 @@
   },
   "settings": {
     "react": {
-      "version": "latest"
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
     }
   }
 }

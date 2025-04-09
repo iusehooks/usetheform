@@ -1,0 +1,36 @@
+---
+name: PersistStateOnUnmount
+---
+
+import Playground from '@site/src/theme/ReactLiveScope';
+
+# PersistStateOnUnmount
+In `usetheform` if a Field gets unmounted its value within the Form state gets cleared.
+Wrap your Field elements between the `<PersistStateOnUnmount />` component to preserve the Fields values.
+
+
+## Basic usage
+
+```javascript
+import { Form, PersistStateOnUnmount, Input, Collection } from 'usetheform'
+import { useState } from 'react'
+```
+
+<Playground>{`function FormPersistStateOnUnmount() {
+  const [visible, toggle] = useState(false);
+  return (
+    <Form>
+      <PersistStateOnUnmount>
+        {!visible && (
+          <Collection object name="user" >
+            <Input type="text" name="name" value="abc" placeholder="Name..." />
+            <Input type="text" name="lastname" value="foo" placeholder="Last Name..." />
+          </Collection>
+          )
+        }
+        <Input type="text" name="other" placeholder="Other..." />
+      </PersistStateOnUnmount>
+      <button type="button" onClick={() => toggle(prev => !prev)}>Toggle Collection</button>
+    </Form>
+  )}`}
+</Playground>
