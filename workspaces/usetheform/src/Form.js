@@ -45,15 +45,18 @@ function Form({
     action
   });
 
-  const ctx = useMemo(() => props, [
-    props.state,
-    props.isValid,
-    props.status,
-    props.pristine,
-    props.isSubmitting,
-    props.submitAttempts,
-    props.submitted
-  ]);
+  const ctx = useMemo(
+    () => props,
+    [
+      props.state,
+      props.isValid,
+      props.status,
+      props.pristine,
+      props.isSubmitting,
+      props.submitAttempts,
+      props.submitted
+    ]
+  );
 
   return (
     <Context.Provider value={ctx}>

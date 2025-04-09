@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+.FormCustom button {
+  @apply bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out;
+}
+
+.FormCustom .vl {
+  @apply inline-block bg-red-400 text-white py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2 cursor-pointer hover:bg-blue-600 transition duration-200 ease-in-out
+}
+
+ul {
+  @apply list-disc pl-5;
+}

@@ -22,7 +22,8 @@ export const useNameProp = (context, name, index) => {
   }
   const unMountIndex = () => {
     if (context && context.type === "array") {
-      nameProp.current = index !== undefined ? index : namePropSaved.current;
+      nameProp.current =
+        typeof index !== "undefined" ? index : namePropSaved.current;
     } else {
       nameProp.current = name;
     }

@@ -33,12 +33,8 @@ export function useField(props) {
     reducers
   } = props;
 
-  const {
-    nameProp,
-    uniqueIDarrayContext,
-    setNameProp,
-    unMountIndex
-  } = useNameProp(context, name, index);
+  const { nameProp, uniqueIDarrayContext, setNameProp, unMountIndex } =
+    useNameProp(context, name, index);
 
   if (process.env.NODE_ENV !== "production") {
     validateProps(
@@ -284,9 +280,8 @@ export function useField(props) {
     };
   }, []);
 
-  const { validationMsg, validationObj, validationFN } = useValidationFunction(
-    validators
-  );
+  const { validationMsg, validationObj, validationFN } =
+    useValidationFunction(validators);
 
   const [validationFNAsync] = useValidationFunctionAsync(
     asyncValidator,
