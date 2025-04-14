@@ -1,0 +1,100 @@
+---
+name: useForm
+---
+
+import Playground from '@site/src/theme/ReactLiveScope';
+
+# useForm
+`useForm()` is a custom React hook that will return helpers and the current state of the form.
+
+```js
+const { state, isValid, pristine, submitted, submitAttempts, reset, formStatus, dispatch } = useForm()
+```
+
+## Returns
+
+(**`helpers`**): object
+
+An object that holds:
+  - **`state`**: the current state of the entire form.
+  - **`isValid`**: a boolean value indicating whether the form has passed all the validation constraints or not.
+  - **`pristine`**: a boolean value indicating whether the form fields have been modified or not.
+  - **`submitted`**: an integer which counts the number of times the form has been submitted with success.
+  - **`submitAttempts`**: an integer which counts the total number of submission attempts.
+  - **`reset`**: a helper function which resets the form's state to an initial State.
+  - **`formStatus`**: a string indicating the form's status. Can be a status of: "ON_CHANGE", "ON_SUBMIT", "ON_RESET", "ON_INIT".
+  - **`dispatch`**: a function used to update the form's state. It accepts object, which will be the new state of the form.
+
+    ```javascript
+    dispatch(prev => ({ ...prev, newProp }))
+    ```
+
+> **Tip**: formStatus can be imported
+  ```javascript
+  import { STATUS } from "usetheform"
+  ```
+
+## Basic usage
+
+```javascript
+import { Form, Input, useValidation } from 'usetheform'
+import { Reset } from './Reset.ts'
+import { Submit } from './Submit.ts'
+```
+
+<Playground>{`function FormBasic() {
+    const email = value =>
+    !(value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value))
+      ? undefined
+      : "Mail not Valid";
+    const required = val => (val && val.trim() !== "" ? undefined : "Required");
+    const [status, validation] = useValidation([required, email]);
+
+    return (
+      <Form initialState={{ email: "foo@google.com" }}>
+        <Input type="text" name="email" placeholder="Email" touched {...validation} />
+        {status.error && <label className="vl">{status.error}</label>}
+        <div className="flex space-x-4">
+          <Submit />
+          <Reset />
+        </div>
+        <CounterSubmitAttempts />
+      </Form>
+    )
+  }`}
+</Playground>
+
+#### Detailed Explanation:
+
+```jsx title="Reset.ts"
+const Reset = props => {
+  const { reset, pristine } = useForm();
+  return (
+    <button disabled={pristine} type="button" onClick={reset}>
+      Reset
+    </button>
+  );
+}
+```
+
+```jsx title="Submit.ts"
+const Submit = props => {
+ const { isValid } = useForm();
+  return (
+    <button disabled={!isValid} type="submit">
+      Submit
+    </button>
+  );
+}
+```
+
+```jsx title="CounterSubmitAttempts.ts"
+const CounterSubmitAttempts = props => {
+  const { submitAttempts } = useForm();
+  return (
+    <span>
+      {submitAttempts}
+    </button>
+  );
+}
+```

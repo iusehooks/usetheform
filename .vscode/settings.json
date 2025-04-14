@@ -1,0 +1,37 @@
+{
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.formatOnSave": true,
+  "eslint.format.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "prettier.trailingComma": "none",
+  "prettier.arrowParens": "avoid",
+  "prettier.endOfLine": "auto",
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "files.encoding": "utf8",
+  "javascript.validate.enable": false,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/build": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true
+  },
+  "javascript.preferences.quoteStyle": "double",
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "prettier.trailingComma": "none"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "prettier.trailingComma": "none"
+  },
+  "files.trimTrailingWhitespace": true,
+  "yaml.schemaStore.enable": false
+}

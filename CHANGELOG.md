@@ -1,10 +1,12 @@
 # Changelog
 
-## [v3.5.0](https://github.com/iusehooks/usetheform/releases/tag/v3.5.0)
+## [v3.6.0](https://github.com/iusehooks/usetheform/releases/tag/v3.6.0)
 
 ### Improvements:
 
 - Enhanced automation tests to support multiple React versions.
+- Docusaurus docs
+- Yarn workspaces
 
 ### Fixes:
 

@@ -1,13 +1,33 @@
+# Ignore node_modules
 node_modules
+
+# Ignore docz build files if you're using Docz
 .docz
+
+# Ignore log files
 *.log
-*.git
+
+# Ignore yarn cache and other files, but keep necessary Yarn files
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/patches
+
+# Ignore macOS system files
 .DS_Store
+
+# Ignore build, dist, and other generated folders
 dist
 build
 dev
 coverage
+
+# Ignore configuration files you don't need in version control
 _config.yml
+
+# Ignore Cypress generated files
 cypress/videos
 cypress/screenshots
+
+# If 'example.json' should not be tracked, keep it here
 cypress/fixtures/example.json

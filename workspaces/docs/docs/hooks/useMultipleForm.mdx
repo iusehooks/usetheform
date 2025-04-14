@@ -1,0 +1,48 @@
+---
+name: useMultipleForm
+---
+
+import Playground from '@site/src/theme/ReactLiveScope';
+
+# useMultipleForm
+`useMultipleForm(callback: Function)` provides the logic to handle the implementation of wizards.
+
+```javascript
+const [getWizardStatus, wizardApi] = useMultipleForm(callback);
+```
+
+## Returns
+
+(**`helpers`**): array
+
+- An array that holds:
+
+  - **`getWizardStatus`**: a function that returns the actual state of the wizard.
+  - **`wizardApi`**: an object which holds the props that must be spread in each form.
+
+## Basic usage
+
+```javascript
+import { Form, Input, useMultipleForm } from 'usetheform';
+import { useState } from 'react';
+```
+
+<Playground>{`function WizardForm() {
+    const [getWizardStatus, wizardApi] = useMultipleForm();
+    const [stateWizard, setStateWizard] = useState({})
+    return (
+      <div className="FormCustom">
+        <Form {...wizardApi} name="form1" initialState={{ name: "foo" }}>
+          <Input type="text" name="name" />
+        </Form>
+        <Form {...wizardApi} name="form2" initialState={{ lastname: "mouse" }}>
+          <Input type="text" name="lastname" />
+        </Form>
+        <div className="space-x-4 mt-4">
+          <button onClick={() => setStateWizard(getWizardStatus())}>Submit Wizard</button>
+          <code>{JSON.stringify(stateWizard)}</code>
+        </div>
+      </div>
+    )
+  }`}
+</Playground>

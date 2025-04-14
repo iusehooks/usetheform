@@ -1,0 +1,19 @@
+{
+  // This file is not used in compilation. It is here just for a nice editor experience.
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": false,
+    "moduleResolution": "node",
+    "paths": {
+      "@site/*": ["./*"],
+      "@usetheform": ["./../usetheform/src/index.js"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "workspaces/usetheform/src/**/*" // Make sure the usetheform src is included
+  ],
+  "exclude": [".docusaurus", "build"]
+}
