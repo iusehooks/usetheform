@@ -121,7 +121,7 @@ describe("Async Validation Form StrictMode => Async Validation", () => {
     );
 
     expect(asyncSuccessCollection).toBeDefined();
-    expect(submittedCounter.textContent).toBe("1");
+    await waitFor(() => expect(submittedCounter.textContent).toBe("1"));
 
     fireEvent.click(removeInputs);
     fireEvent.click(submit);

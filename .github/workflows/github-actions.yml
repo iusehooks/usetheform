@@ -11,7 +11,7 @@ on:
         default: "false"
 
 env:
-  NODE_VERSION: 18.20.8
+  NODE_VERSION: 20.19.0
 
 jobs:
   tests:
@@ -79,6 +79,9 @@ jobs:
   cypress-test:
     name: Automation Tests 🌐
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox, edge, electron]
     env:
       TERM: xterm
       CI: true
@@ -102,18 +105,19 @@ jobs:
       - name: Wait for server ⏳
         run: npx wait-on http://localhost:3000/index_react_16.13.0.html --timeout 120000
 
-      - name: Run Cypress Tests 🧪
+      - name: Run Cypress Tests on ${{ matrix.browser }} 🧪
         uses: cypress-io/github-action@v6
         env:
           CI: true
         with:
-          command: yarn cy:run
+          browser: ${{ matrix.browser }}
+          command: yarn cy:run --browser ${{ matrix.browser }}
 
       - name: Upload Cypress Artifacts 📂
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-artifacts-${{ github.run_number }}-${{ github.sha }}
+          name: cypress-artifacts-${{ matrix.browser }}-${{ github.run_number }}-${{ github.sha }}
           path: |
             cypress/videos
             cypress/screenshots
@@ -205,6 +209,7 @@ jobs:
       - name: Extract current version
         id: version
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        working-directory: workspaces/usetheform
 
       - name: 🏷️ Check if tag already exists
         run: |

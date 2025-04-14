@@ -13,7 +13,9 @@ const {
   FormWithCustomInputAndSelector,
   FormWithAction,
   WizardForm,
-  FormPersistStateOnUnmount
+  FormPersistStateOnUnmount,
+  CreateFormStore,
+  CreateFormStoreWithFormContext
 } = window;
 
 window._FormSuites_ = () => {
@@ -54,6 +56,8 @@ window._FormSuites_ = () => {
       {formLoaded === "FormPersistStateOnUnmount" && (
         <FormPersistStateOnUnmount />
       )}
+      {formLoaded === "CreateFormStore" && <CreateFormStore />}
+      {formLoaded === "CreateFormStoreWithFormContext" && <CreateFormStoreWithFormContext />}
     </React.StrictMode>
   );
 };

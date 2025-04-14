@@ -10,15 +10,15 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
     <meta charset="utf-8" />
     <title>Usetheform</title>
     <!-- React & ReactDOM -->
-    <script type="module">
+    <script crossorigin type="module">
       import React from "https://esm.sh/react@19.0.0/?dev";
       import ReactDOMClient from "https://esm.sh/react-dom@19.0.0/client/?dev";
 
       window.React = React; // Make React available globally for Babel
       window.ReactDOMClient = ReactDOMClient;
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.9/babel.min.js"></script>
-    <script type="module" src="./index.js"></script>
+    <script src="./lib/babel/babel.7.26.0.min.js"></script>
+    <script type="text/babel" src="./index.js"></script>
     <script type="text/babel" src="./helpers/User.js"></script>
     <script type="text/babel" src="./helpers/Reset.js"></script>
     <script type="text/babel" src="./helpers/Submit.js"></script>
@@ -70,6 +70,11 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
     <script
       type="text/babel"
       src="./helpers/FormPersistStateOnUnmount.js"
+    ></script>
+    <script type="text/babel" src="./helpers/CreateFormStore.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/CreateFormStoreWithFormContext.js"
     ></script>
     <script type="text/babel" src="./helpers/Index.js"></script>
   </head>

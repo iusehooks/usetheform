@@ -9,10 +9,10 @@ const exec = (command, extraEnv) =>
     env: Object.assign({}, process.env, extraEnv)
   });
 
-console.log("\nBuilding UMD index.js ...");
+console.log("\nBuilding UMD index.js...", " - watch: ", watch);
 
 if (watch) {
-  exec("rollup -c -f umd -m inline -w src -o dev/index.js", {
+  exec("rollup -c -f umd -m inline -w -w src -o dev/index.js", {
     BABEL_ENV: "umd",
     NODE_ENV: "development"
   });

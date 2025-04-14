@@ -57,7 +57,7 @@ describe("Component => Collection", () => {
     const props = { onInit };
     const value = "foo";
     const children = [
-      <Collection key="1" object name={name}>
+      <Collection key="1" name={name}>
         <Input
           data-testid={dataTestid}
           type={typeInput}

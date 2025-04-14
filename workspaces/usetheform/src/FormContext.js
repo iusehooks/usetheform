@@ -20,7 +20,8 @@ export const FormContext = memo(function FormContext({
   _getInitialStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
-  action
+  action,
+  formStore
 }) {
   const props = useForm({
     initialState,
@@ -39,7 +40,8 @@ export const FormContext = memo(function FormContext({
     _getInitialStateForm_,
     _onMultipleForm_,
     name,
-    action
+    action,
+    formStore
   });
 
   const ctx = useMemo(

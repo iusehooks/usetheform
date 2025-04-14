@@ -1,5 +1,28 @@
 # Changelog
 
+## [v4.0.0](https://github.com/iusehooks/usetheform/releases/tag/v4.0.0)
+
+### Improvements:
+
+- Added `createFormStore`: create and manage reactive form state with a store and selector hook — no provider needed.
+
+Need to read or manipulate Form's Fields anywhere outside Form context?
+
+**Example:**
+
+```javascript
+import { createFormStore } from 'usetheform';
+
+const [formStore, useFormSelector] = createFormStore({ counter: 0 });
+
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+### Fixes:
+
+- Fixed issues with React 18+ strict mode in certain edge cases when using the `<Collection array />`
+
 ## [v3.6.0](https://github.com/iusehooks/usetheform/releases/tag/v3.6.0)
 
 ### Improvements:

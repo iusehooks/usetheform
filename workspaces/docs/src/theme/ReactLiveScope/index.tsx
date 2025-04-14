@@ -68,7 +68,7 @@ const ReactLiveScopeWrapper = ({ children }) => {
       <div className="playgroundContainer_BKND">
         <div className="playgroundHeader_BYID">Preview</div>
         <LivePreview
-          data-colorMode={colorMode}
+          data-colormode={colorMode}
           className="playgroundPreview_wiye"
         />
         <div className="playgroundHeader_BYID">Live Editor</div>

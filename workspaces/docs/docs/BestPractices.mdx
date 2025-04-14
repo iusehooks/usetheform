@@ -1,0 +1,395 @@
+---
+title: Best Practices
+sidebar_position: 5
+---
+
+# Best Practices
+
+This guide outlines recommended patterns and practices when working with **usetheform** to help you build efficient, maintainable form solutions.
+
+### Breaking Down Complex Forms
+
+For large forms, consider breaking them into logical sections using the Collection component:
+
+```tsx title="ProfileForm.tsx"
+import { Form, Collection, Input } from "usetheform";
+
+const ProfileForm = () => (
+  <Form onSubmit={values => console.log(values)}>
+    <Collection object name="personalInfo">
+      <Input name="firstName" />
+      <Input name="lastName" />
+      <Input type="email" name="email" />
+    </Collection>
+
+    <Collection object name="addressInfo">
+      <Input name="street" />
+      <Input name="city" />
+      <Input name="zipCode" />
+    </Collection>
+
+    <button type="submit">Submit</button>
+  </Form>
+);
+```
+
+### Using Reducers for Complex State Transformations
+
+When you need to transform input data in complex ways, use reducers:
+
+```tsx title="ShippingForm.tsx"
+import { Form, Input} from "usetheform";
+import { ReducerFn } from "usetheform/types";
+
+interface ShippingFormState {
+  name: string;
+  phone: string;
+  zip: string;
+}
+
+// Capitalize first letter of each word
+const nameReducer: ReducerFn<string, ShippingFormState> = (
+  value: string = ""
+) => value.replace(/\b\w/g, (char) => char.toUpperCase());
+
+// Format phone number as (XXX) XXX-XXXX
+const phoneReducer: ReducerFn<string, ShippingFormState> = (
+  value: string = ""
+) => {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  const parts = [
+    digits.slice(0, 3),
+    digits.slice(3, 6),
+    digits.slice(6, 10),
+  ].filter(Boolean);
+  if (parts.length === 0) return "";
+  if (parts.length === 1) return `(${parts[0]}`;
+  if (parts.length === 2) return `(${parts[0]}) ${parts[1]}`;
+  return `(${parts[0]}) ${parts[1]}-${parts[2]}`;
+};
+
+// Normalize ZIP code to 5-digit numeric string
+const zipReducer: ReducerFn<string, ShippingFormState> = (value) =>
+  (value || "").replace(/\D/g, "").slice(0, 5);
+
+const ShippingForm = () => {
+  return (
+    <Form<ShippingFormState> onSubmit={(state, isFormValid) => console.log("Form Data:", state, isFormValid)}>
+      <Input
+        type="text"
+        name="name"
+        reducers={[nameReducer]}
+        placeholder="e.g. john doe"
+      />
+      <Input
+        type="text"
+        name="phone"
+        reducers={[phoneReducer]}
+        placeholder="e.g. (123) 456-7890"
+      />
+      <Input
+        type="text"
+        name="zip"
+        reducers={[zipReducer]}
+        placeholder="e.g. 90210"
+      />
+      <button type="submit">Submit</button>
+    </Form>
+  );
+};
+```
+
+### Validating a Form Using Joi Schema
+
+You can pass an `asyncValidator` to the `<Form>` component to run Joi validation against the entire form state.
+
+```tsx title="JoiFormExample.tsx"
+import { Form, Input, useAsyncValidation } from "usetheform";
+import { ReducerFn, AsyncValidatorFn } from "usetheform/types";
+
+const schema = Joi.object<UserForm>({
+  username: Joi.string().min(3).required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
+  age: Joi.number().integer().min(18).required(),
+});
+
+const joiValidator: AsyncValidatorFn<UserForm> = async (value) => {
+  try {
+    await schema.validateAsync(value, { abortEarly: true });
+    return Promise.resolve("Success!");
+  } catch (err) {
+    const error = err as Joi.ValidationError;
+    return Promise.reject(error.details.map((d) => d.message).join("; "));
+  }
+};
+
+function JoiFormExample() {
+  const [asyncStatus, asyncValidationProp] = useAsyncValidation(joiValidator);
+  return (
+    <div>
+      <Form<UserForm>
+        {...asyncValidationProp}
+        onSubmit={(formData, isFormValid) => {
+          console.log(JSON.stringify(formData, null, 2), isFormValid);
+        }}
+      >
+        <div className="field">
+          <label>Username</label>
+          <Input<UserForm["username"]> name="username" type="text" />
+        </div>
+
+        <div className="field">
+          <label>Email</label>
+          <Input<UserForm["email"]> name="email" type="email" />
+        </div>
+
+        <div className="field">
+          <label>Age</label>
+          <Input<UserForm["age"]> name="age" type="number" />
+        </div>
+
+        <button type="submit">Submit</button>
+      </Form>
+      {asyncStatus.status === "asyncError" && (
+        <label>{asyncStatus.value}</label>
+      )}
+    </div>
+  );
+}
+```
+
+### File Upload with FormData
+
+You can easily integrate file uploads in your form using `FormData`. Here's how to handle file input and submit the file to a backend API.
+
+```tsx title="FileUploadForm.tsx"
+import { Form, Input, useForm } from "usetheform";
+import { OnSubmitFormFn } from "usetheform/types";
+
+type FileUploadFormState = {
+  file: File;
+};
+
+const UploadButton = () => {
+  const { submitted, isSubmitting, isValid } = useForm();
+  const disabled = isSubmitting || !isValid || submitted > 0;
+  return (
+    <button type="submit" disabled={disabled}>
+      {isSubmitting && submitted === 0 ? "Uploading..." : "Upload File"}
+    </button>
+  );
+};
+
+const handleSubmit: OnSubmitFormFn<FileUploadFormState> = async (formState) => {
+  const formData = new FormData();
+  formData.append("file", formState.file);
+
+  try {
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+    return Promise.resolve(result);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+function FileUploadForm() {
+  return (
+    <Form<FileUploadFormState> onSubmit={handleSubmit}>
+      <Input type="file" name="file" placeholder="Select a File..." required />
+      <UploadButton />
+    </Form>
+  );
+}
+```
+
+### Conditional Validation
+
+When building dynamic forms, it’s common to require a field *only* under certain conditions — such as when a checkbox is checked.
+
+Here’s a best-practice example using `usetheform`:
+
+```tsx title="ConditionalFormExample.tsx"
+import { Form, Input, useValidation } from "usetheform";
+import { OnSubmitFormFn, OnChangeFormFn, ValidatorFn } from "usetheform/types";
+
+interface MyFormState {
+  petCheckbox: boolean;
+  petName: string;
+}
+
+const required: ValidatorFn<MyFormState["petName"], MyFormState> = (
+  value,
+  formState
+) =>
+  formState.petCheckbox
+    ? value?.trim()
+      ? undefined
+      : "Pet name is required"
+    : undefined;
+
+export default function ConditionalFormExample() {
+  const onChange: OnChangeFormFn<MyFormState> = (formState) =>
+    console.log("ON_CHANGE:", formState);
+
+  const onSubmit: OnSubmitFormFn<MyFormState> = (formState) =>
+    console.log("ON_SUBMIT:", formState);
+
+  const [status, validation] = useValidation([required]);
+
+  return (
+    <Form<MyFormState> onSubmit={onSubmit} onChange={onChange}>
+      <label htmlFor="petCheckbox">Do you have a pet?</label>
+      <Input id="petCheckbox" name="petCheckbox" type="checkbox" />
+
+      <Input name="petName" type="text" touched {...validation} />
+      {status.errors?.petName && <span>{status.errors.petName}</span>}
+
+      <button type="submit">Submit</button>
+    </Form>
+  );
+}
+```
+
+### Multi-Step / Wizard Forms
+
+Use multiple formStores and local state to manage step-based forms.
+
+```tsx title="WizardForm.tsx"
+import { useState } from "react";
+import { createFormStore } from "usetheform";
+import { StepOne } from "./StepOne";
+import { StepTwo } from "./StepTwo";
+import { StepThree } from "./StepThree";
+
+const [formStoreStepOne] = createFormStore();
+const [formStoreStepTwo] = createFormStore();
+const [formStoreStepThree] = createFormStore();
+
+export const WizardForm = () => {
+  const [step, setStep] = useState<"step1" | "step2" | "step3">("step1");
+
+  const submitWizardForm = () => {
+    const data = {
+      stepOne: formStoreStepOne.getState(),
+      stepTwo: formStoreStepTwo.getState(),
+      stepThree: formStoreStepThree.getState(),
+    };
+    console.log("Form submitted:", data);
+  };
+
+  return (
+    <div>
+      <h2>Multi-Step Wizard</h2>
+      <span>Current Step: {step}</span>
+
+      {step === "step1" && (
+        <StepOne onNext={() => setStep("step2")} formStore={formStoreStepOne} />
+      )}
+      {step === "step2" && (
+        <StepTwo
+          onNext={() => setStep("step3")}
+          onPrev={() => setStep("step1")}
+          formStore={formStoreStepTwo}
+        />
+      )}
+      {step === "step3" && (
+        <StepThree
+          onPrev={() => setStep("step2")}
+          onSubmit={submitWizardForm}
+          formStore={formStoreStepThree}
+        />
+      )}
+    </div>
+  );
+};
+```
+
+```tsx title="StepOne.tsx"
+import { Form, Input } from "usetheform";
+
+interface StepOneFormState {
+  firstname: string;
+  lastname: string;
+}
+
+export const StepOne = ({ onNext, formStore }) => {
+  return (
+    <Form<StepOneFormState> formStore={formStore} onSubmit={onNext}>
+      <Input
+        name="firstname"
+        placeholder="First Name"
+        validators={[
+          (v) => (!v || v.trim() === "" ? "Required" : undefined),
+          (v) => (v && v.length < 3 ? "Min 3 chars" : undefined),
+        ]}
+      />
+      <Input name="lastname" placeholder="Last Name" />
+      <SubmitButton label="Next" />
+    </Form>
+  );
+};
+```
+
+```tsx title="StepTwo.tsx"
+import { Form, Input, Select } from "usetheform";
+
+interface StepTwoFormState {
+  age: number;
+  gender: "M" | "F" | "O";
+}
+
+export const StepTwo = ({ onNext, onPrev, formStore }) => {
+  return (
+    <Form<StepTwoFormState> formStore={formStore} onSubmit={onNext}>
+      <Input type="number" name="age" placeholder="Age" />
+      <Select name="gender" validators={[v => ["M", "F", "O"].includes(v) ? undefined : "Required"]}>
+        <option value="">Select gender</option>
+        <option value="M">Male</option>
+        <option value="F">Female</option>
+        <option value="O">Other</option>
+      </Select>
+      <button type="button" onClick={onPrev}>Prev</button>
+      <SubmitButton label="Next" />
+    </Form>
+  );
+};
+```
+
+```tsx title="StepThree.tsx"
+import { Form, Input } from "usetheform";
+
+interface StepThreeFormState {
+  address: string;
+}
+
+export const StepThree = ({ onPrev, onSubmit, formStore }) => {
+  return (
+    <Form<StepThreeFormState> formStore={formStore} onSubmit={onSubmit}>
+      <Input name="address" placeholder="Address" />
+      <button type="button" onClick={onPrev}>Prev</button>
+      <SubmitButton label="Submit" />
+    </Form>
+  );
+};
+```
+
+```tsx title="SubmitButton.tsx"
+import { useForm } from "usetheform"
+
+const SubmitButton = ({ label = "Next" }) => {
+  const { isSubmitting, isValid } = useForm();
+  const disabled = isSubmitting || !isValid;
+  return (
+    <button type="submit" disabled={disabled}>
+      {label}
+    </button>
+  );
+};
+```

@@ -9,17 +9,11 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
   <head>
     <meta charset="utf-8" />
     <title>Usetheform</title>
-    <script
-      crossorigin
-      src="https://unpkg.com/react@17.0.2/umd/react.development.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.3/es6-sham.min.js"></script>
-    <script type="module" src="./index.js"></script>
+    <script src="./lib/react/17.0.2/react.development.js"></script>
+    <script src="./lib/react/17.0.2/react-dom.development.js"></script>
+    <script src="./lib/babel/babel.7.26.0.min.js"></script>
+    <script src="./lib/es-sham/es6-sham.min.js"></script>
+    <script type="text/babel" src="./index.js"></script>
     <script type="text/babel" src="./helpers/User.js"></script>
     <script type="text/babel" src="./helpers/Reset.js"></script>
     <script type="text/babel" src="./helpers/Submit.js"></script>
@@ -71,6 +65,11 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
     <script
       type="text/babel"
       src="./helpers/FormPersistStateOnUnmount.js"
+    ></script>
+    <script type="text/babel" src="./helpers/CreateFormStore.js"></script>
+    <script
+      type="text/babel"
+      src="./helpers/CreateFormStoreWithFormContext.js"
     ></script>
     <script type="text/babel" src="./helpers/Index.js"></script>
   </head>

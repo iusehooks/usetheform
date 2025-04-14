@@ -6,7 +6,7 @@ Usetheform is a form library for React that simplifies form handling with minima
 
 Before getting started, make sure you have the following tools installed:
 
-- **Node.js** (v18.20.8 is recommended)
+- **Node.js** (v20.19.0 is recommended)
   Make sure you have Node.js installed. You can manage multiple versions of Node.js using [nvm](https://github.com/nvm-sh/nvm).
 
 - **Corepack** (which comes bundled with Node.js v16.9 and later)

@@ -1,0 +1,88 @@
+---
+name: createFormStore
+---
+
+# createFormStore
+`createFormStore(initialFormState: Object)` creates a read-only form store that holds the state tree of your Form and the hook function to select a "Field" from the Form state.
+
+## Arguments
+
+**`initialFormState`**: object
+
+## Returns
+
+**`[formStore, useFormSelector]`** (`array`)
+  An array containing:
+  - A read-only `formStore` to attach to your `<Form />` component.
+  - A `useFormSelector` hook for selecting specific fields from the form state.
+
+## Basic usage
+
+### 🙈 First: create a form store
+
+```tsx title="awesomeFormStore.tsx"
+import { createFormStore } from 'usetheform';
+
+const [formStore, useFormSelector] = createFormStore({ counter: 0 });
+
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+### 🙉 Next: create your awesome Form
+
+```tsx title="AwesomeForm.tsx"
+import { Form } from 'usetheform';
+import { awesomeFormStore } from './formStore';
+
+export default function AwesomeForm() {
+  return (
+    <>
+      <Form formStore={awesomeFormStore}>
+        <Input type="number" name="counter" value="0" placeholder="Counter" />
+      </Form>
+      <Counter />
+    </>
+  );
+}
+```
+
+### 🙊 Finally: bind your components, and that's it!
+
+Use the `useAwesomeFormSelector` hook in any component — no need for context providers. Just select the state you need, and your component will re-render when it changes.
+
+```tsx title="Counter.tsx"
+import { useAwesomeFormSelector } from './formStore'
+
+export const Counter = () => {
+  const [counter, setCounterValue] = useAwesomeFormSelector((state) => state.counter);
+  return (
+    <div>
+      <span>{counter}</span>
+      <button type="button" onClick={() => setCounterValue((prev) => ++prev)}>
+        Increase Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue((prev) => --prev)}>
+        Decrease Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue(0)}>
+        Reset Counter
+      </button>
+    </div>
+  );
+}
+```
+
+The `<Counter />` component will re-render on changes.
+
+**IMPORTANT**: You must not select multiple fields in the same call to the selector function. Instead, call the selector separately for each field.
+
+```javascript
+// BAD 👎 ❌
+const [counter, setCounter] = useFormSelector(state => ({ counter1 : state.counter1, counter2 : state.counter2 }));
+```
+```javascript
+// OK 👍 ✅
+const [counter1, setCounter1] = useFormSelector(state => state.counter1);
+const [counter2, setCounter2] = useFormSelector(state => state.counter2);
+```

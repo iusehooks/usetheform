@@ -12,6 +12,8 @@ module.exports = defineConfig({
     baseUrl: "http://localhost:3000/",
     defaultCommandTimeout: defaultTimeout, // Timeout for commands like cy.get()
     pageLoadTimeout: defaultTimeout, // Timeout for the page to load
-    requestTimeout: defaultTimeout // Timeout for requests like cy.intercept()
+    requestTimeout: defaultTimeout, // Timeout for requests like cy.intercept()
+    testIsolation: false, // Disable test isolation
+    video: true
   }
 });
