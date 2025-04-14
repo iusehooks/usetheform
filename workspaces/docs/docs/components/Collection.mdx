@@ -199,8 +199,8 @@ import { Form, Input, Collection, useValidation } from 'usetheform'
 ```
 
 <Playground>{`function FormWihSyncValidation(){
-    const graterThan10 = value => ((value && (value["A"] + value["B"] > 10)) ? undefined : "A+B must be > 10");
-    const [status, validation] = useValidation([graterThan10]);
+    const greaterThan10 = value => ((value && (value["A"] + value["B"] > 10)) ? undefined : "A+B must be > 10");
+    const [status, validation] = useValidation([greaterThan10]);
     const onSubmit = (state) => alert(JSON.stringify(state));
 
     return (

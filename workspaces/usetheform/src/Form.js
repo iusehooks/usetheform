@@ -18,7 +18,7 @@ function Form({
   resetAsyncErr,
   reducers,
   touched,
-  _getInitilaStateForm_, // Private API
+  _getInitialStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
   action,
@@ -39,7 +39,7 @@ function Form({
     onAsyncValidation,
     resetAsyncErr,
     reducers,
-    _getInitilaStateForm_,
+    _getInitialStateForm_,
     _onMultipleForm_,
     name,
     action

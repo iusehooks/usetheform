@@ -15,11 +15,11 @@ env:
 
 jobs:
   tests:
-    name: Unit Tests + Lint 🧪 - React Version
+    name: Unit Tests 🧪 - React
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        react-version: ['18.2.0', '19.0.0']  # Specify the React versions here
+        react-version: ['17.0.0', '18.2.0', '19.0.0']  # Specify the React versions here
 
     steps:
       - name: Checkout repository 🛎️
@@ -36,6 +36,11 @@ jobs:
 
       - name: Install react@${{ matrix.react-version }} 📦
         run: yarn add react@${{ matrix.react-version }} react-dom@${{ matrix.react-version }} -D
+        working-directory: workspaces/usetheform
+
+      - name: React testing-library version 📦
+        if: matrix.react-version == '17.0.0'
+        run: yarn add --dev @testing-library/react@^12 @testing-library/jest-dom@^5.16.5
         working-directory: workspaces/usetheform
 
       - name: Run Lint 🔍

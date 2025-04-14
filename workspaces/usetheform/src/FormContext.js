@@ -17,7 +17,7 @@ export const FormContext = memo(function FormContext({
   resetAsyncErr,
   touched,
   reducers,
-  _getInitilaStateForm_, // Private API
+  _getInitialStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
   action
@@ -36,7 +36,7 @@ export const FormContext = memo(function FormContext({
     resetAsyncErr,
     touched,
     reducers,
-    _getInitilaStateForm_,
+    _getInitialStateForm_,
     _onMultipleForm_,
     name,
     action

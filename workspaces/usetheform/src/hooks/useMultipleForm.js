@@ -9,13 +9,13 @@ export function useMultipleForm(onChange) {
   });
 
   // private API
-  const { current: _getInitilaStateForm_ } = useRef(
+  const { current: _getInitialStateForm_ } = useRef(
     formName => stateRef.current[formName]
   );
 
   const { current: getState } = useRef(() => mergeFormStates(stateRef.current));
 
-  return [getState, { _getInitilaStateForm_, _onMultipleForm_ }];
+  return [getState, { _getInitialStateForm_, _onMultipleForm_ }];
 }
 
 function mergeFormStates(formStates) {

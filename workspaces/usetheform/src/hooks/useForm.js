@@ -33,7 +33,7 @@ export function useForm({
   asyncValidator,
   onAsyncValidation = noop,
   reducers,
-  _getInitilaStateForm_, // Private API
+  _getInitialStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
   action
@@ -43,7 +43,7 @@ export function useForm({
   const memoStateRef = useRef(formState);
 
   const { current: isMultipleForm } = useRef(
-    isUsingMultipleForm(_getInitilaStateForm_, _onMultipleForm_, name)
+    isUsingMultipleForm(_getInitialStateForm_, _onMultipleForm_, name)
   );
 
   const dispatchFormState = useCallback(({ state, status, ...rest }) => {
@@ -412,12 +412,12 @@ export function useForm({
 
     const pristine =
       (isMultipleForm &&
-        (_getInitilaStateForm_(name) == undefined ||
-          Object.keys(_getInitilaStateForm_(name)).length === 0)) ||
+        (_getInitialStateForm_(name) == undefined ||
+          Object.keys(_getInitialStateForm_(name)).length === 0)) ||
       !isMultipleForm;
 
     const state = isMultipleForm
-      ? _getInitilaStateForm_(name) || stateRef.current.state
+      ? _getInitialStateForm_(name) || stateRef.current.state
       : stateRef.current.state;
 
     const isValid =
@@ -489,9 +489,9 @@ export function useForm({
   };
 }
 
-function isUsingMultipleForm(_getInitilaStateForm_, _onMultipleForm_, name) {
+function isUsingMultipleForm(_getInitialStateForm_, _onMultipleForm_, name) {
   return (
-    typeof _getInitilaStateForm_ === "function" &&
+    typeof _getInitialStateForm_ === "function" &&
     typeof _onMultipleForm_ === "function" &&
     typeof name === "string"
   );

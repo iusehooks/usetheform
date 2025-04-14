@@ -1,9 +1,6 @@
 import React from "react";
 import { fireEvent, cleanup, waitFor } from "@testing-library/react";
 import { act } from "./helpers/utils/act";
-
-import { userEvent } from "@testing-library/user-event";
-
 import { CollectionArrayIndexHandledManually } from "./helpers/components/CollectionArrayIndexHandledManually";
 
 import Reset from "./helpers/components/Reset";
@@ -44,21 +41,27 @@ describe("Component => Collection (Array with indexes handled manually)", () => 
     const submit = getByTestId("submit");
 
     expect(onInit).toHaveBeenCalledWith({}, true);
-    const user = userEvent.setup();
 
     for (let i = 1; i <= 10; i++) {
-      await user.click(addInput);
-      const input = await waitFor(() =>
-        getByTestId("input" + "_" + `${i}`, { timeout: 500 })
-      );
-      expect(input.value).toBe(`${i}`);
+      act(() => {
+        fireEvent.click(addInput);
+      });
+
+      await waitFor(() => {
+        const input = getByTestId(`input_${i}`, {
+          timeout: 500
+        });
+        expect(input.value).toBe(`${i}`);
+      });
     }
 
     let stateExpected = myself.current.getInnerState();
     expect(onChange).toHaveBeenCalledWith({ indexManual: stateExpected }, true);
 
     for (let i = 1; i <= 5; i++) {
-      await user.click(removeInput);
+      act(() => {
+        fireEvent.click(removeInput);
+      });
     }
 
     stateExpected = myself.current.getInnerState();
@@ -91,6 +94,12 @@ describe("Component => Collection (Array with indexes handled manually)", () => 
     for (let i = 1; i <= 10; i++) {
       act(() => {
         fireEvent.click(addCollection);
+      });
+      await waitFor(() => {
+        const input = getByTestId(`text_${i}`, {
+          timeout: 500
+        });
+        expect(input.value).toBe(`${i}`);
       });
     }
 

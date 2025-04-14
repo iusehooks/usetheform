@@ -1,4 +1,4 @@
-# <p align="center"> <img src='https://iusehooks.github.io/usetheform/docs/gatsby-theme-docz/assets/logo.png' width="233" height='51' alt='Usetheform Logo' /> </p>
+# <p align="center"> <img src='https://iusehooks.github.io/usetheform/workspaces/docs/static/img/logo.png' width="233" height='51' alt='Usetheform Logo' /> </p>
 
 <h3 align="center">An easy way for building forms in React.</h3><br/>
 
