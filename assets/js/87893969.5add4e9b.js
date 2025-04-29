@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[902],{1653:(e,u,s)=>{s.r(u),s.d(u,{default:()=>f});var c=s(4041);function f(){return(0,c.useEffect)((()=>{window.location.href="/usetheform"}),[]),null}}}]);
