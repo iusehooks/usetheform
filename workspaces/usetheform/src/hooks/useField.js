@@ -67,10 +67,14 @@ export function useField(props) {
     context
   );
 
+  const isCheckboxOrRadio = type === "checkbox" || type === "radio";
   if (!isMounted.current && initialValueRef.current) {
     valueField.current = initialValueRef.current;
+    if (isCheckboxOrRadio) {
+      checkedField.current = initialCheckedRef.current;
+    }
   } else {
-    if (type === "checkbox" || type === "radio") {
+    if (isCheckboxOrRadio) {
       valueField.current = initialValueRef.current;
       checkedField.current =
         type === "checkbox"

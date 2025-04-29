@@ -51,7 +51,7 @@ const onSubmit = (formState) => new Promise((resolve, reject) => { // some async
     * If the function returns a boolean value `false`, the value named **submitted** will not be incremented.
 
 ```js
-  const { submitted, submitAttempts } = useForm();
+const { submitted, submitAttempts } = useForm();
 ```
 
 - It will be only invoked if your form passes all validations added at any level (Collections or Fields).
@@ -110,8 +110,7 @@ import { Form } from './MyFormWithContext.ts'
         </div>
       </FormContext>
     );
-    }
-  `}
+}`}
 </Playground>
 
 ```js title="MyFormWithContext.ts"
@@ -129,7 +128,7 @@ export const Form = ({ children }) => {
 ## Reducers
 
 ```js
-  import { FormContext, Input } from 'usetheform'
+import { FormContext, Input } from 'usetheform'
 ```
 
 <Playground>
@@ -153,10 +152,8 @@ export const Form = ({ children }) => {
         </Form>
       </FormContext>
     )
-  }
-`}
+}`}
 </Playground>
-
 
 ## Validation - Sync
 
@@ -166,7 +163,7 @@ Validation at FormContext level:
 - **touched=true**: error messages will be shown when any Field at any level of nesting is touched/visited.
 
 ```javascript
-  import { FormContext, Input, Collection, useValidation } from 'usetheform'
+import { FormContext, Input, Collection, useValidation } from 'usetheform'
 ```
 
 <Playground>{`function FormContextSyncValidation(){
@@ -183,8 +180,7 @@ Validation at FormContext level:
         </Form>
       </FormContextX>
     )
-  }
-`}</Playground>
+}`}</Playground>
 
 ## Validation - Async
 
@@ -214,8 +210,7 @@ import { FormContext, Collection, Input, useAsyncValidation } from 'usetheform';
         </Form>
       </FormContext>
     )
-  }
-`}
+}`}
 </Playground>
 
 #### Detailed Explanation:

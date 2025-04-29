@@ -3,37 +3,56 @@ title: Introduction
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started
 
-Welcome! 👋 Usetheform is a React library for composing declarative forms and managing their state. It does not depend on any external library, such as Redux, or MobX, which makes it easy to adopt due to the lack of dependencies.
+Welcome! 👋 **Usetheform** is a lightweight, dependency-free React library for composing **declarative forms** and managing their state. It's simple to use, flexible, and powerful for handling nested fields, validation, and much more.
 
-## Features
+## :fire: Features
 
-- Easy integration with other libraries. 👉🏻 [Play with React Select/Material UI](https://codesandbox.io/s/materialuireactselect-6ufc2) - [React Dropzone/MaterialUI Dropzone](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w).
-- Supports Sync and Async validation at [Form](https://iusehooks.github.io/usetheform/docs-form#validation---sync), [Field](https://iusehooks.github.io/usetheform/docs-input#validation---sync) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#validation---sync) level. 👉🏻 [Play with Sync and Async validation](https://iusehooks.github.io/usetheform/docs-input#validation---sync).
-- Supports [Yup](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormYUP.jsx), [Zod](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormZOD.jsx), [Superstruct](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormSuperStruct.jsx), [Joi](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormJOI.jsx) or custom schema validations. 👉🏻 [Play with YUP - ZOD - Superstruct - Joi validations](https://codesandbox.io/s/schema-validations-uc1m6).
-- Follows the HTML standard for validation. 👉🏻 [Play with HTML built-in form validation](https://codesandbox.io/s/built-informvalidation-lp672?file=/src/Info.jsx).
-- Supports reducer functions at [Form](https://iusehooks.github.io/usetheform/docs-form#reducers), [Field](https://iusehooks.github.io/usetheform/docs-input#reducers) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#reducers) level. 👉🏻 [Play with Reducers](https://iusehooks.github.io/usetheform/docs-form#reducers).
-- Easy to handle arrays, objects or nested collections. 👉🏻 [Play with nested collections](https://iusehooks.github.io/usetheform/docs-collection#nested-collections).
-- Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
+📦 Easy integration with libraries like [React Select/Material UI](https://codesandbox.io/s/materialuireactselect-6ufc2) and [React Dropzone/Material UI Dropzone](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w) <br />
+✅ Sync and Async validation <br />
+🔍 Schema support for Yup, Zod, Joi, Superstruct <br />
+🧬 Follows native HTML standards - [see in action](https://codesandbox.io/s/built-informvalidation-lp672?file=/src/Info.jsx) <br />
+🧩 Easy handling of arrays, objects, and nested structures - [Nested collections, arrays, and objects made simple](https://iusehooks.github.io/usetheform/components/Collection#nested-collections) <br />
+💥 Tiny bundle size, zero dependencies — [Check it on Bundlephobia](https://bundlephobia.com/result?p=usetheform)
 
-## Motivation
+## :brain: Motivation
 
-**usetheform** has been built with the necessity of developing a lightweight library in mind, which is able to provide an easy API and allows you to build complex forms, composed by nested levels (e.g. arrays, objects, custom inputs, etc.), with a declarative approach and without the need to include external libraries within your React projects.
+**Usetheform** was created to provide a highly flexible, declarative way to handle forms in React with no dependencies. It supports:
 
-It's easy to start using it in your existing project and gives you full control over Field and Collection at any level of nesting, which makes it easy to manipulate the form state based on your needs. Synchronous and asynchronous validations are also simple and error messages are easy to customize and display. If you find it useful please leave a star 🙏🏻.
+🧩 **Nested field structures**: Build deeply structured forms with collections, arrays, and objects.<br />
+🔁 **Synchronous & asynchronous validation**: Validate inputs at every level — instantly or with async logic.<br />
+🧠 **Custom input and reducer logic**: Extend functionality using reducers and custom input components.<br />
+📜 **Schema-based validation**: Integrate with Yup, Zod, Superstruct, or Joi for powerful schema validation.<br />
+🪶 **Tiny footprint**: Zero dependencies and optimized for performance.
+
+If you find this library useful, please ⭐ the repo. It means a lot! 🙏
 
 ## 🚀 Installation
 
 Install `usetheform` using your preferred package manager:
 
-```bash
-npm install usetheform --save
-```
-
-```bash
-yarn add usetheform
-```
+<Tabs
+  defaultValue="npm"
+  values={[
+    { label: 'npm', value: 'npm' },
+    { label: 'yarn', value: 'yarn' },
+  ]}
+>
+  <TabItem value="npm">
+    ```bash
+    npm install usetheform --save
+    ```
+  </TabItem>
+  <TabItem value="yarn">
+    ```bash
+    yarn add usetheform
+    ```
+  </TabItem>
+</Tabs>
 
 ## ⚡ Quickstart
 
@@ -45,7 +64,7 @@ import ReactLiveScopeWrapper from '@site/src/theme/ReactLiveScope';
         <Input type="text" name="name" placeholder="Enter your name" />
         <Input type="text" name="surname" placeholder="Enter your surname" />
       </Collection>
-      <Collection as="div" className="flex space-x-4 justify-between" object name="nested">
+      <Collection as="div" object name="nested" className="flex space-x-4 justify-between">
         <Input type="text" name="name" placeholder="Enter nested name" />
         <Input type="text" name="surname" placeholder="Enter nested surname" />
       </Collection>
@@ -67,9 +86,71 @@ import ReactLiveScopeWrapper from '@site/src/theme/ReactLiveScope';
       <Submit />
       <Reset />
     </div>
-</Form>
-`}
+</Form>`}
 </ReactLiveScopeWrapper>
+
+## 📖 Recipes
+
+### 🙈 First: create a form store
+
+```tsx title="FormTypes.tsx"
+interface FormState { counter: number; }
+```
+
+```tsx title="AwesomeFormStore.tsx"
+import { createFormStore } from 'usetheform';
+import { FormState } from "./FormTypes";
+
+const [formStore, useFormSelector] = createFormStore<FormState>({ counter: 0 });
+
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+### 🙉 Next: create your awesome Form
+
+```tsx title="AwesomeForm.tsx"
+import { Form } from 'usetheform';
+import { awesomeFormStore } from './awesomeFormStore';
+import { FormState } from "./FormTypes";
+
+export default function AwesomeForm() {
+  return (
+    <>
+      <Form<FormState> formStore={awesomeFormStore}>
+        <Input type="number" name="counter" value="0" placeholder="Counter" />
+      </Form>
+      <Counter />
+    </>
+  );
+}
+```
+
+### 🙊 Finally: bind your components, and that's it!
+
+Use the `useAwesomeFormSelector` hook anywhere, no providers needed. Select your state and the component will re-render on changes.
+
+```tsx title="Counter.tsx"
+import { useAwesomeFormSelector } from './awesomeFormStore'
+
+export const Counter = () => {
+  const [counter, setCounterValue] = useAwesomeFormSelector<"counter">((state) => state.counter);
+  return (
+    <div>
+      <span>{counter}</span>
+      <button type="button" onClick={() => setCounterValue((prev) => ++prev)}>
+        Increase Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue((prev) => --prev)}>
+        Decrease Counter
+      </button>
+      <button type="button" onClick={() => setCounterValue(0)}>
+        Reset Counter
+      </button>
+    </div>
+  );
+}
+```
 
 ## CodeSandbox Examples
 
@@ -86,7 +167,7 @@ import ReactLiveScopeWrapper from '@site/src/theme/ReactLiveScope';
 ## Author
 
 Antonio Pangallo [@antonio_pangall](https://twitter.com/antonio_pangall)
-### &#8627; Stargazers
+### ⭐ Stargazers
 [![Stargazers repo roster for @iusehooks/usetheform](https://reporoster.com/stars/iusehooks/usetheform)](https://github.com/iusehooks/usetheform/stargazers)
 
 ## Contributing

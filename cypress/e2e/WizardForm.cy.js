@@ -28,7 +28,7 @@ reactVersions.forEach(version => {
         .should("not.be.disabled")
         .click();
 
-      cy.getByDataTestId("code", "WizardForm-code").should(
+      cy.getByDataTestId("code", "WizardForm-code").should("exist").should("be.visible").should(
         "have.text",
         `{"name":"foo","lastname":"mouse"}`
       );

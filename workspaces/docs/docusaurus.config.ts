@@ -1,14 +1,15 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import path from "path";
 import tailwindPlugin from "./plugins/tailwind-config"; // add this
 import customAlias from "./plugins/custom-alias"; // add this
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "My Site",
-  tagline: "Dinosaurs are cool",
+  title: "Usetheform",
+  tagline: "An easy way to build forms in React",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -34,7 +35,16 @@ const config: Config = {
   },
   themes: ["@docusaurus/theme-live-codeblock"],
 
-  plugins: [customAlias, tailwindPlugin],
+  plugins: [customAlias, tailwindPlugin, "@docusaurus/plugin-content-pages", [
+    require.resolve("docusaurus-plugin-search-local"),
+    {
+      hashed: true,
+      indexBlog: false,
+      indexPages: false,
+      indexDocs: true,
+      docsRouteBasePath: "/",  // This can remain '/' if docs should be the root path, otherwise adjust it.
+    },
+  ]],
 
   presets: [
     [
@@ -56,7 +66,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: "img/docusaurus-social-card.jpg",
+    image: "img/logo.png",
     navbar: {
       logo: {
         alt: "Usetheform",
@@ -68,6 +78,10 @@ const config: Config = {
           label: "GitHub",
           position: "right",
         },
+        {
+          type: 'search',
+          position: 'right',
+        }
       ],
     },
     prism: {

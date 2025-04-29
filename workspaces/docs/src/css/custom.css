@@ -21,6 +21,10 @@ ul {
   @apply list-disc pl-5;
 }
 
-.playgroundPreview_wiye[data-colorMode="dark"] {
+.playgroundPreview_wiye[data-colormode="dark"] {
   @apply bg-gray-100 text-gray-800 p-4;
+}
+
+a.navbar__item.navbar__link svg {
+  display: inline;
 }

@@ -1,6 +1,6 @@
 {
   "name": "usetheform",
-  "version": "3.6.0",
+  "version": "4.0.0",
   "description": "React library for composing declarative forms in React and managing their state.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
@@ -12,7 +12,7 @@
   "homepage": "https://iusehooks.github.io/usetheform",
   "scripts": {
     "build": "yarn run clean && node ./build_config/build.js",
-    "build:dev": "yarn run clean && node ./build_config/dev.js",
+    "build:dev": "yarn run clean && node ./build_config/dev.js --",
     "clean": "rimraf build coverage dev",
     "lint": "eslint --ext .jsx --ext .js src __tests__ --fix",
     "pretest": "yarn run lint",
@@ -59,6 +59,7 @@
     "babel-eslint": "^10.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^26.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "rollup": "^2.35.1",

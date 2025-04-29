@@ -6,7 +6,11 @@ import { useValidationFunctionAsync } from "./commons/useValidationFunctionAsync
 import { updateState } from "./../utils/updateState";
 import { chainReducers } from "./../utils/chainReducers";
 import { noop } from "./../utils/noop";
-import { STATUS, FORM_VALIDATION_LABEL } from "./../utils/constants";
+import {
+  STATUS,
+  FORM_VALIDATION_LABEL,
+  DISPATCHER_LABEL
+} from "./../utils/constants";
 import {
   createForm,
   isFormValid,
@@ -18,6 +22,7 @@ import {
 
 const emptyStateValue = {};
 const validatorsDefault = [];
+const emptyFormStore = { getState: noop, update: noop, mountForm: noop };
 
 export function useForm({
   initialState,
@@ -36,9 +41,19 @@ export function useForm({
   _getInitialStateForm_, // Private API
   _onMultipleForm_, // Private API
   name,
-  action
+  action,
+  formStore = emptyFormStore
 }) {
-  const [formState, dispatch] = useState(() => createForm(initialState));
+  const refInitialState = useRef(initialState);
+  refInitialState.current = {
+    ...initialState,
+    ...(formStore.getState() || {})
+  };
+
+  const [formState, dispatch] = useState(() =>
+    createForm(refInitialState.current, formStore)
+  );
+
   const stateRef = useRef(formState);
   const memoStateRef = useRef(formState);
 
@@ -61,6 +76,7 @@ export function useForm({
 
     stateRef.current = { ...rest, status, state: newState };
     dispatch(stateRef.current);
+    formStore.update({ ...stateRef.current, mapFields: mapFields.current });
   }, []);
 
   const memoInitialState = useRef({ ...formState });
@@ -393,6 +409,7 @@ export function useForm({
   // after form is mounted dispatch the initial state
   useEffect(() => {
     isMounted.current = true;
+    formStore.mountForm(isMounted.current);
 
     memoStateRef.current = stateRef.current;
 
@@ -432,10 +449,13 @@ export function useForm({
       status: STATUS.ON_INIT
     };
 
+    mapFields.current[DISPATCHER_LABEL] = dispatchNewState;
+
     dispatchFormState(stateRef.current);
 
     return () => {
       isMounted.current = false;
+      formStore.mountForm(isMounted.current);
       stateRef.current = memoStateRef.current;
     };
   }, []);

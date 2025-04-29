@@ -1,115 +1,202 @@
-# <p align="center"> <img src='https://raw.githubusercontent.com/iusehooks/usetheform/refs/heads/master/workspaces/docs/static/img/logo.png' width="233" height='51' alt='Usetheform Logo' /> </p>
-
-<h3 align="center">An easy way for building forms in React.</h3><br/>
-
 <p align="center">
-<a href="https://coveralls.io/github/iusehooks/usetheform?branch=master"><img src="https://coveralls.io/repos/github/iusehooks/usetheform/badge.svg?branch=master" alt="Code Coverage" height="20"/></a>
-<a href="https://travis-ci.org/iusehooks/usetheform"><img src="https://travis-ci.org/iusehooks/usetheform.svg?branch=master" alt="Build info" height="20"/></a>
-<a href="https://bundlephobia.com/result?p=usetheform@latest"><img src="https://img.shields.io/bundlephobia/minzip/usetheform.svg" alt="Bundle size" height="20"/></a>
-<a href="https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks"><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social" alt="Tweet" height="20"/></a>
-</p><br/><br/>
+  <img src="https://raw.githubusercontent.com/iusehooks/usetheform/refs/heads/master/workspaces/docs/static/img/logo.png" width="233" height="51" alt="Usetheform Logo" />
+</p>
+
+<h3 align="center">An easy way to build forms in React.</h3>
 
 <div align="center">
-    <p align="center">
-        <a href="https://iusehooks.github.io/usetheform/" title="Usetheform">
-            <img src="https://raw.githubusercontent.com/iusehooks/usetheform/master/examples/img/example.gif" alt="React library for composing declarative forms and managing their state" width="800" />
-        </a>
-    </p>
-</div><br/>
 
-## :bulb: What is usetheform about?
+  [![Code Coverage](https://coveralls.io/repos/github/iusehooks/usetheform/badge.svg?branch=master)](https://coveralls.io/github/iusehooks/usetheform?branch=master)
+  [![Usetheform CI](https://github.com/iusehooks/usetheform/actions/workflows/github-actions.yml/badge.svg?branch=master)](https://github.com/iusehooks/usetheform/actions/workflows/github-actions.yml)
+  [![Bundle Size](https://img.shields.io/bundlephobia/minzip/usetheform.svg)](https://bundlephobia.com/result?p=usetheform@latest)
+  [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20library%20for%20composing%20declarative%20forms%2C%20manage%20their%20state%2C%20handling%20their%20validation%20and%20much%20more&url=https://github.com/iusehooks/usetheform&hashtags=reactjs,webdev,javascript,forms,reacthooks)
 
-Welcome! 👋 Usetheform is a React library for composing declarative forms and managing their state. It does not depend on any external library, such as Redux, or MobX, which makes it easy to adopt due to the lack of dependencies.
+</div>
 
-- [Documentation](https://iusehooks.github.io/usetheform/)
-- [Features](#fire-features)
-- [Quickstart](#zap-quickstart)
-- [Motivation](#motivation)
-- [Code Sandboxe Examples](#code-sandboxes)
-- [How to Contribute](#how-to-contribute)
-- [License](#license)
+<br/>
+
+<p align="center">
+  <a href="https://iusehooks.github.io/usetheform/" title="Usetheform Docs">
+    <img src="https://raw.githubusercontent.com/iusehooks/usetheform/master/examples/img/example.gif" alt="Demo GIF" width="800" />
+  </a>
+</p>
+
+## 💡 What is Usetheform?
+
+**Usetheform** is a lightweight, dependency-free React library for composing **declarative forms** and managing their state. It's simple to use, flexible, and powerful for handling nested fields, validation, and much more.
+
+📚 [Documentation](https://iusehooks.github.io/usetheform/)<br/>
+⚡ [Quickstart](#zap-quickstart)<br/>
+🔥 [Features](#fire-features)<br/>
+📖 [Recipes](#book-recipes)<br/>
+🧠 [Motivation](#brain-motivation)<br/>
+🧪 [Code Sandboxes](#code-sandboxes)<br/>
+🤝 [How to Contribute](#how-to-contribute)<br/>
+📄 [License](#license)
+
 
 ## :fire: Features
 
-- Easy integration with other libraries. 👉🏻 [Play with React Select/Material UI](https://codesandbox.io/s/materialuireactselect-6ufc2) - [React Dropzone/MaterialUI Dropzone](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w).
-- Supports Sync and Async validation at [Form](https://iusehooks.github.io/usetheform/docs-form#validation---sync), [Field](https://iusehooks.github.io/usetheform/docs-input#validation---sync) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#validation---sync) level. 👉🏻 [Play with Sync and Async validation](https://iusehooks.github.io/usetheform/docs-input#validation---sync).
-- Supports [Yup](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormYUP.jsx), [Zod](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormZOD.jsx), [Superstruct](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormSuperStruct.jsx), [Joi](https://codesandbox.io/s/schema-validations-uc1m6?file=/src/FormJOI.jsx) or custom schema validations. 👉🏻 [Play with YUP - ZOD - Superstruct - Joi validations](https://codesandbox.io/s/schema-validations-uc1m6).
-- Follows the HTML standard for validation. 👉🏻 [Play with HTML built-in form validation](https://codesandbox.io/s/built-informvalidation-lp672?file=/src/Info.jsx).
-- Supports reducer functions at [Form](https://iusehooks.github.io/usetheform/docs-form#reducers), [Field](https://iusehooks.github.io/usetheform/docs-input#reducers) and [Collection](https://iusehooks.github.io/usetheform/docs-collection#reducers) level. 👉🏻 [Play with Reducers](https://iusehooks.github.io/usetheform/docs-form#reducers).
-- Easy to handle arrays, objects or nested collections. 👉🏻 [Play with nested collections](https://iusehooks.github.io/usetheform/docs-collection#nested-collections).
-- Tiny size with zero dependencies. 👉🏻 [Check size](https://bundlephobia.com/result?p=usetheform).
-- Typescript supported.
+- 📦 Easy integration with libraries like [React Select/Material UI](https://codesandbox.io/s/materialuireactselect-6ufc2) and [React Dropzone/Material UI Dropzone](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w)
+- ✅ Sync and Async validation at:
+  - [Form level](https://iusehooks.github.io/usetheform/components/Form#validatisync)
+  - [Field level](https://iusehooks.github.io/usetheform/components/Input#validatisync)
+  - [Collection level](https://iusehooks.github.io/usetheform/components/Collection#validatisync)
+- 🔍 Schema validation with:
+  - [Yup](https://codesandbox.io/p/sandbox/schema-validations-uc1m6?file=%2Fsrc%2FFormYUP.jsx)
+  - [Zod](https://codesandbox.io/p/sandbox/schema-validations-uc1m6?file=%2Fsrc%2FFormZOD.jsx)
+  - [Superstruct](https://codesandbox.io/p/sandbox/schema-validations-uc1m6?file=%2Fsrc%2FFormSuperStruct.jsx)
+  - [Joi](https://codesandbox.io/p/sandbox/schema-validations-uc1m6?file=%2Fsrc%2FFormJOI.jsx)
+- 🧬 Follows native HTML standards — [see in action](https://codesandbox.io/s/built-informvalidation-lp672?file=/src/Info.jsx)
+- 🧠 Reducer support at:
+  - [Form level](https://iusehooks.github.io/usetheform/components/Form/#reducers)
+  - [Field level](https://iusehooks.github.io/usetheform/components/Input#reducers)
+  - [Collection level](https://iusehooks.github.io/usetheform/components/Collection#reducers)
+- 🧩 Easy handling of arrays, objects, and nested structures
+  - [Nested collections demo](https://iusehooks.github.io/usetheform/components/Collection#nested-collections)
+- 📦 Tiny bundle size, zero dependencies — [Check it on Bundlephobia](https://bundlephobia.com/result?p=usetheform)
 
 ## :zap: Quickstart
 
-```sh
+Install `usetheform` using your preferred package manager:
+
+```bash
 npm install --save usetheform
 ```
 
-```jsx
+```bash
+yarn add usetheform
+```
+
+#### Basic usage example:
+
+```tsx
 import React from "react";
 import { Form, Input, useValidation } from "usetheform";
+import { ReducerFn, ValidatorFn, OnChangeFormFn, OnSubmitFormFn } from "usetheform/types";
 
-const preventNegativeNumber = (next, prev) => (next <= 0 ? 0 : next);
-const required = (value) =>
-  value && value.trim() !== "" ? undefined : "Required";
+interface MyFormState {
+  firstname: string;
+  lastname: string;
+  age: number;
+}
+
+const preventNegativeNumber: ReducerFn<MyFormState["age"]> = (next) =>
+  next <= 0 ? 0 : next;
+const required: ValidatorFn<MyFormState["firstname"]> = (value) =>
+  value?.trim() ? undefined : "Required";
 
 export default function App() {
-  const onChange = (formState) => console.log("ON_CHANGE : ", formState);
-  const onSubmit = (formState) => console.log("ON_SUBMIT : ", formState);
-
+  const onChange: OnChangeFormFn<MyFormState> = (formState) => console.log("ON_CHANGE:", formState);
+  const onSubmit: OnSubmitFormFn<MyFormState> = (formState) => console.log("ON_SUBMIT:", formState);
   const [status, validation] = useValidation([required]);
 
   return (
-    <Form onSubmit={onSubmit} onChange={onChange}>
+    <Form<MyFormState> onSubmit={onSubmit} onChange={onChange}>
       <Input name="firstname" type="text" touched {...validation} />
       {status.error && <span>{status.error}</span>}
       <Input name="lastname" type="text" />
-      <Input
-        name="age"
-        type="number"
-        value={18}
-        reducers={preventNegativeNumber}
-      />
+      <Input name="age" type="number" value={18} reducers={preventNegativeNumber} />
       <button type="submit">Submit</button>
     </Form>
   );
 }
 ```
 
-## Motivation
+## :book: Recipes
 
-**usetheform** has been built with the necessity of developing a lightweight library in mind, which is able to provide an easy API and allows you to build complex forms, composed by nested levels (e.g. arrays, objects, custom inputs, etc.), with a declarative approach and without the need to include external libraries within your React projects.
+### Accessing form fields outside the Form context
 
-It's easy to start using it in your existing project and gives you full control over Field and Collection at any level of nesting, which makes it easy to manipulate the form state based on your needs. Synchronous and asynchronous validations are also simple and error messages are easy to customize and display. If you find it useful please leave a star 🙏🏻.
+#### 🧱 Step 1: Create a form store
 
-## Author
+```tsx
+interface FormState { counter: number; }
+```
 
-- Antonio Pangallo [@antonio_pangall](https://twitter.com/antonio_pangall)
+```tsx
+import { createFormStore } from 'usetheform';
 
-### &#8627; Stargazers
+const [formStore, useFormSelector] = createFormStore<FormState>({ counter: 0 });
 
-[![Stargazers repo roster for @iusehooks/usetheform](https://reporoster.com/stars/iusehooks/usetheform)](https://github.com/iusehooks/usetheform/stargazers)
+export const awesomeFormStore = formStore;
+export const useAwesomeFormSelector = useFormSelector;
+```
+
+#### 🧩 Step 2: Create your awesome form
+
+```tsx
+import { Form, Input } from 'usetheform';
+import { awesomeFormStore } from './awesomeFormStore';
+
+
+export default function AwesomeForm() {
+  return (
+    <>
+      <Form<FormState> formStore={awesomeFormStore}>
+        <Input type="number" name="counter" value="0" placeholder="Counter" />
+      </Form>
+      <Counter />
+    </>
+  );
+}
+```
+
+#### 🔌 Step 3: Connect your components
+
+```tsx
+import { useAwesomeFormSelector } from './awesomeFormStore';
+
+export const Counter = () => {
+  const [counter, setCounterValue] = useAwesomeFormSelector<"counter">((state) => state.counter);
+  return (
+    <div>
+      <span>{counter}</span>
+      <button onClick={() => setCounterValue(prev => ++prev)}>Increase</button>
+      <button onClick={() => setCounterValue(prev => --prev)}>Decrease</button>
+      <button onClick={() => setCounterValue(0)}>Reset</button>
+    </div>
+  );
+};
+```
+
+## :brain: Motivation
+
+**Usetheform** was created to provide a highly flexible, declarative way to handle forms in React with no dependencies. It supports:
+
+- Nested field structures
+- Synchronous & asynchronous validation
+- Custom input and reducer logic
+- Schema-based validation
+- Tiny footprint
+
+If you find this library useful, please ⭐ the repo. It means a lot! 🙏
+
+## 👤 Author
+
+- **Antonio Pangallo** — [@antonio_pangall](https://twitter.com/antonio_pangall)
+
+### ⭐ Stargazers
+
+[![Stargazers repo roster](https://reporoster.com/stars/iusehooks/usetheform)](https://github.com/iusehooks/usetheform/stargazers)
 
 ## Code Sandboxes
 
-- Twitter 'What's Happening' Form Bar: [Sandbox](https://codesandbox.io/s/twitter-bar-form-czx3o)
-- Shopping Cart: [Sandbox](https://codesandbox.io/s/shopping-cart-97y5k)
-- Examples: Slider, Select, Collections etc..: [Sandbox](https://codesandbox.io/s/formexample2-mmcjs)
-- Various Implementations: [Sandbox](https://codesandbox.io/s/035l4l75ln)
-- Wizard: [Sandbox](https://codesandbox.io/s/v680xok7k7)
-- FormContext: [Sandbox](https://codesandbox.io/s/formcontext-ukvc5)
-- Material UI - React Select: [Sandbox](https://codesandbox.io/s/materialuireactselect-6ufc2)
-- Validation using Yup, ZOD, JOI, Superstruct: [Sandbox](https://codesandbox.io/s/schema-validations-uc1m6)
-- React Dropzone - Material UI Dropzone: [Sandbox](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w)
+- [Twitter-style Form Bar](https://codesandbox.io/s/twitter-bar-form-czx3o)
+- [Shopping Cart](https://codesandbox.io/s/shopping-cart-97y5k)
+- [Form Examples (Select, Slider, Collections)](https://codesandbox.io/s/formexample2-mmcjs)
+- [Various Implementations](https://codesandbox.io/s/035l4l75ln)
+- [Wizard](https://codesandbox.io/s/v680xok7k7)
+- [FormContext](https://codesandbox.io/s/formcontext-ukvc5)
+- [Material UI + React Select](https://codesandbox.io/s/materialuireactselect-6ufc2)
+- [Validation (Yup, Zod, Joi, Superstruct)](https://codesandbox.io/s/schema-validations-uc1m6)
+- [React Dropzone + Material UI](https://codesandbox.io/s/reactdropzone-materialuidropzone-yjb8w)
 
 ## How to Contribute
 
-🎉 First off, thanks for taking the time to contribute! 🎉
+🎉 Thanks for considering contributing!
+Please read our [CONTRIBUTING.md](https://github.com/iusehooks/usetheform/blob/master/CONTRIBUTING.md) for guidelines.
 
-We would like to encourage everyone to help and support this library by contributing. See the [CONTRIBUTING file](https://github.com/iusehooks/usetheform/blob/master/CONTRIBUTING.md).
+## 📄 License
 
-## License
-
-This software is free to use under the MIT license.
-See the [LICENSE](/LICENSE.md) file for license text and copyright information.
+This project is licensed under the MIT License.
+See the [LICENSE](./LICENSE.md) file for details.
